@@ -1,0 +1,53 @@
+//
+// roles.bolt
+//
+
+/roles is Roles;
+
+
+type Roles {
+  hasRoot: HasRoot
+  root: RootUser
+  superAdmins: SuperAdmin[]
+  admins: Admin[]
+  maintainers: Maintainer[]
+  moderators: Moderator[]
+  read() { amSuperAdmin() }
+}
+
+type HasRoot extends Readable<Boolean> {
+  write() { this == true }
+}
+
+type RootUser extends FinalAuth {
+//    validate() { isSuperAdmin(this) }
+}
+type SuperAdmin {
+  write() { amRoot() }
+//    validate() { isAdmin(this) }
+}
+type Admin {
+  write() { amSuperAdmin() }
+//    validate() { isMaintainer(this) }
+}
+type Maintainer {
+  write() { amAdmin() }
+//    validate() { isModerator(this) }
+}
+type Moderator {
+  write() { amMaintainer() }
+//    validate() { userExists(key()) }
+}
+
+
+isModerator(user) {  root.roles.moderators[user] != null }
+isMaintainer(user) { root.roles.maintainers[user] != null }
+isAdmin(user) {      root.roles.admins[user] != null }
+isSuperAdmin(user) { root.roles.superAdmins[user] != null }
+isRoot(user) {       root.roles.root == user }
+
+amModerator() {     isModerator(me())   && amElevated() }
+amMaintainer() {    isMaintainer(me())  && amElevated() }
+amAdmin() {         isAdmin(me())       && amElevated() }
+amSuperAdmin() {    isSuperAdmin(me())  && amElevated() }
+amRoot() {          isRoot(me())        && amElevated() }

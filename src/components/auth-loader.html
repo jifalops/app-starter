@@ -12,38 +12,48 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'auth-loader',
-      properties: {
-        /**
-         * The Firebase app.
-         */
-        app: Object,
-        /**
-         * The &lt;firebase-auth&gt; user object.
-         */
-        authRaw: Object,
-        /**
-         * When authenticated this contains all of the loaded user data.
-         */
-        auth: {
-          type: Object,
-          value: null,
-          notify: true
-        },
-        /**
-         * For specifying a username with capitalization when a user
-         * is first created using the email/username login method.
-         */
-        username: String
-      },
+    class AuthLoader extends Polymer.Element {
+      static get is() { return 'auth-loader'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            /**
+             * The Firebase app.
+             */
+            app: Object,
+            /**
+             * The &lt;firebase-auth&gt; user object.
+             */
+            authRaw: Object,
+            /**
+             * When authenticated this contains all of the loaded user data.
+             */
+            auth: {
+              type: Object,
+              value: null,
+              notify: true
+            },
+            /**
+             * For specifying a username with capitalization when a user
+             * is first created using the email/username login method.
+             */
+            username: String
+          },
 
-      observers: [
-        '_userAuthenticated(app, authRaw)',
-        '_userDataLoaded(app, authRaw, username, user, profile)',
-      ],
+          observers: [
+            '_userAuthenticated(app, authRaw)',
+            '_userDataLoaded(app, authRaw, username, user, profile)',
+          ]
+        }
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
 
-      _userAuthenticated: function(app, authRaw) {
+      _userAuthenticated(app, authRaw) {
         if (app && authRaw) {
           // If we are here the user has authenticated with either
           // a provider or the email/username login.
@@ -94,9 +104,9 @@
             this.auth = null;
           }
         }
-      },
+      }
 
-      _userDataLoaded: function (app, authRaw, username, user, profile) {
+      _userDataLoaded(app, authRaw, username, user, profile) {
         if (app && authRaw && username && !isEmpty(user) && !isEmpty(profile)) {
           var tmp = {};
           tmp.uid = username;
@@ -108,9 +118,9 @@
           // This purpose of this element has been fulfilled.
           this.auth = tmp;
         }
-      },
+      }
 
-      createUser: function(authRaw, username) {
+      createUser(authRaw, username) {
         var user = {};
         var profile = {};
         var data = authRaw.providerData[0];
@@ -119,12 +129,12 @@
         //  user.email = authRaw.email || data.email;
         //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
 
-        profile.pic = authRaw.photoURL || data.photoURL || '/images/unknown_user.jpg';
+        profile.pic = authRaw.photoURL || data.photoURL || '/images/unknown-user.jpg';
         profile.name = authRaw.displayName || data.displayName || username;
         profile.created = db.timestamp();
 
         if (profile.pic.length > 250) {
-          profile.pic = '/images/unknown_user.jpg';
+          profile.pic = '/images/unknown-user.jpg';
         }
         if (profile.name.length > 16) {
           profile.name = username;
@@ -133,9 +143,9 @@
         db.users.createUser(authRaw.uid, username, user, profile, function() {
           showInfoToast('Welcome!');
         }, showServerErrorToast);
-      },
+      }
 
-      _getProvider: function(provider) {
+      _getProvider(provider) {
         switch (provider) {
           case 'password':
             return 'Username';
@@ -150,22 +160,23 @@
           default:
             return provider || '';
         }
-      },
+      }
 
-      _watchUserData: function(username) {
+      _watchUserData(username) {
         db.watch('/users/' + username, function(user) {
           this.user = user;
         }, this);
         db.watch('/profiles/' + username, function(profile) {
           this.profile = profile;
         }, this);
-      },
+      }
 
-      _unwatchUserData: function(username) {
+      _unwatchUserData(username) {
         db.unwatch('/users/' + username);
         db.unwatch('/profiles/' + username);
       }
-
-    });
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(AuthLoader.is, AuthLoader);
   </script>
 </dom-module>

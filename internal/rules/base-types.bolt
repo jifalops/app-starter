@@ -1,0 +1,55 @@
+//
+// base-types.bolt
+//
+
+// Final types
+type Final {
+  validate() { isUnchanged(this) }
+}
+type FinalString extends String {
+  validate() { isUnchanged(this) }
+}
+type FinalBoolean extends Boolean {
+  validate() { isUnchanged(this) }
+}
+type FinalNumber extends Number {
+  validate() { isUnchanged(this) }
+}
+type FinalNow {
+  validate() { isUnchangedDefault(this, now) }
+}
+type FinalTimestamp extends Timestamp {
+  validate() { isUnchanged(this) }
+}
+type FinalAuth {
+  validate() { isUnchangedDefault(this, me()) }
+}
+type FinalUser {
+  validate() { isUnchanged(this) && userExists(this) }
+}
+type FinalPay extends Pay {
+  validate() { isUnchanged(this) }
+}
+
+// Timestamp types
+type CurrentTimestamp {
+  validate() { this == now }
+}
+type Timestamp extends Number {
+  validate() { this >= 0 && this <= now }
+}
+
+// Readable types
+type Readable<T> extends T {
+  read() { amAuthed() }
+}
+
+type RecordedAction {
+  user: FinalAuth
+  created: FinalNow
+}
+
+amAuthed() { auth.uid != null }
+//isAuthed(uid) { amAuthed() && auth.uid == uid }
+isUnchanged(value) { prior(value) == null || value == prior(value) }
+isUnchangedDefault(value, default) { value == (prior(value) == null ? default : prior(value)) }

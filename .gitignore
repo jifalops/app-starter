@@ -2,6 +2,8 @@ bower_components
 dist
 node_modules
 build
-internal
 .idea
 firebase-debug.log
+
+# Uncomment the next line in production applications
+#internal

@@ -3,27 +3,11 @@
 //
 
 /geoUsers {
-  read() { amAdmin() }
+  read() { true }
   index() { 'g' }
   /{user} is Geofire {
     read() { amUser(key()) }
     write() { amUser(key()) }
-  }
-}
-
-/geoJobPosts {
-  read() { true }
-  index() { 'g' }
-  /{jid} is Geofire {
-    write() { amOwner(key()) }
-  }
-}
-
-/geoRequestPosts {
-  read() { true }
-  index() { 'g' }
-  /{jid} is Geofire {
-    write() { amOwner(key()) }
   }
 }
 
