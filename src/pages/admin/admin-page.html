@@ -1,0 +1,70 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="/src/header.html">
+
+<dom-module id="admin-page">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+
+    <template is="dom-if" if="[[auth]]">
+      <firebase-document app-name="dropjobs"
+                 path="/roles/hasRoot"
+                 data="{{dbHasRoot}}"></firebase-document>
+      <paper-button hidden$="[[hasRoot]]"
+              class="primary-button"
+              on-tap="becomeRoot">Become Root</paper-button>
+    </template>
+    <template is="dom-if" if="[[hasAccess]]">
+      <div class="title">Welcome</div>
+      <div>[[auth.profile.name]]</div>
+    </template>
+    <template is="dom-if" if="[[!hasAccess]]">
+      You do not have permission to view this page.
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'admin-page',
+      properties: {
+        auth: Object,
+        hasRoot: {
+          type: Boolean,
+          value: true,
+          computed: '_hasRoot(dbHasRoot)'
+        },
+        hasAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasAccess(auth, hasRoot)'
+        }
+      },
+
+      behaviors: [
+        DjBehaviors.MainBehavior
+      ],
+
+      _hasRoot: function(dbHasRoot) {
+//                console.log('dbHasRoot', dbHasRoot);
+        return !isEmpty(dbHasRoot);
+      },
+
+      _hasAccess: function(auth, hasRoot) {
+        return auth && hasRoot && auth.user.isModerator;
+      },
+
+      becomeRoot: function() {
+        db.admin.becomeRoot(this.auth.name, function () {
+          showSuccessToast('You are now root.');
+        }, function () {
+          showErrorToast('Failed to become root.');
+        });
+      }
+    });
+  </script>
+</dom-module>

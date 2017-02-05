@@ -1,11 +1,14 @@
 /*
- * Simply logging utility.
+ * Simple logging utility.
  */
 'use strict';
 
-if (log !== undefined) {
-  console.warn('log.js: log is already defined as', log, 'overwriting...');
-}
+/*
+ * Global logging trigger.
+ * Logging a message via `LOG && log.v('x');` allows minification
+ * tools to omit logging lines altogether when LOG is false.
+ */
+const LOG = true;
 
 var log = {};
 
@@ -16,23 +19,20 @@ log.INFO = 4;
 log.DEBUG = 5;
 log.VERBOSE = 6;
 
-log.level = log.VERBOSE;
+log.setLevel = function(level) {
+  if (level >= log.ASSERT)  { log.a = console.assert.bind(window.console); }
+  else { log.a = function() {} }
+  if (level >= log.ERROR)   { log.e = console.error.bind(window.console); }
+  else { log.e = function() {} }
+  if (level >= log.WARN)    { log.w = console.warn.bind(window.console); }
+  else { log.w = function() {} }
+  if (level >= log.INFO)    { log.i = console.info.bind(window.console); }
+  else { log.i = function() {} }
+  if (level >= log.DEBUG)   { log.d = console.debug.bind(window.console); }
+  else { log.d = function() {} }
+  if (level >= log.VERBOSE) { log.v = console.log.bind(window.console); }
+  else { log.v = function() {} }
+  log.level = level;
+};
 
-log.a = function() {
-  if (log.level >= log.ASSERT) console.assert.apply(this, arguments);
-};
-log.e = function() {
-  if (log.level >= log.ERROR) console.error.apply(this, arguments);
-};
-log.w = function() {
-  if (log.level >= log.WARN) console.warn.apply(this, arguments);
-};
-log.i = function() {
-  if (log.level >= log.INFO) console.info.apply(this, arguments);
-};
-log.d = function() {
-  if (log.level >= log.DEBUG) console.debug.apply(this, arguments);
-};
-log.v = function() {
-  if (log.level >= log.VERBOSE) console.log.apply(this, arguments);
-};
+log.setLevel(log.VERBOSE);

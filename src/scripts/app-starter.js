@@ -1,5 +1,5 @@
 /*
- * Common functions shared throughout the app.
+ * Functions specific to the app.
  */
 'use strict';
 

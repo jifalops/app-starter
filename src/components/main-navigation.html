@@ -1,0 +1,68 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/iron-collapse-button/iron-collapse-button.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/src/header.html">
+
+<dom-module id="main-navigation">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+      a {
+        display: block;
+        padding: 0 0px;
+        line-height: 40px;
+        /*color: var(--accent-color);*/
+      }
+    </style>
+    <paper-listbox selected="[[page]]" attr-for-selected="name" role="navigation">
+
+      <paper-item name="list">
+        <a plain class="flex" href="/posts/list">List</a>
+      </paper-item>
+      <paper-item name="map" link>
+        <a plain class="flex" href="/posts/map">Map</a>
+      </paper-item>
+
+      <div class="divider"></div>
+
+      <paper-item name="new" disabled$="[[!auth]]">
+        <a plain class="flex" href="/new">New post</a>
+      </paper-item>
+
+      <div class="divider"></div>
+
+      <paper-item name="actions" disabled$="[[!auth]]">
+        <a plain class="flex" href="/user/[[auth.name]]/actions">Actions</a>
+      </paper-item>
+      <paper-item name="messages" disabled$="[[!auth]]">
+        <a plain class="flex" href="/user/[[auth.name]]/messages">Messages</a>
+      </paper-item>
+      <paper-item name="completed" disabled$="[[!auth]]">
+        <a plain class="flex" href="/user/[[auth.name]]/completed">Completed</a>
+      </paper-item>
+
+      <div class="divider"></div>
+
+      <paper-item name="feedback" id="feedback" disabled$="[[!auth]]">
+        <a plain class="flex" href="/feedback">Feedback</a>
+      </paper-item>
+    </paper-listbox>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'main-navigation',
+      properties: {
+        auth: {
+          type: Object,
+          value: null
+        },
+        page: String
+      }
+    });
+  </script>
+</dom-module>

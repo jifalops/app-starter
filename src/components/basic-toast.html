@@ -1,0 +1,60 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/src/header.html">
+
+<dom-module id="basic-toast">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+      .success-toast {
+        --paper-toast-background-color: var(--success-bg-color);
+        --paper-toast-color: var(--success-color);
+        background-color: var(--success-bg-color);
+        color: var(--success-color);
+        font-weight: bold;
+      }
+      .error-toast {
+        --paper-toast-background-color: var(--error-bg-color);
+        --paper-toast-color: var(--error-color);
+        background-color: var(--error-bg-color);
+        color: var(--error-color);
+        font-weight: bold;
+      }
+      .info-toast {
+        --paper-toast-background-color: var(--info-bg-color);
+        --paper-toast-color: var(--info-color);
+        background-color: var(--info-bg-color);
+        color: var(--info-color);
+        font-weight: bold;
+      }
+      .warning-toast {
+        --paper-toast-background-color: var(--warning-bg-color);
+        --paper-toast-color: var(--warning-color);
+        background-color: var(--warning-bg-color);
+        color: var(--warning-color);
+        font-weight: bold;
+      }
+    </style>
+    <paper-toast id="toast"></paper-toast>
+  </template>
+  <script>
+    Polymer({
+      is: 'basic-toast',
+      get toast() { return this.$.toast },
+      show: function(type, text, duration, properties) {
+        text = text || type;
+        this.toast.className = type + '-toast';
+        this.toast.show(this._makeProperties(text, duration, properties));
+      },
+      _makeProperties: function(text, duration, properties) {
+        duration = duration || (duration === 0 ? 0 : 3000);
+        properties = properties || {};
+        properties.text = text;
+        properties.duration = duration;
+        return properties;
+      }
+    });
+  </script>
+</dom-module>

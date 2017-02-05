@@ -1,0 +1,84 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="/src/header.html">
+
+<dom-module id="confirm-dialog">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-dialog id="dialog"
+            modal$="[[modal]]"
+            with-backdrop
+            on-iron-overlay-opened="_onOpened"
+            on-iron-overlay-closed="_onClosed">
+      <div class="subhead">[[header]]</div>
+      <paper-dialog-scrollable>
+        <div>[[content]]</div>
+        <content></content>
+      </paper-dialog-scrollable>
+      <div>[[footer]]</div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>
+          [[cancel]]
+        </paper-button>
+        <paper-button disabled$="[[disabled]]" dialog-confirm autofocus>
+          [[confirm]]
+        </paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'confirm-dialog',
+      properties: {
+        disabled: {
+          type: Boolean,
+          value: true,
+          readOnly: true
+        },
+        header: String,
+        content: String,
+        footer: String,
+        confirm: {
+          type: String,
+          value: 'Confirm'
+        },
+        cancel: {
+          type: String,
+          value: 'Cancel'
+        },
+        modal: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        }
+      },
+      behaviors: [
+        DjBehaviors.MainBehavior
+      ],
+      show: function(header, content, footer, confirm, cancel, onClosed) {
+        this.header = header;
+        this.content = content;
+        this.footer = footer;
+        this.confirm = confirm;
+        this.cancel = cancel;
+        this.onClosed = onClosed;
+        this.$.dialog.open();
+      },
+      _onOpened: function(e) {
+        this._setDisabled(true);
+        setTimeout(function() { this._setDisabled(false); }.bind(this), 1500);
+      },
+      _onClosed: function(e) {
+        this.onClosed(e.detail.confirmed || false);
+      }
+    });
+  </script>
+</dom-module>

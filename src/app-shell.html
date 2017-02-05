@@ -1,13 +1,24 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="header.html">
 <link rel="import" href="components/firebase-auth-wrapper.html">
 <link rel="import" href="components/auth-loader.html">
+<link rel="import" href="components/value-history.html">
+<link rel="import" href="components/main-pages.html">
+<link rel="import" href="components/main-navigation.html">
+<link rel="import" href="components/basic-toast.html">
+<link rel="import" href="components/confirm-dialog.html">
+<link rel="import" href="components/set-username-dialog.html">
 
 <dom-module id="app-shell">
   <template>
     <style include="app-styles">
       :host {
         display: block;
+        @apply --font-default;
+        color: var(--primary-text-color);
+        background-color: : var(--primary-background-color);
       }
     </style>
 
@@ -32,7 +43,50 @@
       auth="{{auth}}">
     </auth-loader>
 
-    <div class="font-title">Hello app-starter</div>
+    <app-location
+      id="appLocation"
+      route="{{route}}">
+    </app-location>
+
+    <app-route
+      route="[[route]]"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subroute}}">
+    </app-route>
+
+    <value-history
+      value="[[route]]"
+      history="{{history}}"
+      limit="10">
+    </value-history>
+
+    <div id="content">
+      <div class="font-title">Hello app-starter</div>
+
+      <neon-animated-pages role="main" selected="[[page]]" attr-for-selected="name">
+        <neon-animatable name="user">
+          <user-page auth="[[auth]]" route="[[subroute]]"></user-page>
+        </neon-animatable>
+        <neon-animatable name="admin">
+          <admin-page auth="[[auth]]"></admin-page>
+        </neon-animatable>
+        <neon-animatable name="login">
+          <login-register-page auth="[[auth]]" type="login"></login-register-page>
+        </neon-animatable>
+        <neon-animatable name="register">
+          <login-register-page auth="[[auth]]" type="register"></login-register-page>
+        </neon-animatable>
+        <neon-animatable name="feedback">
+          <feedback-page auth="[[auth]]"></feedback-page>
+        </neon-animatable>
+      </neon-animated-pages>
+    </div>
+
+
+    <basic-toast id="toast"></basic-toast>
+    <confirm-dialog id="confirmDialog"></confirm-dialog>
+    <set-username-dialog id="setUsernameDialog"></set-username-dialog>
   </template>
 
   <script>
@@ -45,7 +99,10 @@
               type: Object,
               observer: '_onFirebaseAppChanged'
             }
-          }
+          },
+          observers: [
+            '_routePageChanged(routeData.page)'
+          ],
         }
       }
       constructor() {
@@ -54,9 +111,37 @@
       connectedCallback() {
         super.connectedCallback();
       }
+
       _onFirebaseAppChanged(app, old) {
         if (app && !old) {
-          log.d('Firebase app ready');
+          LOG && log.d('Firebase app ready');
+        }
+      }
+
+      _routePageChanged(page) {
+        LOG && log.v('page changed', page);
+        var file = this._fileForPage(page);
+        if (!page || !file) {
+          redirect('/');
+          return;
+        }
+
+        // load page import on demand.
+        var url = this.resolveUrl(file);
+        this.importHref(url, function() {
+          LOG && log.v('main-pages: imported', url);
+        }.bind(this), function() {
+          LOG && log.e('main-pages: failed to import', url);
+        }, true);
+      }
+
+      _fileForPage(page) {
+        switch (page) {
+          case '/':          return '/src/pages/user-map/user-map-page.html';
+          case 'admin':      return '/src/pages/admin/admin-page.html';
+          case 'login':      return '/src/pages/login-register/login-register-page.html';
+          case 'register':   return '/src/pages/login-register/login-register-page.html';
+          case 'feedback':   return '/src/pages/feedback/feedback-page.html';
         }
       }
     }

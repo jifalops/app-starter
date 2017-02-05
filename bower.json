@@ -8,7 +8,8 @@
     "polymerfire": "2.0-preview",
     "iron-flex-layout": "2.0-preview",
     "paper-styles": "2.0-preview",
-    "paper-input": "2.0-preview"
+    "paper-input": "2.0-preview",
+    "app-route": "PolymerElements/app-route#2.0-preview"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
@@ -22,6 +23,8 @@
     "iron-behaviors": "2.0-preview",
     "iron-a11y-keys-behavior": "2.0-preview",
     "iron-validatable-behavior": "2.0-preview",
-    "iron-meta": "2.0-preview"
+    "iron-meta": "2.0-preview",
+    "app-route": "2.0-preview",
+    "iron-location": "2.0-preview"
   }
 }

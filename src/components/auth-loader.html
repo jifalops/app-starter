@@ -66,7 +66,7 @@
           //      which is passed in as the desired username with capitalization.
           //   b. Provider login: Prompt for a username and then create
           //      user data using that username.
-          log.v('Authenticated. Loading user data from database...');
+          LOG && log.v('Authenticated. Loading user data from database...');
           db.watch('/uids/' + authRaw.uid, function(username) {
             if (username) {
               // User exists!
@@ -83,7 +83,7 @@
                 //var username = authRaw.email.split('@', 1)[0];
               } else {
                 // Authenticated using a provider.
-                log.d('Showing set-username dialog...');
+                LOG && log.d('Showing set-username dialog...');
                 showSetUsernameDialog(authRaw.uid,
                   this._getProvider(authRaw.providerData[0].providerId),
                   function(username) {
@@ -113,7 +113,7 @@
           tmp.user = user;
           tmp.profile = profile;
           if (!this.auth) {
-            log.d('Authenticated user loaded: ', tmp);
+            LOG && log.d('Authenticated user loaded: ', tmp);
           }
           // This purpose of this element has been fulfilled.
           this.auth = tmp;
