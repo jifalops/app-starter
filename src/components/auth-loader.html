@@ -1,0 +1,171 @@
+<link rel="import" href="/src/header.html">
+
+<!--
+  auth-loader loads user data from the database after a user is authenticated.
+  It will be loaded into the variable `auth` with at least these children:
+  * `auth.user` the user's private information
+  * `auth.profile` the user's public profile
+  * `auth.uid` the user's unique username. For the Firebase uid, use authRaw.uid
+-->
+<dom-module id="auth-loader">
+  <template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'auth-loader',
+      properties: {
+        /**
+         * The Firebase app.
+         */
+        app: Object,
+        /**
+         * The &lt;firebase-auth&gt; user object.
+         */
+        authRaw: Object,
+        /**
+         * When authenticated this contains all of the loaded user data.
+         */
+        auth: {
+          type: Object,
+          value: null,
+          notify: true
+        },
+        /**
+         * For specifying a username with capitalization when a user
+         * is first created using the email/username login method.
+         */
+        username: String
+      },
+
+      observers: [
+        '_userAuthenticated(app, authRaw)',
+        '_userDataLoaded(app, authRaw, username, user, profile)',
+      ],
+
+      _userAuthenticated: function(app, authRaw) {
+        if (app && authRaw) {
+          // If we are here the user has authenticated with either
+          // a provider or the email/username login.
+          // They may or may not have user data in the database.
+
+          // The approach here is to
+          // 1. Check if they have user data and load it.
+          // 2. If no user data exists in the database:
+          //   a. Username login: Create user data from `this.username`
+          //      which is passed in as the desired username with capitalization.
+          //   b. Provider login: Prompt for a username and then create
+          //      user data using that username.
+          log.v('Authenticated. Loading user data from database...');
+          db.watch('/uids/' + authRaw.uid, function(username) {
+            if (username) {
+              // User exists!
+              this.username = username;
+              this._watchUserData(username);
+            } else {
+              // No user data in the database.
+              if (authRaw.providerData[0].providerId == 'password') {
+                // Authenticated using email/username.
+                this.createUser(authRaw, this.username);
+                // Parsing the email address results in a lowercase username.
+                // Use this.username instead.
+                //var email = authRaw.email || authRaw.providerData[0].email;
+                //var username = authRaw.email.split('@', 1)[0];
+              } else {
+                // Authenticated using a provider.
+                log.d('Showing set-username dialog...');
+                showSetUsernameDialog(authRaw.uid,
+                  this._getProvider(authRaw.providerData[0].providerId),
+                  function(username) {
+                    this.username = username;
+                    this.createUser(authRaw, username);
+                  }.bind(this));
+              }
+            }
+          }, this);
+        } else {
+          // User is not authenticated.
+          if (this.auth) {
+            // Handle logout.
+            this._unwatchUserData(this.username);
+            this.username = null;
+            this.user = null;
+            this.profile = null;
+            this.auth = null;
+          }
+        }
+      },
+
+      _userDataLoaded: function (app, authRaw, username, user, profile) {
+        if (app && authRaw && username && !isEmpty(user) && !isEmpty(profile)) {
+          var tmp = {};
+          tmp.uid = username;
+          tmp.user = user;
+          tmp.profile = profile;
+          if (!this.auth) {
+            log.d('Authenticated user loaded: ', tmp);
+          }
+          // This purpose of this element has been fulfilled.
+          this.auth = tmp;
+        }
+      },
+
+      createUser: function(authRaw, username) {
+        var user = {};
+        var profile = {};
+        var data = authRaw.providerData[0];
+
+        user.provider = this._getProvider(data.providerId);
+        //  user.email = authRaw.email || data.email;
+        //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
+
+        profile.pic = authRaw.photoURL || data.photoURL || '/images/unknown_user.jpg';
+        profile.name = authRaw.displayName || data.displayName || username;
+        profile.created = db.timestamp();
+
+        if (profile.pic.length > 250) {
+          profile.pic = '/images/unknown_user.jpg';
+        }
+        if (profile.name.length > 16) {
+          profile.name = username;
+        }
+
+        db.users.createUser(authRaw.uid, username, user, profile, function() {
+          showInfoToast('Welcome!');
+        }, showServerErrorToast);
+      },
+
+      _getProvider: function(provider) {
+        switch (provider) {
+          case 'password':
+            return 'Username';
+          case 'google.com':
+            return 'Google';
+          case 'twitter.com':
+            return 'Twitter';
+          case 'facebook.com':
+            return 'Facebook';
+          case 'github.com':
+            return 'Github';
+          default:
+            return provider || '';
+        }
+      },
+
+      _watchUserData: function(username) {
+        db.watch('/users/' + username, function(user) {
+          this.user = user;
+        }, this);
+        db.watch('/profiles/' + username, function(profile) {
+          this.profile = profile;
+        }, this);
+      },
+
+      _unwatchUserData: function(username) {
+        db.unwatch('/users/' + username);
+        db.unwatch('/profiles/' + username);
+      }
+
+    });
+  </script>
+</dom-module>

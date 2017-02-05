@@ -1,0 +1,7 @@
+{
+  "name": "app-starter",
+  "short_name": "app-starter",
+  "description": "A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.",
+  "start_url": "/",
+  "display": "standalone"
+}

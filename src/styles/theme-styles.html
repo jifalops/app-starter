@@ -1,0 +1,226 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-styles/typography.html">
+<link rel="import" href="/bower_components/paper-styles/color.html">
+<link rel="import" href="/bower_components/paper-styles/default-theme.html">
+
+<!--
+  Theme styles pertain to site-wide colors and text.
+-->
+<dom-module id="theme-styles">
+  <template>
+    <style>
+      :host > * {
+        /*
+         * Overrides of the default theme
+         */
+        --primary-color: var(--paper-teal-500);                 /* #009688 */
+        --light-primary-color: var(--paper-teal-300);
+        --dark-primary-color: var(--paper-teal-700);
+
+        --accent-color: var(--paper-deep-orange-a200);          /* #ff6e40 */
+        --light-accent-color: var(--paper-deep-orange-a100);
+        --dark-accent-color: var(--paper-deep-orange-a400);
+
+        /*
+          Variables for use from the default theme
+
+          --primary-text-color: var(--light-theme-text-color);
+          --primary-background-color: var(--light-theme-background-color);
+          --secondary-text-color: var(--light-theme-secondary-color);
+          --disabled-text-color: var(--light-theme-disabled-color);
+          --divider-color: var(--light-theme-divider-color);
+          --error-color: var(--paper-deep-orange-a700);
+
+          Material Design Light background theme
+          --light-theme-background-color: #ffffff;
+          --light-theme-base-color: #000000;
+          --light-theme-text-color: var(--paper-grey-900);
+          --light-theme-secondary-color: #737373;
+          --light-theme-disabled-color: #9b9b9b;
+          --light-theme-divider-color: #dbdbdb;
+
+          Material Design Dark background theme
+          --dark-theme-background-color: var(--paper-grey-900);
+          --dark-theme-base-color: #ffffff;
+          --dark-theme-text-color: #ffffff;
+          --dark-theme-secondary-color: #bcbcbc;
+          --dark-theme-disabled-color: #646464;
+          --dark-theme-divider-color: #3c3c3c;
+        */8
+
+        --light-primary-text-color: #fff;
+
+        --warning-color: var(--paper-amber-a700);
+        --info-color: var(--paper-blue-a700);
+        --success-color: var(--paper-green-a700);
+
+        --error-bg-color: var(--paper-deep-orange-50);
+        --warning-bg-color: var(--paper-amber-50);
+        --info-bg-color: var(--paper-blue-50);
+        --success-bg-color: var(--paper-green-50);
+
+        /**
+         * Fonts
+         */
+        --font-default: {
+          @apply --paper-font-body1;
+        };
+        --font-small: {
+          @apply --paper-font-common-base;
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 16px;
+        };
+        --font-tiny: {
+          @apply --paper-font-common-base;
+          font-size: 10px;
+          font-weight: 300;
+          line-height: 14px;
+        };
+        --font-code: {
+          @apply --paper-font-code1;
+        }
+        --font-button: {
+          @apply --paper-font-button;
+        }
+        --font-menu: {
+          @apply --paper-font-menu;
+        }
+        --font-caption: {
+          @apply --paper-font-caption;
+        }
+
+        /* Decreasing size */
+        --font-display4: {
+          @apply --paper-font-display4;
+        }
+        --font-display3: {
+          @apply --paper-font-display3;
+        }
+        --font-display2: {
+          @apply --paper-font-display2;
+        }
+        --font-display1: {
+          @apply --paper-font-display1;
+        }
+        --font-headline: {
+          @apply --paper-font-headline;
+        }
+        --font-title: {
+          @apply --paper-font-title;
+        }
+        --font-subhead: {
+          @apply --paper-font-subhead;
+        }
+      }
+
+      .font-default {
+        @apply --font-default;
+      }
+      .font-small {
+        @apply --font-small;
+      }
+      .font-code {
+        @apply --font-code;
+      }
+      .font-button {
+        @apply --font-button;
+      }
+      .font-menu {
+        @apply --font-menu;
+      }
+      .font-caption {
+        @apply --font-caption;
+      }
+      .font-display4 {
+        @apply --font-display4;
+      }
+      .font-display3 {
+        @apply --font-display3;
+      }
+      .font-display2 {
+        @apply --font-display2;
+      }
+      .font-display1 {
+        @apply --font-display1;
+      }
+      .font-headline {
+        @apply --font-headline;
+      }
+      .font-title {
+        @apply --font-title;
+      }
+      .font-subhead {
+        @apply --font-subhead;
+      }
+
+      .text-primary {
+        color: var(--primary-text-color);
+      }
+      .text-light {
+        color: var(--light-primary-text-color);
+      }
+      .text-secondary {
+        color: var(--secondary-text-color);
+      }
+      .text-disabled {
+        color: var(--disabled-text-color);
+      }
+
+      .success {
+        background-color: var(--success-bg-color);
+        color: var(--success-color);
+      }
+      .info {
+        background-color: var(--info-bg-color);
+        color: var(--info-color);
+      }
+      .warning {
+        background-color: var(--warning-bg-color);
+        color: var(--warning-color);
+      }
+      .error {
+        background-color: var(--error-bg-color);
+        color: var(--error-color);
+      }
+
+      .color-primary {
+        color: var(--primary-color);
+      }
+      .color-primary-light {
+        color: var(--light-primary-color);
+      }
+      .color-primary-dark {
+        color: var(--dark-primary-color);
+      }
+      .color-accent {
+        color: var(--accent-color);
+      }
+      .color-accent-light {
+        color: var(--light-accent-color);
+      }
+      .color-accent-dark {
+        color: var(--dark-accent-color);
+      }
+
+      .bgcolor-primary {
+        background-color: var(--primary-color);
+      }
+      .bgcolor-primary-light {
+        background-color: var(--light-primary-color);
+      }
+      .bgcolor-primary-dark {
+        background-color: var(--dark-primary-color);
+      }
+      .bgcolor-accent {
+        background-color: var(--accent-color);
+      }
+      .bgcolor-accent-light {
+        background-color: var(--light-accent-color);
+      }
+      .bgcolor-accent-dark {
+        background-color: var(--dark-accent-color);
+      }
+    </style>
+  </template>
+</dom-module>

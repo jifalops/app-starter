@@ -1,0 +1,49 @@
+//
+// geofire.bolt
+//
+
+/geoUsers {
+  read() { amAdmin() }
+  index() { 'g' }
+  /{user} is Geofire {
+    read() { amUser(key()) }
+    write() { amUser(key()) }
+  }
+}
+
+/geoJobPosts {
+  read() { true }
+  index() { 'g' }
+  /{jid} is Geofire {
+    write() { amOwner(key()) }
+  }
+}
+
+/geoRequestPosts {
+  read() { true }
+  index() { 'g' }
+  /{jid} is Geofire {
+    write() { amOwner(key()) }
+  }
+}
+
+type Geofire {
+  g: GeoHash
+  l: GeoLocation
+}
+
+type GeoHash {
+  validate() { this.length > 0 && this.length <= 22 }
+}
+
+type GeoLocation {
+  '0': Latitude
+  '1': Longitude
+}
+
+type Latitude extends Number {
+  validate() { this >= -90 && this <= 90 }
+}
+type Longitude extends Number {
+  validate() { this >= -180 && this <= 180 }
+}

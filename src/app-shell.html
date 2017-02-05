@@ -1,0 +1,67 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="header.html">
+<link rel="import" href="components/firebase-auth-wrapper.html">
+<link rel="import" href="components/auth-loader.html">
+
+<dom-module id="app-shell">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-app
+      app="{{app}}"
+      auth-domain="app-starter-8f1a5.firebaseapp.com"
+      database-url="https://app-starter-8f1a5.firebaseio.com"
+      api-key="AIzaSyA_8AApyhoQ2QUImoCdULeq7MLQoBTB0ZI"
+      storage-bucket="app-starter-8f1a5.appspot.com"
+      message-sender-id="435083496955">
+    </firebase-app>
+
+    <firebase-auth-wrapper
+      id="auth"
+      user="{{authRaw}}"
+      email-suffix="@users.gather.ink">
+    </firebase-auth-wrapper>
+
+    <auth-loader
+      app="[[app]]"
+      auth-raw="[[authRaw]]"
+      auth="{{auth}}">
+    </auth-loader>
+
+    <div class="font-title">Hello app-starter</div>
+  </template>
+
+  <script>
+    class AppShell extends Polymer.Element {
+      static get is() { return 'app-shell'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            app: {
+              type: Object,
+              observer: '_onFirebaseAppChanged'
+            }
+          }
+        }
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
+      _onFirebaseAppChanged(app, old) {
+        if (app && !old) {
+          log.d('Firebase app ready');
+        }
+      }
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(AppShell.is, AppShell);
+  </script>
+</dom-module>

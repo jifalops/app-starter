@@ -1,0 +1,32 @@
+//
+// usernames.bolt
+//
+
+// Map uid -> user, including capital letters.
+/uids {
+  read() { amAdmin() }
+  /{uid} is Username {
+    read() { auth.uid == key() }
+    create() { auth.uid == key() && userExists(this) }
+  }
+}
+
+// lowercase(user)
+/usernames {
+  read() { amAdmin() }
+  /{user} is FinalNow {
+    read() { true }
+    create() { key() == root.uids[auth.uid].toLowerCase() }
+  }
+}
+
+type Username extends String {
+  validate() {
+    this.length >= 4 && this.length <= 16 && this.test(/^[a-zA-Z0-9_\-]+$/)
+  }
+}
+
+me() { root.uids[auth.uid] }
+userExists(user) { root.usernames[user.toLowerCase()] != null }
+isUser(uid, user) { root.uids[uid] == user }
+amUser(user) { isUser(auth.uid, user) }
