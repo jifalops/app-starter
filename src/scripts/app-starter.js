@@ -3,6 +3,11 @@
  */
 'use strict';
 
+/*
+ * Categorical logging filters
+ */
+const USER = true;
+const ROUTE = false;
 
 function redirect(path) {
   document.getElementById('app').$['appLocation'].path = path;
@@ -20,7 +25,7 @@ function goBack() {
       }
     }
   }
-  redirect('/');
+  redirect('/users');
 }
 
 function showSuccessToast(text, duration, properties) {

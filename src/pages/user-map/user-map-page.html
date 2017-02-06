@@ -1,0 +1,31 @@
+<link rel="import" href="/src/header.html">
+<dom-module id="user-map-page">
+<template>
+  <style include="app-styles">
+    :host {
+      display: block;
+    }
+  </style>
+  <div class="font-display3">User map page</div>
+</template>
+<script>
+class UserMapPage extends Polymer.Element {
+  static get is() { return 'user-map-page'; }
+  static get config() {
+    return { /* properties, observers meta data */
+      properties: {
+
+      }
+    }
+  }
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    super.connectedCallback();
+  }
+}
+// Register custom element definition using standard platform API
+customElements.define(UserMapPage.is, UserMapPage);
+</script>
+</dom-module>

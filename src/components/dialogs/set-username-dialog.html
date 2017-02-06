@@ -4,7 +4,7 @@
 <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
 
 <link rel="import" href="/src/header.html">
-<link rel="import" href="inputs/uname-input.html">
+<!-- <link rel="import" href="inputs/uname-input.html"> -->
 
 <dom-module id="set-username-dialog">
   <template>
@@ -22,7 +22,7 @@
       <div>Thank you for logging in using [[provider]].</div>
       <div>Please select a username to use as your identity.</div>
       <div class="layout horizontal center">
-        <uname-input id="unameInput"></uname-input>
+        <!-- <uname-input id="unameInput"></uname-input> -->
         <!--<paper-icon-button icon="check"-->
                    <!--on-tap="_checkUsername"></paper-icon-button>-->
       </div>
@@ -44,7 +44,7 @@
         }
       },
       behaviors: [
-        DjBehaviors.MainBehavior
+        // DjBehaviors.MainBehavior
       ],
 
       show: function(uid, provider, onUsernameChosen) {
