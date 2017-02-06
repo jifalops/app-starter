@@ -1,11 +1,23 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="header.html">
 <link rel="import" href="components/firebase-auth-wrapper.html">
 <link rel="import" href="components/auth-loader.html">
 <link rel="import" href="components/value-history.html">
 <link rel="import" href="components/main-navigation.html">
+<link rel="import" href="components/app-logo.html">
 <link rel="import" href="components/basic-toast.html">
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
@@ -20,6 +32,18 @@
         @apply --font-default;
         color: var(--primary-text-color);
         background-color: : var(--primary-background-color);
+      }
+      app-drawer {
+        --app-drawer-width: 200px;
+      }
+      app-toolbar {
+        background-color: var(--primary-color);
+        color: #fff;
+        /*height: inherit;*/
+      }
+      #content {
+        margin: 0 auto;
+        max-width: 800px;
       }
     </style>
 
@@ -62,57 +86,80 @@
       limit="10">
     </value-history>
 
-    <div id="content">
-      <div class="layout horizontal center">
-        <a plain class="font-title" href="/users">App Starter</a>
-        <span class="flex"></span>
-        <div>
-          <a href="/login">Login</a>
-          | <a href="/register">Register</a>
+
+    <app-drawer-layout fullbleed>
+
+      <!-- Navigation drawer -->
+      <app-drawer id="drawer" opened="{{wideLayout}}">
+        <app-toolbar>
+          <app-logo></app-logo>
+        </app-toolbar>
+        <paper-listbox selected="[[routeData.page]]" attr-for-selected="name" role="navigation">
+          <paper-item name="users">
+            <a plain class="flex" href="/users">User Map</a>
+          </paper-item>
+          <div class="divider"></div>
+          <paper-item name="feedback" disabled$="[[!auth]]">
+            <a plain class="flex" href="/feedback">Feedback</a>
+          </paper-item>
+        </paper-listbox>
+      </app-drawer>
+
+      <!-- Main toolbar -->
+      <app-header-layout has-scrolling-region>
+        <app-header condenses reveals effects="waterfall" class="main-header">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <app-logo hidden$="[[wideLayout]]"></app-logo>
+            <span class="flex"></span>
+            <div class="font-small">
+              <div hidden$="[[auth]]">
+                <a href="/login">Login</a>
+                | <a href="/register">Register</a>
+              </div>
+              <div hidden$="[[!auth]]">
+                <span>[[auth.uid]]</span>
+                | <a href="javascript:" on-tap="logout">logout</a>
+              </div>
+            </div>
+          </app-toolbar>
+        </app-header>
+
+        <!-- Content -->
+        <div id="content" class="layout vertical">
+
+          <!-- Work around app-drawer issue -->
+          <div>
+            Nav drawer is broken:
+            <a href="/users">User Map</a>
+            | <a href="/test">Test page</a>
+            | <a href="/admin">Admin page</a>
+            | <a href="/feedback">Feedback</a>
+          </div>
+
+          <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
+            <neon-animatable name="users">
+              <user-map-page auth="[[auth]]" route="[[subroute]]"></user-map-page>
+            </neon-animatable>
+            <neon-animatable name="login">
+              <login-register-page auth="[[auth]]"></login-register-page>
+            </neon-animatable>
+            <neon-animatable name="register">
+              <login-register-page auth="[[auth]]" register></login-register-page>
+            </neon-animatable>
+            <neon-animatable name="feedback">
+              <feedback-page auth="[[auth]]"></feedback-page>
+            </neon-animatable>
+            <neon-animatable name="admin">
+              <admin-page auth="[[auth]]"></admin-page>
+            </neon-animatable>
+            <neon-animatable name="test">
+              <test-page auth="[[auth]]"></test-page>
+            </neon-animatable>
+          </neon-animated-pages>
         </div>
-      </div>
-
-      <paper-input
-        id="username"
-        required
-        autofocus
-        auto-validate
-        label="Username"
-        allowed-pattern="[a-zA-Z0-9_\\-]"
-        minlength="4"
-        maxlength="16">
-      </paper-input>
-
-      <paper-input
-        id="password"
-        type="password"
-        required
-        auto-validate
-        label="Password"
-        minlength="6"
-        maxlength="24">
-      </paper-input>
-
-
-      <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
-        <neon-animatable name="users">
-          <user-map-page auth="[[auth]]" route="[[subroute]]"></user-map-page>
-        </neon-animatable>
-        <neon-animatable name="login">
-          <login-register-page auth="[[auth]]" type="login"></login-register-page>
-        </neon-animatable>
-        <neon-animatable name="register">
-          <login-register-page auth="[[auth]]" type="register"></login-register-page>
-        </neon-animatable>
-        <neon-animatable name="feedback">
-          <feedback-page auth="[[auth]]"></feedback-page>
-        </neon-animatable>
-        <neon-animatable name="admin">
-          <admin-page auth="[[auth]]"></admin-page>
-        </neon-animatable>
-      </neon-animated-pages>
-    </div>
-
+      </app-header-layout>
+    </app-drawer-layout>
 
     <basic-toast id="toast"></basic-toast>
     <confirm-dialog id="confirmDialog"></confirm-dialog>
@@ -172,7 +219,14 @@
           case 'register':   return '/src/pages/login-register/login-register-page.html';
           case 'feedback':   return '/src/pages/feedback/feedback-page.html';
           case 'admin':      return '/src/pages/admin/admin-page.html';
+          case 'test':       return '/src/pages/test/test-page.html';
         }
+      }
+
+      logout() {
+        this.$.auth.logout(function() {
+          // goBack();
+        }, showServerErrorToast, showServerErrorToast);
       }
     }
     // Register custom element definition using standard platform API

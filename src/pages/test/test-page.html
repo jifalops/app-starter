@@ -1,0 +1,59 @@
+<link rel="import" href="/src/header.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<dom-module id="test-page">
+<template>
+  <style include="app-styles">
+    :host {
+      display: block;
+    }
+    .colors > div {
+      padding: 8px 16px;
+    }
+  </style>
+  <paper-material>
+    <span class="font-subhead">Colors</span>
+    <div class="colors layout horizontal justified">
+      <div class="bgcolor-primary">primary</div>
+      <div class="bgcolor-primary-dark">primary-dark</div>
+      <div class="bgcolor-primary-light">primary-light</div>
+    </div>
+    <div class="colors layout horizontal justified">
+      <div class="bgcolor-accent">accent</div>
+      <div class="bgcolor-accent-dark">accent-dark</div>
+      <div class="bgcolor-accent-light">accent-light</div>
+    </div>
+    <div class="colors layout horizontal justified">
+      <div class="success">Success</div>
+      <div class="info">Info</div>
+      <div class="warning">Warning</div>
+      <div class="error">Error</div>
+    </div>
+    <div class="colors layout horizontal justified">
+      <div class="text-primary">text-primary</div>
+      <div class="text-secondary">text-secondary</div>
+      <div class="text-disabled">text-disabled</div>
+      <div class="text-light" style="background-color:#000;">text-light</div>
+    </div>
+  </paper-material>
+</template>
+<script>
+class TestPage extends Polymer.Element {
+  static get is() { return 'test-page'; }
+  static get config() {
+    return { /* properties, observers meta data */
+      properties: {
+
+      }
+    }
+  }
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    super.connectedCallback();
+  }
+}
+// Register custom element definition using standard platform API
+customElements.define(TestPage.is, TestPage);
+</script>
+</dom-module>

@@ -1,0 +1,43 @@
+<link rel="import" href="/src/header.html">
+<link rel="import" href="/bower_components/iron-image/iron-image.html">
+<dom-module id="app-logo">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+      .super {
+        @apply --font-tiny;
+        vertical-align: super;
+      }
+      a {
+        color: inherit;
+        text-decoration: inherit;
+      }
+      iron-image {
+        --iron-image-height: 36px;
+        --iron-image-width: 36px;
+      }
+    </style>
+    <a href="/users" class="layout horizontal center">
+      <!-- <iron-image src="/images/app-icon-transparent-240.png"></iron-image> -->
+      <span main-title>App Starter
+        <span class="super">alpha</span>
+      </span>
+    </a>
+  </template>
+  <script>
+    class AppLogo extends Polymer.Element {
+      static get is() { return 'app-logo'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            
+          }
+        }
+      }
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(AppLogo.is, AppLogo);
+  </script>
+</dom-module>
