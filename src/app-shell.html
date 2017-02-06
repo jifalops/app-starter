@@ -133,8 +133,8 @@
             Nav drawer is broken:
             <a href="/users">User Map</a>
             | <a href="/test">Test page</a>
-            | <a href="/admin">Admin page</a>
-            | <a href="/feedback">Feedback</a>
+            | <a href="/admin" plain$="[[!auth]]">Admin page</a>
+            | <a href="/feedback" plain$="[[!auth]]">Feedback</a>
           </div>
 
           <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">

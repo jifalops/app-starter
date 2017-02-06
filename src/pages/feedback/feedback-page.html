@@ -1,9 +1,7 @@
-<link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/bower_components/paper-material/paper-material.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
-
+<link rel="import" href="/bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="/src/header.html">
-<!-- <link rel="import" href="/src/components/inputs/dj-textarea.html"> -->
 
 <dom-module id="feedback-page">
   <template>
@@ -19,22 +17,35 @@
       <div class="font-title">
         Feedback
       </div>
-      <dj-textarea id="input" label="" minlength="15" maxlength="1000" char-counter required></dj-textarea>
+      <paper-textarea
+        id="input"
+        required
+        char-counter
+        label=""
+        minlength="15"
+        maxlength="1000">
+      </paper-textarea>
       <paper-button disabled$="[[!auth]]" class="primary-button" raised on-tap="sendFeedback">Send</paper-button>
     </paper-material>
   </template>
 
   <script>
-    Polymer({
-      is: 'feedback-page',
-      properties: {
-        auth: Object
-      },
-      behaviors: [
-        DjBehaviors.MainBehavior
-      ],
-
-      sendFeedback: function() {
+    class FeedbackPage extends Polymer.Element {
+      static get is() { return 'feedback-page'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            auth: Object
+          }
+        }
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
+      sendFeedback() {
         var feedback = this.$.input.value;
         if (feedback && feedback.length >= 15 && feedback.length <= 1000) {
           db.users.sendFeedback(this.auth.name, feedback, function () {
@@ -43,8 +54,9 @@
         } else {
           this.$.input.invalid = true;
         }
-      },
-
-    });
+      }
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(FeedbackPage.is, FeedbackPage);
   </script>
 </dom-module>

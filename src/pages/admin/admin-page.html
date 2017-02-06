@@ -1,5 +1,4 @@
-<link rel="import" href="/bower_components/polymer/polymer.html">
-<link rel="import" href="/bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="/src/header.html">
 
 <dom-module id="admin-page">
@@ -10,61 +9,80 @@
       }
     </style>
 
+    <paper-material>
+      <div hidden$="[[hasRoot]]">
+        The root user is not defined yet.
+        <paper-button
+          class="primary-button"
+          on-tap="becomeRoot">
+          Become Root
+        </paper-button>
+      </div>
 
-    <template is="dom-if" if="[[auth]]">
-      <firebase-document app-name="dropjobs"
-                 path="/roles/hasRoot"
-                 data="{{dbHasRoot}}"></firebase-document>
-      <paper-button hidden$="[[hasRoot]]"
-              class="primary-button"
-              on-tap="becomeRoot">Become Root</paper-button>
-    </template>
-    <template is="dom-if" if="[[hasAccess]]">
-      <div class="title">Welcome</div>
-      <div>[[auth.profile.name]]</div>
-    </template>
-    <template is="dom-if" if="[[!hasAccess]]">
-      You do not have permission to view this page.
-    </template>
+      <div hidden$="[[hasAccess]]">
+        You do not have permission to view this page.
+      </div>
+
+      <dom-if if="[[hasAccess]]">
+        <template>
+        <div class="font-title">Welcome</div>
+        <div>[[auth.profile.name]]</div>
+        </template>
+      </dom-if>
+    </paper-material>
   </template>
 
   <script>
-    Polymer({
-      is: 'admin-page',
-      properties: {
-        auth: Object,
-        hasRoot: {
-          type: Boolean,
-          value: true,
-          computed: '_hasRoot(dbHasRoot)'
-        },
-        hasAccess: {
-          type: Boolean,
-          value: false,
-          computed: '_hasAccess(auth, hasRoot)'
+    class AdminPage extends Polymer.Element {
+      static get is() { return 'admin-page'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            auth: {
+              type: Object,
+              observer: '_authChanged'
+            },
+            hasRoot: {
+              type: Boolean,
+              value: true,
+              readOnly: true
+            },
+            hasAccess: {
+              type: Boolean,
+              value: false,
+              computed: '_hasAccess(auth, hasRoot)'
+            }
+          }
         }
-      },
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
 
-      behaviors: [
-        DjBehaviors.MainBehavior
-      ],
+      _authChanged(auth, prev) {
+        if (auth && !prev) {
+          db.read('/roles/hasRoot', function(hasRoot) {
+            this._setHasRoot(!isEmpty(hasRoot));
+          }, this);
+        }
+      }
 
-      _hasRoot: function(dbHasRoot) {
-//                console.log('dbHasRoot', dbHasRoot);
-        return !isEmpty(dbHasRoot);
-      },
+      _hasAccess(auth, hasRoot) {
+        return hasRoot && hasChild(auth, 'user', 'isElevated') && auth.user.isElevated;
+      }
 
-      _hasAccess: function(auth, hasRoot) {
-        return auth && hasRoot && auth.user.isModerator;
-      },
-
-      becomeRoot: function() {
+      becomeRoot() {
         db.admin.becomeRoot(this.auth.name, function () {
           showSuccessToast('You are now root.');
         }, function () {
           showErrorToast('Failed to become root.');
         });
       }
-    });
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(AdminPage.is, AdminPage);
   </script>
 </dom-module>

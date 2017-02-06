@@ -23,7 +23,10 @@
     "paper-icon-button": "2.0-preview",
     "iron-image": "2.0-preview",
     "iron-pages": "^1.0.8",
-    "paper-button": "2.0-preview"
+    "paper-button": "2.0-preview",
+    "iron-resizable-behavior": "2.0-preview",
+    "iron-overlay-behavior": "2.0-preview",
+    "iron-fit-behavior": "2.0-preview"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
