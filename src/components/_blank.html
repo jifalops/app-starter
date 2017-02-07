@@ -1,5 +1,5 @@
 <link rel="import" href="/src/header.html">
-<dom-module id="X">
+<dom-module id="blank-el">
 <template>
   <style include="app-styles">
     :host {
@@ -9,8 +9,8 @@
 
 </template>
 <script>
-class X extends Polymer.Element {
-  static get is() { return 'X'; }
+class BlankEl extends Polymer.Element {
+  static get is() { return 'blank-el'; }
   static get config() {
     return { /* properties, observers meta data */
       properties: {
@@ -26,6 +26,6 @@ class X extends Polymer.Element {
   }
 }
 // Register custom element definition using standard platform API
-customElements.define(X.is, X);
+customElements.define(BlankEl.is, BlankEl);
 </script>
 </dom-module>

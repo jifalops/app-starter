@@ -119,7 +119,7 @@
                 | <a href="/register">Register</a>
               </div>
               <div hidden$="[[!auth]]">
-                <span>[[auth.uid]]</span>
+                <a href="/user/[[auth.uid]]">[[auth.uid]]</span>
                 | <a href="javascript:" on-tap="logout">logout</a>
               </div>
             </div>
@@ -147,6 +147,9 @@
             </neon-animatable>
             <neon-animatable name="register">
               <login-register-page auth="[[auth]]" register on-login-register="loginRegister"></login-register-page>
+            </neon-animatable>
+            <neon-animatable name="user">
+              <user-page auth="[[auth]]" route="[[subroute]]"></user-page>
             </neon-animatable>
             <neon-animatable name="feedback">
               <feedback-page auth="[[auth]]"></feedback-page>
@@ -216,6 +219,7 @@
       _fileForPage(page) {
         switch (page) {
           case 'users':      return '/src/pages/user-map/user-map-page.html';
+          case 'user':       return '/src/pages/user/user-page.html';
           case 'login':      return '/src/pages/login-register/login-register-page.html';
           case 'register':   return '/src/pages/login-register/login-register-page.html';
           case 'feedback':   return '/src/pages/feedback/feedback-page.html';

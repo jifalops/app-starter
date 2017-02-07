@@ -1,0 +1,68 @@
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="/src/header.html">
+<dom-module id="user-page">
+<template>
+  <style include="app-styles">
+    :host {
+      display: block;
+    }
+    .font-subhead {
+      margin-top: 24px;
+    }
+  </style>
+
+  <app-route
+    route="[[route]]"
+    pattern="/:user"
+    data="{{routeData}}"
+    tail="{{subroute}}">
+  </app-route>
+
+  <paper-material class="layout vertical">
+    <span class="font-title self-center">[[routeData.user]]'s Profile</span>
+    <div class="font-subhead">Name</div>
+    <div>[[profile.name]]</div>
+    <div class="font-subhead">Image</div>
+    <iron-image class="avatar" src="[[profile.pic]]"></iron-image>
+    <div class="font-subhead">Created</div>
+    <div>[[profile.created]]</div>
+  </paper-material>
+</template>
+<script>
+class UserPage extends Polymer.Element {
+  static get is() { return 'user-page'; }
+  static get config() {
+    return { /* properties, observers meta data */
+      properties: {
+        auth: Object,
+        route: Object
+      },
+      observers: [
+        '_loadProfile(auth, routeData.user)'
+      ]
+    }
+  }
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    super.connectedCallback();
+  }
+  _loadProfile(auth, user) {
+    if (auth && auth.uid == user) {
+      LOG && log.v('Using auth.profile');
+      this.profile = auth.profile;
+    } else {
+      db.watch('/profiles/' + user, function(profile) {
+        LOG && log.v("Using " + user + "'s profile'");
+        this.profile = profile;
+      }.bind(this));
+    }
+  }
+}
+// Register custom element definition using standard platform API
+customElements.define(UserPage.is, UserPage);
+</script>
+</dom-module>
