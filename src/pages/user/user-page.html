@@ -1,6 +1,8 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="/src/header.html">
 <dom-module id="user-page">
 <template>
@@ -22,12 +24,69 @@
 
   <paper-material class="layout vertical">
     <span class="font-title self-center">[[routeData.user]]'s Profile</span>
-    <div class="font-subhead">Name</div>
-    <div>[[profile.name]]</div>
-    <div class="font-subhead">Image</div>
-    <iron-image class="avatar" src="[[profile.pic]]"></iron-image>
+
+
+    <div class="font-subhead">
+      <span>Display Name</span>
+      <a
+        hidden$="[[!amOwner]]"
+        href="javascript:"
+        class="font-tiny"
+        on-tap="toggleEditName"
+      >[[toggleString(editName, 'done', 'change')]]</a>
+    </div>
+    <div hidden$="[[editName]]">[[profile.name]]</div>
+    <div hidden$="[[!editName]]">
+      <paper-input id="nameInput" value="[[profile.name]]"></paper-input>
+      <iron-icon icon="check" on-tap="updateName"></iron-icon>
+    </div>
+
+
+    <div class="font-subhead">
+      <span>Image</span>
+      <a
+        hidden$="[[!amOwner]]"
+        href="javascript:"
+        class="font-tiny"
+        on-tap="toggleEditPic"
+      >[[toggleString(editPic, 'done', 'change')]]</a>
+    </div>
+    <div hidden$="[[editPic]]">
+      <iron-image class="avatar" src="[[profile.pic]]"></iron-image>
+    </div>
+    <div hidden$="[[!editPic]]">
+      <paper-input id="picInput" value="[[profile.pic]]"></paper-input>
+      <iron-icon icon="check" on-tap="updatePic"></iron-icon>
+    </div>
+
+
     <div class="font-subhead">Created</div>
     <div>[[profile.created]]</div>
+  </paper-material>
+
+  <paper-material hidden$="[[!amOwner]]" class="layout vertical">
+    <span class="font-title self-center">Private Info</span>
+    <div class="font-subhead">Login method</div>
+    <div>[[auth.user.provider]]</div>
+    <div class="font-subhead">Last Activity</div>
+    <div>[[auth.user.lastActivity]]</div>
+
+    <div hidden$="[[!auth.user.isModerator]]">
+      <div class="font-subhead">Elevate Privilages</div>
+      <a
+        href="javascript:"
+        on-tap="toggleElevated"
+      >[[toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
+
+      <div class="font-subhead">Roles</div>
+      <div class="font-small">
+        <div>Moderator</div>
+        <div hidden$="[[!auth.user.isMaintainer]]">Maintainer</div>
+        <div hidden$="[[!auth.user.isAdmin]]">Admin</div>
+        <div hidden$="[[!auth.user.isSuperAdmin]]">Super Admin</div>
+        <div hidden$="[[!auth.user.isRoot]]">Root</div>
+      </div>
+    </div>
   </paper-material>
 </template>
 <script>
@@ -46,20 +105,58 @@ class UserPage extends Polymer.Element {
   }
   constructor() {
     super();
+    this.editName = false;
+    this.editPic = false;
+    this.amOwner = false;
   }
   connectedCallback() {
     super.connectedCallback();
   }
   _loadProfile(auth, user) {
     if (auth && auth.uid == user) {
-      LOG && log.v('Using auth.profile');
+      USER && log.v('Using auth.profile');
       this.profile = auth.profile;
+      this.amOwner = true;
     } else {
       db.watch('/profiles/' + user, function(profile) {
-        LOG && log.v("Using " + user + "'s profile'");
+        USER && log.v("Using " + user + "'s profile'");
+        this.amOwner = false;
         this.profile = profile;
       }.bind(this));
     }
+  }
+
+  toggleEditName() {
+    this.editName = !this.editName;
+  }
+  toggleEditPic() {
+    this.editPic = !this.editPic;
+  }
+  toggleElevated() {
+    db.users.setElevated(this.auth.uid, !this.auth.user.isElevated, null, showServerErrorToast);
+  }
+
+
+  updateName() {
+    var name = this.$.nameInput.value;
+    if (name && name.length >= 1 && name.length <= 16) {
+      db.users.changeDisplayName(this.auth.uid, name, function() {
+        this.editName = false;
+      }.bind(this), showServerErrorToast);
+    }
+  }
+  updatePic() {
+    var pic = this.$.picInput.value;
+    if (pic && pic.length >= 10 && pic.length <= 250) {
+      db.users.changeAvatar(this.auth.uid, pic, function() {
+        this.editPic = false;
+      }.bind(this), showServerErrorToast);
+    }
+  }
+
+  // TODO behavior
+  toggleString(condition, ifTrue, ifFalse) {
+    return condition ? ifTrue : ifFalse;
   }
 }
 // Register custom element definition using standard platform API

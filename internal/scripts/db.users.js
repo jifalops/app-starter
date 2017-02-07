@@ -31,7 +31,7 @@ db.users = {
   changeDisplayName: function (user, name, onSuccess, onFailure) {
     DB && console.log('Changing display name to ' + name);
     var updates = db.userActionUpdate(user);
-    updates['/profiles/' + auth.uid + '/name'] = name;
+    updates['/profiles/' + user + '/name'] = name;
     db.update(updates, onSuccess, onFailure);
   },
 

@@ -10,7 +10,12 @@ path /users {
 type User {
   provider: Provider
   lastActivity: CurrentTimestamp
-  isElevated: Boolean | Null
+  isModerator:    IsModerator     | Null
+  isMaintainer:   IsMaintainer    | Null
+  isAdmin:        IsAdmin         | Null
+  isSuperAdmin:   IsSuperAdmin    | Null
+  isRoot:         IsRoot          | Null
+  isElevated:     Boolean         | Null
   read() { key() == me() }
   write() { key() == me() && this != null }
 }
@@ -18,6 +23,24 @@ type User {
 type Provider extends String {
   validate() { this.test(/^(Username|Google|Facebook|Twitter|Github)$/) }
 }
+
+type IsModerator extends Boolean {
+  validate() { this == isModerator($user) }
+}
+type IsMaintainer extends Boolean {
+  validate() { this == isMaintainer($user) }
+}
+type IsAdmin extends Boolean {
+  validate() { this == isAdmin($user) }
+}
+type IsSuperAdmin extends Boolean {
+  validate() { this == isSuperAdmin($user) }
+}
+type IsRoot extends Boolean {
+  validate() { this == isRoot($user) }
+}
+
+
 
 isElevated(user) { root.users[user].isElevated }
 amElevated() { isElevated(me()) }
