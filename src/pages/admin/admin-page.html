@@ -64,18 +64,18 @@
 
       _authChanged(auth, prev) {
         if (auth && !prev) {
-          db.read('/roles/hasRoot', function(hasRoot) {
+          db.watch('/roles/hasRoot', function(hasRoot) {
             this._setHasRoot(!isEmpty(hasRoot));
-          }, this);
+          }.bind(this));
         }
       }
 
       _hasAccess(auth, hasRoot) {
-        return hasRoot && hasChild(auth, 'user', 'isElevated') && auth.user.isElevated;
+        return auth && (!hasRoot || (auth.user && auth.user.isElevated));
       }
 
       becomeRoot() {
-        db.admin.becomeRoot(this.auth.name, function () {
+        db.admin.becomeRoot(this.auth.uid, function () {
           showSuccessToast('You are now root.');
         }, function () {
           showErrorToast('Failed to become root.');

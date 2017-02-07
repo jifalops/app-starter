@@ -9,12 +9,7 @@ db.admin = {
     updates['/roles/admins/'        + user] = db.timestamp();
     updates['/roles/maintainers/'   + user] = db.timestamp();
     updates['/roles/moderators/'    + user] = db.timestamp();
-    updates['/users/' + user + '/isRoot']        = true;
-    updates['/users/' + user + '/isSuperAdmin']  = true;
-    updates['/users/' + user + '/isAdmin']       = true;
-    updates['/users/' + user + '/isMaintainer']  = true;
-    updates['/users/' + user + '/isModerator']   = true;
-    updates['/users/' + user + '/isElevated']    = true;
+    updates['/users/' + user + '/isElevated'] = true;
     db.update(updates, onSuccess, onFailure);
   }
 };

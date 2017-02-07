@@ -1,0 +1,23 @@
+//
+// users.bolt
+//
+
+path /users {
+  read() { amAdmin() }
+  /{user} is User;
+}
+
+type User {
+  provider: Provider
+  lastActivity: CurrentTimestamp
+  isElevated: Boolean | Null
+  read() { key() == me() }
+  write() { key() == me() && this != null }
+}
+
+type Provider extends String {
+  validate() { this.test(/^(Username|Google|Facebook|Twitter|Github)$/) }
+}
+
+isElevated(user) { root.users[user].isElevated }
+amElevated() { isElevated(me()) }

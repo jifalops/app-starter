@@ -3,7 +3,7 @@
 //
 
 // Map uid -> user, including capital letters.
-/uids {
+path /uids {
   read() { amAdmin() }
   /{uid} is Username {
     read() { auth.uid == key() }
@@ -12,7 +12,7 @@
 }
 
 // lowercase(user)
-/usernames {
+path /usernames {
   read() { amAdmin() }
   /{user} is FinalNow {
     read() { true }

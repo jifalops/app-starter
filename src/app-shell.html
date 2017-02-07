@@ -65,6 +65,7 @@
     <auth-loader
       app="[[app]]"
       auth-raw="[[authRaw]]"
+      username="[[username]]"
       auth="{{auth}}">
     </auth-loader>
 
@@ -142,10 +143,10 @@
               <user-map-page auth="[[auth]]" route="[[subroute]]"></user-map-page>
             </neon-animatable>
             <neon-animatable name="login">
-              <login-register-page auth="[[auth]]"></login-register-page>
+              <login-register-page auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
             </neon-animatable>
             <neon-animatable name="register">
-              <login-register-page auth="[[auth]]" register></login-register-page>
+              <login-register-page auth="[[auth]]" register on-login-register="loginRegister"></login-register-page>
             </neon-animatable>
             <neon-animatable name="feedback">
               <feedback-page auth="[[auth]]"></feedback-page>
@@ -220,6 +221,23 @@
           case 'feedback':   return '/src/pages/feedback/feedback-page.html';
           case 'admin':      return '/src/pages/admin/admin-page.html';
           case 'test':       return '/src/pages/test/test-page.html';
+        }
+      }
+
+      loginRegister(e, data) {
+        LOG && log.v('Signing in using', data.provider);
+        if (data.provider == 'username') {
+          if (data.isRegistering) {
+            this.username = data.username;
+            this.$.auth.registerUser(data.username, data.password, null,
+              showServerErrorToast, showServerErrorToast);
+          } else {
+            this.$.auth.usernameLogin(data.username, data.password, null,
+              showServerErrorToast, showServerErrorToast);
+          }
+        } else {
+          this.$.auth.providerLogin(data.provider, null,
+            showServerErrorToast, showServerErrorToast);
         }
       }
 

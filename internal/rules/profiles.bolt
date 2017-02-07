@@ -1,0 +1,22 @@
+//
+// profiles.bolt
+//
+
+path /profiles {
+  read() { true }
+  /{user} is Profile;
+}
+
+type Profile {
+  created: FinalNow
+  name: DisplayName
+  pic: PicUrl
+  write() { key() == me() && this != null }
+}
+
+type DisplayName extends String {
+  validate() { this.length >= 1 && this.length <= 16 }
+}
+type PicUrl extends String {
+  validate() { this.length >= 10 && this.length <= 250 }
+}

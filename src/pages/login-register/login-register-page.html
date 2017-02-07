@@ -45,7 +45,7 @@
         auto-validate
         label="Password"
         minlength="6"
-        maxlength="24">
+        maxlength="32">
       </paper-input>
       <paper-input
         id="passwordRepeat"
@@ -55,7 +55,7 @@
         auto-validate
         label="Confirm password"
         minlength="6"
-        maxlength="24">
+        maxlength="32">
       </paper-input>
 
       <div class="layout horizontal center-justified">
@@ -63,7 +63,8 @@
           raised
           class="primary-button"
           id="loginRegisterButton"
-          on-tap="_usernameLogin">
+          on-tap="_loginRegister"
+          data-provider="username">
           [[toggleString(register, 'Register', 'Sign In')]]
         </paper-button>
       </div>
@@ -74,22 +75,26 @@
 
       <div class="font-small layout horizontal wrap around-justified">
         <div class="layout vertical center"
-           on-tap="googleLogin">
+          on-tap="_loginRegister"
+          data-provider="google">
           <iron-image src="/images/google-icon.svg"></iron-image>
           Google
         </div>
         <div class="layout vertical center"
-           on-tap="facebookLogin">
+          on-tap="_loginRegister"
+          data-provider="facebook">
           <iron-image src="/images/facebook-icon.svg"></iron-image>
           Facebook
         </div>
         <div class="layout vertical center"
-           on-tap="twitterLogin">
+          on-tap="_loginRegister"
+          data-provider="twitter">
           <iron-image src="/images/twitter-icon.svg"></iron-image>
           Twitter
         </div>
         <div class="layout vertical center"
-           on-tap="githubLogin">
+          on-tap="_loginRegister"
+          data-provider="github">
           <iron-image src="/images/github-icon.svg"></iron-image>
           Github
         </div>
@@ -120,6 +125,53 @@ class LoginRegisterPage extends Polymer.Element {
   connectedCallback() {
     super.connectedCallback();
   }
+
+  _loginRegister(e) {
+    var el = e.tartget || e.srcElement;
+    var data = {};
+    data.provider = el.dataset.provider;
+
+    if (data.provider == 'username') {
+      data.isRegistering = this.register;
+      if (this._validateInput()) {
+        data.username = this.$.username.value;
+        data.password = this.$.password.value;
+      } else {
+        return;
+      }
+    }
+
+    // LOG && log.v('firing login-register', data);
+    fire(this, 'login-register', data);
+  }
+
+  _validateInput() {
+    var user = this.$.username.value;
+    var pass = this.$.password.value;
+    var pass2 = this.$.passwordRepeat.value;
+
+    if (!user || user.length < 4 || user.length > 16) {
+      this.$.username.invalid = true;
+      return false;
+    }
+    if (!pass || pass.length < 6 || pass.length > 32) {
+      this.$.password.invalid = true;
+      return false;
+    }
+    if (this.register) {
+      if (!pass2 || pass2.length < 6 || pass2.length > 32) {
+        this.$.passwordRepeat.invalid = true;
+        return false;
+      }
+      if (pass != pass2) {
+        this.$.password.invalid = true;
+        this.$.passwordRepeat.invalid = true;
+        return false;
+      }
+    }
+    return true;
+  }
+
   // TODO behavior
   toggleString(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;

@@ -6,8 +6,18 @@
 /*
  * Categorical logging filters
  */
+const DB = true;
 const USER = true;
 const ROUTE = false;
+
+function fire(context, name, data, options) {
+  options = options || {};
+  options.detail = data;
+  if (!hasChild(options, 'bubbles')) {
+    options.bubbles = true;
+  }
+  context.dispatchEvent(new CustomEvent(name, options));
+}
 
 function redirect(path) {
   document.getElementById('app').$['appLocation'].path = path;

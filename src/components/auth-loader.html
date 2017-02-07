@@ -68,6 +68,7 @@
           //      user data using that username.
           LOG && log.v('Authenticated. Loading user data from database...');
           db.watch('/uids/' + authRaw.uid, function(username) {
+            LOG && log.v(authRaw.uid, 'is', username);
             if (username) {
               // User exists!
               this.username = username;
@@ -76,11 +77,17 @@
               // No user data in the database.
               if (authRaw.providerData[0].providerId == 'password') {
                 // Authenticated using email/username.
+
+                if (!this.username) {
+                  // If authenticated but no username was passed,
+                  // parse the username from the email, which results in the
+                  // user being created with all lowercase letters.
+                  var email = authRaw.email || authRaw.providerData[0].email;
+                  this.username = email.split('@', 1)[0];
+                }
+
                 this.createUser(authRaw, this.username);
-                // Parsing the email address results in a lowercase username.
-                // Use this.username instead.
-                //var email = authRaw.email || authRaw.providerData[0].email;
-                //var username = authRaw.email.split('@', 1)[0];
+
               } else {
                 // Authenticated using a provider.
                 LOG && log.d('Showing set-username dialog...');
@@ -92,7 +99,7 @@
                   }.bind(this));
               }
             }
-          }, this);
+          }.bind(this));
         } else {
           // User is not authenticated.
           if (this.auth) {
@@ -121,11 +128,13 @@
       }
 
       createUser(authRaw, username) {
+        USER && log.v(authRaw, username);
         var user = {};
         var profile = {};
         var data = authRaw.providerData[0];
 
         user.provider = this._getProvider(data.providerId);
+        user.lastActivity = db.timestamp();
         //  user.email = authRaw.email || data.email;
         //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
 
@@ -165,10 +174,10 @@
       _watchUserData(username) {
         db.watch('/users/' + username, function(user) {
           this.user = user;
-        }, this);
+        }.bind(this));
         db.watch('/profiles/' + username, function(profile) {
           this.profile = profile;
-        }, this);
+        }.bind(this));
       }
 
       _unwatchUserData(username) {

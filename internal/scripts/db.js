@@ -6,8 +6,6 @@
 
 var db = db || {};
 
-db.logging = true;
-
 /**
  * Set this to your Firebase app name if not using the default app.
  */
@@ -24,7 +22,7 @@ db.ref = function(path) {
  * Perform multiple database updates as a single transaction.
  */
 db.update = function(updates, onSuccess, onFailure) {
-  db.logging && console.log('Performing update:', updates);
+  DB && log.v('Performing update:', updates);
   db.ref().update(updates, db.callback(onSuccess, onFailure));
 };
 
@@ -32,7 +30,7 @@ db.update = function(updates, onSuccess, onFailure) {
  * Set the value at a single location in the DB.
  */
 db.set = function(path, value, onSuccess, onFailure) {
-  db.logging && console.log('Performing set:', path, value);
+  DB && log.v('Performing set:', path, value);
   return db.ref(path).set(value, db.callback(onSuccess, onFailure));
 };
 
@@ -40,7 +38,7 @@ db.set = function(path, value, onSuccess, onFailure) {
  * Append to an array in the DB.
  */
 db.push = function(path, value, onSuccess, onFailure) {
-  db.logging && console.log('Performing push:', path, value);
+  DB && log.v('Performing push:', path, value);
   return db.ref(path).push(value, db.callback(onSuccess, onFailure));
 };
 
@@ -67,13 +65,22 @@ db.newKey = function(path) {
 db.callback = function(onSuccess, onFailure) {
   return function(error) {
     if (error) {
-      db.logging && console.error('Operation failed: ', error);
+      DB && log.v('Operation failed: ', error);
       if (onFailure) onFailure();
     } else {
-      db.logging && console.log('Operation succeeded.');
+      DB && log.v('Operation succeeded.');
       if (onSuccess) onSuccess();
     }
   };
+};
+
+/**
+ * Common part of db transactions
+ */
+db.userActionUpdate = function(user) {
+  var updates = {};
+  updates['/users/' + user + '/lastActivity'] = db.timestamp();
+  return updates;
 };
 
 

@@ -1,0 +1,20 @@
+//
+// feedback.bolt
+//
+
+path /feedback {
+  read() { amMaintainer() }
+  /{feedback} is Feedback;
+}
+
+
+type Feedback {
+  user: FinalAuth
+  text: FeedbackText
+  created: FinalNow
+  create() { amUser(this.user) }
+}
+
+type FeedbackText extends FinalString {
+  validate() { this.length >= 10 && this.length <= 500 }
+}

@@ -2,7 +2,7 @@
 // roles.bolt
 //
 
-/roles is Roles;
+path /roles is Roles;
 
 
 type Roles {
@@ -20,23 +20,24 @@ type HasRoot extends Readable<Boolean> {
 }
 
 type RootUser extends FinalAuth {
-//    validate() { isSuperAdmin(this) }
+  write() { this == me() }
+  /*validate() { isSuperAdmin(this) }*/
 }
 type SuperAdmin {
   write() { amRoot() }
-//    validate() { isAdmin(this) }
+  /*validate() { isAdmin(this) }*/
 }
 type Admin {
   write() { amSuperAdmin() }
-//    validate() { isMaintainer(this) }
+  /*validate() { isMaintainer(this) }*/
 }
 type Maintainer {
   write() { amAdmin() }
-//    validate() { isModerator(this) }
+  /*validate() { isModerator(this) }*/
 }
 type Moderator {
   write() { amMaintainer() }
-//    validate() { userExists(key()) }
+  /*validate() { userExists(key()) }*/
 }
 
 

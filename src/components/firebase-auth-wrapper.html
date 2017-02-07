@@ -54,13 +54,13 @@
       }
 
       registerUser(username, password, onSuccess, onFailure, onException) {
-        console.log("Registering new user...");
+        console.log("Registering new user,", username);
         this.$.auth.createUserWithEmailAndPassword(username + this.emailSuffix, password)
             .then(onSuccess, onFailure)
             .catch(onException);
       }
 
-      emailLogin(username, password, onSuccess, onFailure, onException) {
+      usernameLogin(username, password, onSuccess, onFailure, onException) {
         console.log("Signing in with username/email...");
         this.$.auth.signInWithEmailAndPassword(username + this.emailSuffix, password)
             .then(onSuccess, onFailure)
@@ -86,8 +86,8 @@
           .catch(onException);
       }
 
-      _onAuthError(error) {
-        console.error('Auth Error!', error);
+      _onAuthError(e, detail) {
+        console.error('Exception using firebase-auth:', detail, e);
       }
     }
     // Register custom element definition using standard platform API

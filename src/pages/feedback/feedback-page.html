@@ -22,8 +22,8 @@
         required
         char-counter
         label=""
-        minlength="15"
-        maxlength="1000">
+        minlength="10"
+        maxlength="500">
       </paper-textarea>
       <paper-button disabled$="[[!auth]]" class="primary-button" raised on-tap="sendFeedback">Send</paper-button>
     </paper-material>
@@ -47,8 +47,8 @@
       }
       sendFeedback() {
         var feedback = this.$.input.value;
-        if (feedback && feedback.length >= 15 && feedback.length <= 1000) {
-          db.users.sendFeedback(this.auth.name, feedback, function () {
+        if (feedback && feedback.length >= 10 && feedback.length <= 500) {
+          db.users.sendFeedback(this.auth.uid, feedback, function () {
             showSuccessToast('Feedback sent!');
           }, showServerErrorToast);
         } else {
