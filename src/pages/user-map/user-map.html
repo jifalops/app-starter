@@ -1,0 +1,118 @@
+<link rel="import" href="../../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="/src/header.html">
+
+<!--
+  The user map page shows a google map fully zoomed out with a marker for each
+  user that has allowed themselves to be added.
+  The map can be searched, optionally by the visitor's current location.
+-->
+<dom-module id="user-map">
+<template>
+  <style include="app-styles">
+    :host {
+      display: block;
+    }
+    google-map {
+      min-height: 400px;
+    }
+  </style>
+  <google-map
+    latitude="[[_filterLat(lat)]]"
+    longitude="[[_filterLng(lng)]]"
+    api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"
+    disable-street-view-control
+    map="{{map}}"
+    on-google-map-ready="_mapLoaded"
+    zoom="[[_radiusToZoom(radiusKm, 'true')]]">
+    <dom-repeat items="[[users]]" as="user">
+      <template>
+      <google-map-marker
+        latitude="[[user.lat]]"
+        longitude="[[user.lng]]"
+        title="[[user.name]]"
+        click-events
+        map="[[map]]"
+        on-google-map-marker-click="_toggleInfoWindow"
+        on-google-map-marker-close="_infoWindowClosed">
+      </google-map-marker>
+      </template>
+    <dom-repeat>
+  </google-map>
+</template>
+<script>
+class UserMap extends Polymer.Element {
+  static get is() { return 'user-map'; }
+  static get config() {
+    return { /* properties, observers meta data */
+      properties: {
+        auth: Object,
+        users: Array,
+        lat: {
+          type: Number,
+          value: 41.651
+        },
+        lng: {
+          type: Number,
+          value: -83.542
+        },
+        radiusKm: {
+          type: Number,
+          value: 0
+        }
+      }
+    }
+  }
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    super.connectedCallback();
+  }
+  _filterLat(lat) {
+    return lat ? lat : 41.651;
+  }
+  _filterLng(lng) {
+    return lng ? lng : -83.542;
+  }
+  /**
+   * Convert miles to a google map's zoom, based on a zoom of 14 ~= 1 mile.
+   */
+  _radiusToZoom(radius, metric) {
+    if (radius == 0) return 1;
+    if (metric) radius = kmToMiles(radius);
+    var zoom = Math.round(14 - Math.log(radius) / Math.LN2);
+    // console.log('zoom', zoom);
+    return zoom;
+  }
+  _toggleInfoWindow(e) {
+    var marker = e.target.marker;
+    var post = e.model.post;
+    this.infoWindows = this.infoWindows || {};
+    var info = this.infoWindows[post.$key];
+    if (info) {
+      info.close();
+      this.infoWindows[post.$key] = null;
+    } else {
+      var contentString = 'content';
+      info = new google.maps.InfoWindow({
+          content: contentString
+      });
+      info.open(this.map, marker);
+      this.infoWindows[post.$key] = info;
+    }
+  }
+  _infoWindowClosed(e) {
+    console.log('closed info window');
+    var post = e.model.post;
+    this.infoWindows = this.infoWindows || {};
+    this.infoWindows[post.$key] = null;
+  }
+  _mapLoaded() {
+    LOG && log.d('Google maps api has loaded');
+  }
+}
+// Register custom element definition using standard platform API
+customElements.define(UserMap.is, UserMap);
+</script>
+</dom-module>

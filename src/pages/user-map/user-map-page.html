@@ -1,14 +1,33 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="/src/header.html">
+<link rel="import" href="user-map.html">
+
+
+<!--
+  The user map page shows a google map fully zoomed out with a marker for each
+  user that has allowed themselves to be added.
+  The map can be searched, optionally by the visitor's current location.
+-->
 <dom-module id="user-map-page">
 <template>
   <style include="app-styles">
     :host {
       display: block;
     }
+    user-map {
+      min-height: 400px;
+    }
   </style>
+  <paper-material class="layout vertical">
+    <span class="font-headline self-center">User Map</span>
+
+    <local-query posts="{{posts}}" lat="{{lat}}" lng="{{lng}}" radius-km="{{radiusKm}}"
+      use-current-location
+    ></local-query>
+
+  </paper-material>
   <paper-material>
-    <div class="font-display1">User map page</div>
+    <user-map></user-map>
   </paper-material>
 </template>
 <script>
@@ -17,7 +36,8 @@ class UserMapPage extends Polymer.Element {
   static get config() {
     return { /* properties, observers meta data */
       properties: {
-
+        app: Object,
+        auth: Object,
       }
     }
   }

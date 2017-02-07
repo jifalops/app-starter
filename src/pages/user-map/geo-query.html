@@ -1,0 +1,202 @@
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/geo-query-input/geo-query-input.html">
+<link rel="import" href="../../../bower_components/geofire-elements/geofire-query.html">
+<link rel="import" href="../../../bower_components/geo-location/geo-location.html">
+<link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
+<link rel="import" href="/src/header.html">
+<dom-module id="geo-query">
+<template>
+  <style include="app-styles">
+    :host {
+      display: block;
+    }
+    geo-query-input {
+      border-bottom: 1px solid var(--divider-color);
+      padding: 0;
+    }
+    paper-checkbox {
+      margin: 8px 16px;
+    }
+    .summary {
+      margin: 4px 8px;
+      padding: 4px 8px;
+    }
+  </style>
+  <geo-location latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
+  <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
+
+  <geofire-query
+    idle$="[[_isIdle(app, jobs)]]"
+    app="dropjobs"
+    path="geoJobPosts"
+    lat="[[lat]]"
+    lng="[[lng]]"
+    radius="[[radiusKm]]"
+    results-array="{{jobResults}}"></geofire-query>
+
+  <geofire-query
+    idle$="[[_isIdle(app, requests)]]"
+    app="dropjobs"
+    path="geoRequestPosts"
+    lat="[[lat]]"
+    lng="[[lng]]"
+    radius="[[radiusKm]]"
+    results-array="{{requestResults}}"></geofire-query>
+
+    <div class="layout vertical center">
+      <geo-query-input
+        use-current-location$="[[_hasUserLoc(userLat, userLng)]]"
+        radius="50"
+        on-query-changed="_queryChanged"></geo-query-input>
+      <div class="layout horizontal">
+        <paper-checkbox noink checked="{{jobs}}">Jobs</paper-checkbox>
+        <paper-checkbox noink checked="{{requests}}">Requests</paper-checkbox>
+      </div>
+    </div>
+    <div class="summary">
+      [[_summary(posts, posts.length)]]
+    </div>
+</template>
+<script>
+class GeoQuery extends Polymer.Element {
+  static get is() { return 'geo-query'; }
+  static get config() {
+    return { /* properties, observers meta data */
+      properties: {
+        lat: {
+          type: Number,
+          notify: true
+        },
+        lng: {
+          type: Number,
+          notify: true
+        },
+        radiusKm: {
+          type: Number,
+          notify: true
+        },
+
+        results: {
+          type: Array,
+          notify: true,
+          observer: '_combinedResultsChanged'
+        },
+
+        users: {
+          type: Array,
+          notify: true
+        },
+      }
+    }
+  }
+  constructor() {
+    super();
+  }
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  _hasUserLoc(userLat, userLng) {
+    // return userLat && userLng;
+    return true;
+  }
+
+  _anyResultsChanged(jobResults, requestResults) {
+    this.debounce('results-sort', function() {
+      this._combineAndSort(jobResults, requestResults);
+    }.bind(this), 250);
+  }
+
+  _combineAndSort(jobResults, requestResults) {
+    console.log('combining and sorting', jobResults, requestResults);
+    var results = [];
+    var i;
+
+    if (this.jobs && jobResults) {
+      for (i = 0; i < jobResults.length; ++i) {
+        jobResults[i].isRequest = false;
+      }
+      results = results.concat(jobResults);
+    }
+
+    if (this.requests && requestResults) {
+      for (i = 0; i < requestResults.length; ++i) {
+        requestResults[i].isRequest = true;
+      }
+      results = results.concat(requestResults);
+    }
+
+    results.sort(function(a, b) {
+      if (a.distance < b.distance) {
+        return -1;
+      }
+      if (a.distance > b.distance) {
+        return 1;
+      }
+      return 0;
+    });
+
+    this.results = results;
+  }
+
+  _combinedResultsChanged(results) {
+    console.log('updating posts', results);
+    this.posts = [];
+
+    if (isEmpty(results)) return;
+
+    for (var i = 0; i < results.length; i++) {
+      this._loadPost(results[i], i);
+    }
+  }
+
+  _loadPost(result, index) {
+    db.ref((result.isRequest ? '/requestPosts/' : '/jobPosts/') + result.key).on('value', function(snap) {
+      var post = snap.val();
+      post.$key = result.key;
+      post.isRequest = result.isRequest;
+      // TODO support metric
+      post.distance = kmToMiles(result.distance);
+
+      // TODO can result in incorrect order.
+      this.push('posts', post);
+
+      // TODO uses correct order, but issues with notifying changes
+      // var posts = this.posts;
+      // posts[index] = post;
+      // this.posts = [];
+      // this.posts = posts;
+    }.bind(this));
+  }
+
+  _queryChanged(e, data) {
+    console.log('Query changed', data);
+    this.radiusKm = data.radiusKm;
+    if (data.useCurrentLocation) {
+      this.lat = this.userLat;
+      this.lng = this.userLng;
+      if (this.auth) {
+        db.users.updateLocation(this.auth.name, this.lat, this.lng, null, null);
+      }
+    } else {
+      console.log('geocoding', data.location);
+      this.$.codec.geocode(data.location, function (address, lat, lng, place) {
+        console.log(address, lat, lng);
+        this.lat = lat;
+        this.lng = lng;
+      }.bind(this));
+    }
+  }
+
+  _isIdle(app, type) {
+    return !app || !type;
+  }
+
+  _summary(posts, len) {
+    return len + (len == 1 ? ' result.' : ' results.');
+  }
+}
+// Register custom element definition using standard platform API
+customElements.define(GeoQuery.is, GeoQuery);
+</script>
+</dom-module>

@@ -8,3 +8,4 @@ A starting point for using Polymer, Firebase with email/username/provider login,
 * app-layout: the drawer does not show, probably because it depends on behaviors,
   which still use the old style Polymer 1.x paradigm
   https://www.polymer-project.org/2.0/docs/about_20#behaviors
+* google-map: Has styles outside of template and fills the paper-material
