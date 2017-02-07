@@ -1,5 +1,6 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="/src/header.html">
+<link rel="import" href="geo-query.html">
 <link rel="import" href="user-map.html">
 
 
@@ -20,14 +21,23 @@
   </style>
   <paper-material class="layout vertical">
     <span class="font-headline self-center">User Map</span>
-
-    <local-query posts="{{posts}}" lat="{{lat}}" lng="{{lng}}" radius-km="{{radiusKm}}"
-      use-current-location
-    ></local-query>
-
+    <geo-query
+      app="[[app]]"
+      profiles="{{profiles}}"
+      lat="{{lat}}"
+      lng="{{lng}}"
+      radius-km="{{radiusKm}}"
+      use-current-location>
+    </geo-query>
   </paper-material>
   <paper-material>
-    <user-map></user-map>
+    <user-map
+      auth="[[auth]]"
+      users="[[profiles]]"
+      lat="[[lat]]"
+      lng="[[lng]]"
+      radius-km="[[radiusKm]]">
+    </user-map>
   </paper-material>
 </template>
 <script>

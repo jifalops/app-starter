@@ -29,7 +29,7 @@
     "iron-fit-behavior": "2.0-preview",
     "paper-checkbox": "2.0-preview",
     "geo-query-input": "^0.1.1",
-    "geofire-elements": "^0.1.1",
+    "geofire-elements": "^0.2.0",
     "geo-location": "^1.0.6",
     "geo-codec": "^0.3.2",
     "google-map": "^1.2.0"
@@ -73,6 +73,7 @@
     "paper-item": "2.0-preview",
     "iron-overlay-behavior": "2.0-preview",
     "iron-fit-behavior": "2.0-preview",
-    "paper-checkbox": "2.0-preview"
+    "paper-checkbox": "2.0-preview",
+    "geofire-elements": "^0.2.0"
   }
 }

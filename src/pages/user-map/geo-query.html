@@ -1,4 +1,3 @@
-<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../bower_components/geo-query-input/geo-query-input.html">
 <link rel="import" href="../../../bower_components/geofire-elements/geofire-query.html">
 <link rel="import" href="../../../bower_components/geo-location/geo-location.html">
@@ -14,9 +13,6 @@
       border-bottom: 1px solid var(--divider-color);
       padding: 0;
     }
-    paper-checkbox {
-      margin: 8px 16px;
-    }
     .summary {
       margin: 4px 8px;
       padding: 4px 8px;
@@ -25,36 +21,22 @@
   <geo-location latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
-  <geofire-query
-    idle$="[[_isIdle(app, jobs)]]"
-    app="dropjobs"
-    path="geoJobPosts"
+  <!-- <geofire-query
+    geofire="[[geofire]]"
     lat="[[lat]]"
     lng="[[lng]]"
     radius="[[radiusKm]]"
-    results-array="{{jobResults}}"></geofire-query>
-
-  <geofire-query
-    idle$="[[_isIdle(app, requests)]]"
-    app="dropjobs"
-    path="geoRequestPosts"
-    lat="[[lat]]"
-    lng="[[lng]]"
-    radius="[[radiusKm]]"
-    results-array="{{requestResults}}"></geofire-query>
+    results-array="{{geoUsers}}"></geofire-query> -->
 
     <div class="layout vertical center">
       <geo-query-input
         use-current-location$="[[_hasUserLoc(userLat, userLng)]]"
-        radius="50"
+        radius="25000"
+        radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
-      <div class="layout horizontal">
-        <paper-checkbox noink checked="{{jobs}}">Jobs</paper-checkbox>
-        <paper-checkbox noink checked="{{requests}}">Requests</paper-checkbox>
-      </div>
     </div>
     <div class="summary">
-      [[_summary(posts, posts.length)]]
+      [[_summary(geoUsers, geoUsers.length)]]
     </div>
 </template>
 <script>
@@ -63,6 +45,16 @@ class GeoQuery extends Polymer.Element {
   static get config() {
     return { /* properties, observers meta data */
       properties: {
+        app: {
+          type: Object,
+          value: null,
+          observer: '_appChanged'
+        },
+        geofire: {
+          type: Object,
+          value: null
+        },
+
         lat: {
           type: Number,
           notify: true
@@ -75,14 +67,16 @@ class GeoQuery extends Polymer.Element {
           type: Number,
           notify: true
         },
-
-        results: {
+        radiusOptions: {
+          type: Array,
+          value: function() { return [1000, 5000, 10000, 25000]; }
+        },
+        geoUsers: {
           type: Array,
           notify: true,
-          observer: '_combinedResultsChanged'
+          observer: '_geoUsersChanged'
         },
-
-        users: {
+        profiles: {
           type: Array,
           notify: true
         },
@@ -96,76 +90,53 @@ class GeoQuery extends Polymer.Element {
     super.connectedCallback();
   }
 
+  _appChanged(app, old) {
+    if (app && !old) {
+      // setTimeout(function() {
+      //   LOG && log.d('Initializing geofire');
+      //   this.geofire =  new GeoFire(db.ref('geoUsers'));
+      // }.bind(this), 3000);
+    }
+  }
+
   _hasUserLoc(userLat, userLng) {
-    // return userLat && userLng;
-    return true;
+    return userLat && userLng;
   }
 
-  _anyResultsChanged(jobResults, requestResults) {
-    this.debounce('results-sort', function() {
-      this._combineAndSort(jobResults, requestResults);
-    }.bind(this), 250);
-  }
+  _geoUsersChanged(geoUsers, old) {
+    LOG && log.v('geoUsers changed', geoUsers);
+    this.profiles = [];
 
-  _combineAndSort(jobResults, requestResults) {
-    console.log('combining and sorting', jobResults, requestResults);
-    var results = [];
-    var i;
+    if (isEmpty(geoUsers)) return;
 
-    if (this.jobs && jobResults) {
-      for (i = 0; i < jobResults.length; ++i) {
-        jobResults[i].isRequest = false;
-      }
-      results = results.concat(jobResults);
-    }
-
-    if (this.requests && requestResults) {
-      for (i = 0; i < requestResults.length; ++i) {
-        requestResults[i].isRequest = true;
-      }
-      results = results.concat(requestResults);
-    }
-
-    results.sort(function(a, b) {
-      if (a.distance < b.distance) {
-        return -1;
-      }
-      if (a.distance > b.distance) {
-        return 1;
-      }
-      return 0;
-    });
-
-    this.results = results;
-  }
-
-  _combinedResultsChanged(results) {
-    console.log('updating posts', results);
-    this.posts = [];
-
-    if (isEmpty(results)) return;
-
-    for (var i = 0; i < results.length; i++) {
-      this._loadPost(results[i], i);
+    for (var i = 0; i < geoUsers.length; i++) {
+      this._loadProfile(geoUsers[i], i);
     }
   }
 
-  _loadPost(result, index) {
-    db.ref((result.isRequest ? '/requestPosts/' : '/jobPosts/') + result.key).on('value', function(snap) {
+  _loadProfile(geoUser, index) {
+    db.watch('/profiles/' + geoUser.key, function(profile) {
+      profile.$key = geoUser.key;
+      profile.distance = kmToMiles(geoUser.distance);
+      // TODO can result in incorrect order.
+      this.push('profiles', profile);
+      // TODO uses correct order, but issues with notifying changes
+      // var profiles = this.profiles;
+      // profiles[index] = profile;
+      // this.profiles = [];
+      // this.profiles = profiles;
+    }.bind(this));
+
+    db.ref().on('value', function(snap) {
       var post = snap.val();
       post.$key = result.key;
       post.isRequest = result.isRequest;
       // TODO support metric
       post.distance = kmToMiles(result.distance);
 
-      // TODO can result in incorrect order.
-      this.push('posts', post);
 
-      // TODO uses correct order, but issues with notifying changes
-      // var posts = this.posts;
-      // posts[index] = post;
-      // this.posts = [];
-      // this.posts = posts;
+
+
     }.bind(this));
   }
 
@@ -175,24 +146,17 @@ class GeoQuery extends Polymer.Element {
     if (data.useCurrentLocation) {
       this.lat = this.userLat;
       this.lng = this.userLng;
-      if (this.auth) {
-        db.users.updateLocation(this.auth.name, this.lat, this.lng, null, null);
-      }
     } else {
-      console.log('geocoding', data.location);
+      LOG && log.v('geocoding', data.location);
       this.$.codec.geocode(data.location, function (address, lat, lng, place) {
-        console.log(address, lat, lng);
+        LOG && log.v(address, lat, lng);
         this.lat = lat;
         this.lng = lng;
       }.bind(this));
     }
   }
 
-  _isIdle(app, type) {
-    return !app || !type;
-  }
-
-  _summary(posts, len) {
+  _summary(geoUsers, len) {
     return len + (len == 1 ? ' result.' : ' results.');
   }
 }
