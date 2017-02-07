@@ -1,9 +1,12 @@
+<!-- <link rel="import" href="../../../bower_components/geofire-elements/geofire-query.html"> -->
 <link rel="import" href="../../../bower_components/geo-query-input/geo-query-input.html">
-<link rel="import" href="../../../bower_components/geofire-elements/geofire-query.html">
 <link rel="import" href="../../../bower_components/geo-location/geo-location.html">
 <link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
 <link rel="import" href="/src/header.html">
-<dom-module id="geo-query">
+<link rel="import" href="geofire-query.html">
+<!-- <link rel="import" href="geo-query-input.html"> -->
+
+<dom-module id="users-query">
 <template>
   <style include="app-styles">
     :host {
@@ -21,17 +24,17 @@
   <geo-location latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
-  <!-- <geofire-query
+  <geofire-query
     geofire="[[geofire]]"
     lat="[[lat]]"
     lng="[[lng]]"
     radius="[[radiusKm]]"
-    results-array="{{geoUsers}}"></geofire-query> -->
+    results-array="{{geoUsers}}"></geofire-query>
 
     <div class="layout vertical center">
       <geo-query-input
         use-current-location$="[[_hasUserLoc(userLat, userLng)]]"
-        radius="25000"
+        radius="15000"
         radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
     </div>
@@ -40,8 +43,8 @@
     </div>
 </template>
 <script>
-class GeoQuery extends Polymer.Element {
-  static get is() { return 'geo-query'; }
+class UsersQuery extends Polymer.Element {
+  static get is() { return 'users-query'; }
   static get config() {
     return { /* properties, observers meta data */
       properties: {
@@ -69,7 +72,7 @@ class GeoQuery extends Polymer.Element {
         },
         radiusOptions: {
           type: Array,
-          value: function() { return [1000, 5000, 10000, 25000]; }
+          value: function() { return [1000, 5000, 10000, 15000]; }
         },
         geoUsers: {
           type: Array,
@@ -93,8 +96,8 @@ class GeoQuery extends Polymer.Element {
   _appChanged(app, old) {
     if (app && !old) {
       // setTimeout(function() {
-      //   LOG && log.d('Initializing geofire');
-      //   this.geofire =  new GeoFire(db.ref('geoUsers'));
+        LOG && log.d('Initializing geofire');
+        this.geofire =  new GeoFire(db.ref('geoUsers'));
       // }.bind(this), 3000);
     }
   }
@@ -161,6 +164,6 @@ class GeoQuery extends Polymer.Element {
   }
 }
 // Register custom element definition using standard platform API
-customElements.define(GeoQuery.is, GeoQuery);
+customElements.define(UsersQuery.is, UsersQuery);
 </script>
 </dom-module>

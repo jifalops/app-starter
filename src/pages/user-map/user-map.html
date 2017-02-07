@@ -14,7 +14,7 @@
       display: block;
     }
     google-map {
-      min-height: 400px;
+      min-height: 350px;
     }
   </style>
   <google-map
@@ -83,7 +83,7 @@ class UserMap extends Polymer.Element {
     if (metric) radius = kmToMiles(radius);
     var zoom = Math.round(14 - Math.log(radius) / Math.LN2);
     // console.log('zoom', zoom);
-    return zoom;
+    return zoom < 1 ? 1 : zoom;
   }
   _toggleInfoWindow(e) {
     var marker = e.target.marker;
