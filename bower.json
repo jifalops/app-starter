@@ -34,7 +34,9 @@
     "geo-codec": "^0.3.2",
     "google-map": "^1.2.0",
     "geofire": "^4.1.2",
-    "paper-dropdown-menu": "2.0-preview"
+    "paper-dropdown-menu": "2.0-preview",
+    "paper-tabs": "2.0-preview",
+    "iron-list": "^1.4.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
@@ -79,6 +81,7 @@
     "geofire-elements": "^0.2.0",
     "paper-dropdown-menu": "2.0-preview",
     "paper-menu-button": "2.0-preview",
-    "iron-dropdown": "2.0-preview"
+    "iron-dropdown": "2.0-preview",
+    "iron-scroll-target-behavior": "2.0-preview"
   }
 }

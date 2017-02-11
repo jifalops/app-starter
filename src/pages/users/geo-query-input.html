@@ -1,10 +1,9 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="/src/header.html">
 <!--
 `geo-query-input`
 A Polymer element for specifying latitude, longitude, and search radius for geographical queries.
@@ -14,7 +13,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
 
 <dom-module id="geo-query-input">
   <template>
-    <style>
+    <style include="app-styles">
       :host {
         display: block;
         @apply --font-small;
@@ -33,7 +32,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
         width: 4em;
         margin: 0 6px 2em;
         --paper-dropdown-menu-input: {
-          /*TODO has no effect*/
+          /*FIXME has no effect*/
           @apply --font-small;
         };
       }
@@ -48,7 +47,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
         --paper-input-container-label: {
           @apply --font-small;
         };
-        /*TODO causes exceptions */
+        /*FIXME causes exceptions */
         /*--paper-input-container-input: {
           @apply --font-small;
         };*/
@@ -83,6 +82,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
           value="{{location}}"
           label="[[inputLabel]]"
           auto-validate
+          autofocus          
           minlength="3"
           error-message="[[errorMsg]]"></paper-input>
 
@@ -93,103 +93,105 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
   </template>
 
   <script>
-    Polymer({
+    class GeoQueryInput extends Polymer.Element {
+      static get is() { return 'geo-query-input'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            /**
+             * Whether to use miles or kilometers. Defaults to miles.
+             */
+            metric: {
+              type: Boolean,
+              value: false,
+              reflectToAttribute: true
+            },
 
-      is: 'geo-query-input',
+            /**
+             * The label for the location input.
+             */
+            inputLabel: {
+              type: String,
+              value: 'Zip or description'
+            },
 
-      properties: {
-        /**
-         * Whether to use miles or kilometers. Defaults to miles.
-         */
-        metric: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        },
+            /**
+             * The error message for the location input.
+             */
+            errorMsg: {
+              type: String,
+              value: 'At least 3 characters'
+            },
 
-        /**
-         * The label for the location input.
-         */
-        inputLabel: {
-          type: String,
-          value: 'Zip or description'
-        },
+            /**
+             * The value of the location input.
+             */
+            location: {
+                type: String,
+                notify: true,
+                observer: '_locationChanged'
+            },
 
-        /**
-         * The error message for the location input.
-         */
-        errorMsg: {
-          type: String,
-          value: 'At least 3 characters'
-        },
+            /**
+             * Whether to use the user's current location as opposed to the location input field.
+             */
+            useCurrentLocation: {
+                type: Boolean,
+                value: false,
+                reflectToAttribute: true,
+                notify: true,
+            },
 
-        /**
-         * The value of the location input.
-         */
-        location: {
-            type: String,
-            notify: true,
-            observer: '_locationChanged'
-        },
+            /**
+             * The distance to search from [lat, lng], in miles or kilometers depending
+             * on the `metric` property.
+             */
+            radius: {
+                type: Number,
+                value: 50,
+                notify: true
+            },
 
-        /**
-         * Whether to use the user's current location as opposed to the location input field.
-         */
-        useCurrentLocation: {
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true,
-            notify: true,
-        },
-
-        /**
-         * The distance to search from [lat, lng], in miles or kilometers depending
-         * on the `metric` property.
-         */
-        radius: {
-            type: Number,
-            value: 50,
-            notify: true
-        },
-
-        /**
-         * The values for the radius dropdown chooser.
-         */
-        radiusOptions: {
-            type: Array,
-            value: [5, 10, 25, 50, 100, 200]
-        },
-
-        _kmPerMile: {
-          type: Number,
-          value: 1.60934,
-          readOnly: true
+            /**
+             * The values for the radius dropdown chooser.
+             */
+            radiusOptions: {
+                type: Array,
+                value: [10, 25, 50, 100, 200]
+            }
+          },
+          observers: [
+            '_queryChanged(metric, radius, location, useCurrentLocation)'
+          ],
         }
-      },
+      }
+      constructor() {
+        super();
+        this.debouncer = new Polymer.Debouncer(this);
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
 
-      observers: [
-        '_queryChanged(metric, radius, location, useCurrentLocation)'
-      ],
-
-      _locationChanged: function(loc, oldLoc) {
+      _locationChanged(loc, oldLoc) {
         if (loc || oldLoc) {
           this.useCurrentLocation = false;
         }
-      },
+      }
 
-      _getDistanceUnit: function(metric) {
+      _getDistanceUnit(metric) {
           return metric ? 'km' : 'miles';
-      },
+      }
 
-      _queryChanged: function(metric, radius, location, useCurrentLocation) {
+      _queryChanged(metric, radius, location, useCurrentLocation) {
         if (radius && (useCurrentLocation || (location && this.$.locationInput.validate()))) {
-          this.debounce('queryChanged', function() {
-            this.fire('query-changed', {
-              radiusKm: metric ? radius : radius * this._kmPerMile,
+          Polymer.Debouncer.debounce(this.debouncer, function() {
+            fire(this, 'query-changed', {
+              radiusKm: metric ? radius : milesToKm(radius),
               location: location,
               useCurrentLocation: useCurrentLocation
             });
-          }, 1000);
+          }, 1000, this);
         }
       }
 
@@ -200,6 +202,8 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
        * @param {location} string The string to geocode if not using the user's current location.
        * @param {radiusKm} number The radius in kilometers to search from the center point.
        */
-    });
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(GeoQueryInput.is, GeoQueryInput);
   </script>
 </dom-module>

@@ -10,69 +10,76 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
 
 <dom-module id="geofire-query">
   <script>
-    Polymer({
+    class GeofireQuery extends Polymer.Element {
+      static get is() { return 'geofire-query'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            /**
+             * The Geofire instance this query will use
+             */
+            geofire: {
+              type: Object,
+              value: null
+            },
 
-      is: 'geofire-query',
+            /**
+             * The latitude for the query's center.
+             */
+            lat: Number,
 
-      properties: {
-        /**
-         * The Geofire instance this query will use
-         */
-        geofire: {
-          type: Object,
-          value: null
-        },
+            /**
+             * The longitude for the query's center.
+             */
+            lng: Number,
 
-        /**
-         * The latitude for the query's center.
-         */
-        lat: Number,
+            /**
+             * The radius in kilometers around the query's center.
+             */
+            radius: Number,
 
-        /**
-         * The longitude for the query's center.
-         */
-        lng: Number,
+            /**
+             * Whether the query is active and listening for GeoQuery events.
+             */
+            idle: {
+              type: Boolean,
+              value: false,
+              reflectToAttribute: true,
+            //          observer: '_idleChanged'
+            },
 
-        /**
-         * The radius in kilometers around the query's center.
-         */
-        radius: Number,
+            /**
+             * An array managed by the GeoQuery events.
+             * Each element is an object with properties `key, lat, lng, location, distance`.
+             */
+            resultsArray: {
+              type: Array,
+              notify: true
+            },
 
-        /**
-         * Whether the query is active and listening for GeoQuery events.
-         */
-        idle: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true,
-//          observer: '_idleChanged'
-        },
-
-        /**
-         * An array managed by the GeoQuery events.
-         * Each element is an object with properties `key, lat, lng, location, distance`.
-         */
-        resultsArray: {
-          type: Array,
-          notify: true
-        },
-
-        /**
-         * An object managed by the GeoQuery events.
-         * It is a map of key => {`lat, lng, location, distance`}.
-         */
-        resultsObject: {
-          type: Object,
-          notify: true
+            /**
+             * An object managed by the GeoQuery events.
+             * It is a map of key => {`lat, lng, location, distance`}.
+             */
+            resultsObject: {
+              type: Object,
+              notify: true
+            }
+          },
+          observers: [
+            '_idleChanged(idle, query)',
+            '_queryChanged(geofire, lat, lng, radius)'
+          ]
         }
-      },
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
 
-      observers: [
-        '_idleChanged(idle, query)',
-        '_queryChanged(geofire, lat, lng, radius)'
-      ],
-
-      _idleChanged: function(idle, query) {
+      _idleChanged(idle, query) {
         if (!query) return;
         if (!idle) {
 
@@ -105,7 +112,7 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
             };
             this.push('resultsArray', data);
 
-            this.fire('key-entered', data);
+            fire(this, 'key-entered', data);
           }.bind(this));
 
           // Key exited event
@@ -123,7 +130,7 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
               }
             }
 
-            this.fire('key-exited', {
+            fire(this, 'key-exited', {
               key: key,
               lat: location[0],
               lng: location[1],
@@ -160,12 +167,12 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
               }
             }
 
-            this.fire('key-moved', data);
+            fire(this, 'key-moved', data);
           }.bind(this));
 
           // Ready event
           this.onReadyRegistration = query.on("ready", function() {
-            this.fire('ready');
+            fire(this, 'ready');
           }.bind(this));
 
         } else {
@@ -180,9 +187,9 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
             this.query = null;
           }
         }
-      },
+      }
 
-      _queryChanged: function(geofire, lat, lng, radius) {
+      _queryChanged(geofire, lat, lng, radius) {
         if ((lat || lat === 0) && (lng || lng === 0) && radius) {
           var criteria = {
             center: [lat, lng],
@@ -230,6 +237,8 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
        * Corresponds to the GeoQuery's `ready` event. Fired when the initial result set of the query is ready.
        * @event ready
        */
-    });
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(GeofireQuery.is, GeofireQuery);
   </script>
 </dom-module>

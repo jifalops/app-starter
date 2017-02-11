@@ -1,10 +1,8 @@
-<link rel="import" href="/bower_components/polymer/polymer.html">
-<link rel="import" href="/bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<!-- <link rel="import" href="../../../bower_components/iron-list/iron-list.html"> -->
 <link rel="import" href="/src/header.html">
-<link rel="import" href="post-list-item.html">
-<link rel="import" href="/src/behaviors/post-behavior.html">
 
-<dom-module id="post-list">
+<dom-module id="user-list">
   <template>
 
     <style include="app-styles">
@@ -17,36 +15,48 @@
       }
     </style>
 
-    <iron-list items="[[posts]]" as="post" id="list" selection-enabled scroll-target="document">
-      <template>
-        <div>
-          <post-list-item auth="[[auth]]" post="[[post]]" request$="[[post.isRequest]]"></post-list-item>
-        </div>
-      </template>
-    </iron-list>
+    <paper-material>
+      <iron-list
+        id="list"
+        selection-enabled
+        scroll-target="document"
+        items="[[users]]"
+        as="user">
+        <template>
+          <div>
+            User [[user]]
+          </div>
+        </template>
+      </iron-list>
+    </paper-material>
   </template>
 
   <script>
-    Polymer({
-      is: 'post-list',
-
-      properties: {
-        auth: Object,
-        posts: {
-          type: Array,
+    class UserList extends Polymer.Element {
+      static get is() { return 'user-list'; }
+      static get config() {
+        return { /* properties, observers meta data */
+          properties: {
+            auth: Object,
+            users: {
+              type: Array,
+            }
+          }
         }
-      },
+      }
+      constructor() {
+        super();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
 
-      behaviors: [
-        DjBehaviors.MainBehavior,
-        DjBehaviors.PostBehavior
-      ],
-
-      notifyResize: function() {
+      notifyResize() {
         this.$.list.notifyResize();
       }
-    });
-
+    }
+    // Register custom element definition using standard platform API
+    customElements.define(UserList.is, UserList);
   </script>
 
 </dom-module>

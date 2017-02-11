@@ -132,7 +132,7 @@
           <!-- Work around app-drawer issue -->
           <div>
             Nav drawer is broken:
-            <a href="/users">User Map</a>
+            <a href="/users">Users</a>
             | <a href="/test">Test page</a>
             | <a href="/admin" plain$="[[!auth]]">Admin page</a>
             | <a href="/feedback" plain$="[[!auth]]">Feedback</a>
@@ -203,7 +203,7 @@
         LOG && ROUTE && log.v('page changed:', page);
         var file = this._fileForPage(page);
         if (!page || !file) {
-          redirect('/users');
+          redirect('/users/map');
           return;
         }
 

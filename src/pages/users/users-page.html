@@ -1,6 +1,12 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="/src/header.html">
 <link rel="import" href="users-query.html">
+<link rel="import" href="user-list.html">
 <link rel="import" href="user-map.html">
 
 
@@ -19,25 +25,59 @@
       min-height: 400px;
     }
   </style>
+
+  <app-route
+    active="{{active}}"
+    route="[[route]]"
+    pattern="/:page"
+    data="{{routeData}}"
+    tail="{{subroute}}"></app-route>
+
+  <paper-tabs
+    fit-container
+    selected="[[routeData.page]]"
+    attr-for-selected="name"
+    role="navigation">
+    <paper-tab name="list"><a plain href='/users/list'><span>List</span></a></paper-tab>
+    <paper-tab name="map"><a plain href='/users/map'><span>Map</span></a></paper-tab>
+  </paper-tabs>
+
   <paper-material class="layout vertical">
-    <span class="font-headline self-center">User Map</span>
+    <span class="font-headline self-center">Users</span>
     <users-query
       app="[[app]]"
       profiles="{{profiles}}"
       lat="{{lat}}"
       lng="{{lng}}"
-      radius-km="{{radiusKm}}"
-      use-current-location>
+      radius-km="{{radiusKm}}">
     </users-query>
   </paper-material>
+
+  <neon-animated-pages selected="[[routeData.page]]" attr-for-selected="name">
+    <neon-animatable name="list" entry-animation="slide-from-left-animation" exit-animation="slide-left-animation">
+      <user-list
+        id="list"
+        auth="[[auth]]"
+        users="[[profiles]]">
+      </user-list>
+    </neon-animatable>
+    <neon-animatable name="map" entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
+      <!-- FIXME If paper-material is part of user-map, the map has a small height. -->
+      <paper-material>
+        <user-map
+          auth="[[auth]]"
+          users="[[profiles]]"
+          lat="[[lat]]"
+          lng="[[lng]]"
+          radius-km="[[radiusKm]]">
+        </user-map>
+      </paper-material>
+    </neon-animatable>
+  </neon-animated-pages>
+
+
   <paper-material>
-    <user-map
-      auth="[[auth]]"
-      users="[[profiles]]"
-      lat="[[lat]]"
-      lng="[[lng]]"
-      radius-km="[[radiusKm]]">
-    </user-map>
+
   </paper-material>
 </template>
 <script>
@@ -48,7 +88,11 @@ class UsersPage extends Polymer.Element {
       properties: {
         app: Object,
         auth: Object,
-      }
+        route: Object
+      },
+      observers: [
+        '_pageChanged(routeData.page)'
+      ],
     }
   }
   constructor() {
@@ -56,6 +100,44 @@ class UsersPage extends Polymer.Element {
   }
   connectedCallback() {
     super.connectedCallback();
+  }
+
+  _pageChanged(page) {
+    if (!hasChild(this.route, 'prefix') || this.route.prefix != '/users') {
+      return;
+    }
+
+    var file = this._fileForPage(page);
+    if (!page || !file) {
+      redirect('/users/map');
+      return;
+    }
+
+    var url = this.resolveUrl(file);
+    Polymer.Utils.importHref(url, function() {
+      LOG && ROUTE && log.v('imported', url);
+      this._fixListOverlap(page);
+    }.bind(this), function() {
+      LOG && log.e('failed to import', url);
+    }, true);
+    this._fixListOverlap(page);
+  }
+
+  _fixListOverlap(page) {
+    if (page == 'list' && hasChild(this.$.list, 'list', 'notifyResize')) {
+      this.$.list.list.notifyResize();
+    }
+  }
+
+  _fileForPage(page) {
+    switch (page) {
+      case 'list':      return '/src/pages/users/user-list.html';
+      case 'map':       return '/src/pages/users/user-map.html';
+    }
+  }
+
+  _perturb(coord) {
+    return perturbCoordinate(coord);
   }
 }
 // Register custom element definition using standard platform API

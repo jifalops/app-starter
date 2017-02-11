@@ -1,3 +1,4 @@
+<!-- <link rel="import" href="../../../bower_components/paper-material/paper-material.html"> -->
 <link rel="import" href="../../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../../bower_components/google-map/google-map-marker.html">
 <link rel="import" href="/src/header.html">
@@ -17,28 +18,28 @@
       min-height: 350px;
     }
   </style>
-  <google-map
-    latitude="[[_filterLat(lat)]]"
-    longitude="[[_filterLng(lng)]]"
-    api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"
-    disable-street-view-control
-    map="{{map}}"
-    on-google-map-ready="_mapLoaded"
-    zoom="[[_radiusToZoom(radiusKm, 'true')]]">
-    <dom-repeat items="[[users]]" as="user">
-      <template>
-      <google-map-marker
-        latitude="[[user.lat]]"
-        longitude="[[user.lng]]"
-        title="[[user.name]]"
-        click-events
-        map="[[map]]"
-        on-google-map-marker-click="_toggleInfoWindow"
-        on-google-map-marker-close="_infoWindowClosed">
-      </google-map-marker>
-      </template>
-    <dom-repeat>
-  </google-map>
+    <google-map
+      latitude="[[_filterLat(lat)]]"
+      longitude="[[_filterLng(lng)]]"
+      api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"
+      disable-street-view-control
+      map="{{map}}"
+      on-google-map-ready="_mapLoaded"
+      zoom="[[_radiusToZoom(radiusKm, 'true')]]">
+      <dom-repeat items="[[users]]" as="user">
+        <template>
+        <google-map-marker
+          latitude="[[user.lat]]"
+          longitude="[[user.lng]]"
+          title="[[user.name]]"
+          click-events
+          map="[[map]]"
+          on-google-map-marker-click="_toggleInfoWindow"
+          on-google-map-marker-close="_infoWindowClosed">
+        </google-map-marker>
+        </template>
+      <dom-repeat>
+    </google-map>
 </template>
 <script>
 class UserMap extends Polymer.Element {

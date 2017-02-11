@@ -34,7 +34,7 @@
     <div class="layout vertical center">
       <geo-query-input
         use-current-location$="[[_hasUserLoc(userLat, userLng)]]"
-        radius="15000"
+        radius="1000"
         radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
     </div>
@@ -103,7 +103,8 @@ class UsersQuery extends Polymer.Element {
   }
 
   _hasUserLoc(userLat, userLng) {
-    return userLat && userLng;
+    return false;
+    // return userLat && userLng;
   }
 
   _geoUsersChanged(geoUsers, old) {
@@ -152,16 +153,27 @@ class UsersQuery extends Polymer.Element {
       this.lat = this.userLat;
       this.lng = this.userLng;
     } else {
-      LOG && log.v('geocoding', data.location);
-      this.$.codec.geocode(data.location, function (address, lat, lng, place) {
-        LOG && log.v(address, lat, lng);
-        this.lat = lat;
-        this.lng = lng;
-      }.bind(this));
+      this.cache = this.cache || {};
+      var cached = this.cache[data.location];
+      if (!cached) {
+        LOG && log.v('geocoding', data.location);
+        this.$.codec.geocode(data.location, function (address, lat, lng, place) {
+          LOG && log.v(address, lat, lng);
+          this.lat = lat;
+          this.lng = lng;
+          this.cache[data.location] = [address, lat, lng, place];
+        }.bind(this));
+      } else {
+        this.lat = cached[1];
+        this.lng = cached[2];
+      }
     }
   }
 
   _summary(geoUsers, len) {
+    if (len === undefined || len === null) {
+      return '';
+    }
     return len + (len == 1 ? ' result.' : ' results.');
   }
 }
