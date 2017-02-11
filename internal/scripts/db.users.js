@@ -22,9 +22,9 @@ db.users = {
     DB && console.log('Updating location to', lat, lng);
     var geofire = new GeoFire(db.ref('/geoUsers'));
     geofire.set(user, [lat, lng]).then(function () {
-      onSuccess();
+      if (onSuccess) onSuccess();
     }, function (error) {
-      onFailure(error);
+      if (onFailure) onFailure(error);
     });
   },
 

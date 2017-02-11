@@ -46,6 +46,7 @@
     <span class="font-headline self-center">Users</span>
     <users-query
       app="[[app]]"
+      auth="[[auth]]"
       profiles="{{profiles}}"
       lat="{{lat}}"
       lng="{{lng}}"
@@ -134,10 +135,6 @@ class UsersPage extends Polymer.Element {
       case 'list':      return '/src/pages/users/user-list.html';
       case 'map':       return '/src/pages/users/user-map.html';
     }
-  }
-
-  _perturb(coord) {
-    return perturbCoordinate(coord);
   }
 }
 // Register custom element definition using standard platform API

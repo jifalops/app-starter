@@ -92,6 +92,7 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
 
           // Key entered event
           this.onKeyEnteredRegistration = query.on('key_entered', function(key, location, distance) {
+            LOG && log.v('key-entered', key, location, distance);
 
             // Object changes
             this.resultsObject[key] = {
@@ -117,6 +118,7 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
 
           // Key exited event
           this.onKeyExitedRegistration = query.on("key_exited", function(key, location, distance) {
+            LOG && log.v('key-exited', key, location, distance);
 
             // Object changes
             this.resultsObject[key] = null;
@@ -141,6 +143,7 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
 
           // Key moved event
           this.onKeyMovedRegistration = query.on("key_moved", function(key, location, distance) {
+            LOG && log.v('key-moved', key, location, distance);
 
             // Object changes
             this.resultsObject[key] = {
@@ -172,6 +175,7 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
 
           // Ready event
           this.onReadyRegistration = query.on("ready", function() {
+            LOG && log.v('ready');
             fire(this, 'ready');
           }.bind(this));
 

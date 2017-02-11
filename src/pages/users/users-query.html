@@ -2,6 +2,7 @@
 <!-- <link rel="import" href="../../../bower_components/geo-query-input/geo-query-input.html"> -->
 <link rel="import" href="../../../bower_components/geo-location/geo-location.html">
 <link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="/src/header.html">
 <link rel="import" href="geofire-query.html">
 <link rel="import" href="geo-query-input.html">
@@ -21,7 +22,7 @@
       padding: 4px 8px;
     }
   </style>
-  <geo-location latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
+  <geo-location idle$="[[!useCurrentLocation]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
   <geofire-query
@@ -33,13 +34,14 @@
 
     <div class="layout vertical center">
       <geo-query-input
-        use-current-location$="[[_hasUserLoc(userLat, userLng)]]"
+        use-current-location$="{{useCurrentLocation}}"
         radius="1000"
         radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
     </div>
-    <div class="summary">
-      [[_summary(geoUsers, geoUsers.length)]]
+    <div class="summary layout horizontal center justified">
+      <span>[[_summary(geoUsers, geoUsers.length)]]</span>
+      <paper-button disabled$="[[!auth]]" raised class="primary-button" on-tap="_addUser">Add Me</paper-button>
     </div>
 </template>
 <script>
@@ -53,6 +55,7 @@ class UsersQuery extends Polymer.Element {
           value: null,
           observer: '_appChanged'
         },
+        auth: Object,
         geofire: {
           type: Object,
           value: null
@@ -82,12 +85,16 @@ class UsersQuery extends Polymer.Element {
         profiles: {
           type: Array,
           notify: true
-        },
-      }
+        }
+      },
+      observers: [
+        '_userLocationChanged(userLat, userLng)'
+      ]
     }
   }
   constructor() {
     super();
+    this.useCurrentLocation = false;
   }
   connectedCallback() {
     super.connectedCallback();
@@ -95,16 +102,9 @@ class UsersQuery extends Polymer.Element {
 
   _appChanged(app, old) {
     if (app && !old) {
-      // setTimeout(function() {
         LOG && log.d('Initializing geofire');
-        this.geofire =  new GeoFire(db.ref('geoUsers'));
-      // }.bind(this), 3000);
+        this.geofire = new GeoFire(db.ref('geoUsers'));
     }
-  }
-
-  _hasUserLoc(userLat, userLng) {
-    return false;
-    // return userLat && userLng;
   }
 
   _geoUsersChanged(geoUsers, old) {
@@ -132,26 +132,15 @@ class UsersQuery extends Polymer.Element {
       // this.profiles = [];
       // this.profiles = profiles;
     }.bind(this));
-
-    db.ref().on('value', function(snap) {
-      var post = snap.val();
-      post.$key = result.key;
-      post.isRequest = result.isRequest;
-      // TODO support metric
-      post.distance = kmToMiles(result.distance);
-
-
-
-
-    }.bind(this));
   }
 
   _queryChanged(e, data) {
-    console.log('Query changed', data);
+    LOG && log.v('Query changed', data);
     this.radiusKm = data.radiusKm;
     if (data.useCurrentLocation) {
       this.lat = this.userLat;
       this.lng = this.userLng;
+      if (this.addingUser) this._doAddUser();
     } else {
       this.cache = this.cache || {};
       var cached = this.cache[data.location];
@@ -164,17 +153,41 @@ class UsersQuery extends Polymer.Element {
           this.cache[data.location] = [address, lat, lng, place];
         }.bind(this));
       } else {
+        LOG && log.v('Using cached result', cached);
         this.lat = cached[1];
         this.lng = cached[2];
       }
     }
   }
 
-  _summary(geoUsers, len) {
-    if (len === undefined || len === null) {
-      return '';
+  _userLocationChanged(userLat, userLng) {
+    if (this.useCurrentLocation) {
+      this.lat = userLat;
+      this.lng = userLng;
     }
+  }
+
+  _summary(geoUsers, len) {
+    len = len || '~';
     return len + (len == 1 ? ' result.' : ' results.');
+  }
+
+  _addUser() {
+    this.addingUser = true;
+    if (!this.useCurrentLocation) {
+      this.useCurrentLocation = true;
+    } else if (this.userLat && this.userLng) {
+      this._doAddUser();
+    }
+  }
+
+  _doAddUser() {
+    var lat = perturbCoordinate(this.userLat);
+    var lng = perturbCoordinate(this.userLng);
+    var dist = GeoFire.distance([this.userLat, this.userLng], [lat, lng]);
+    LOG && log.v('Anonymizing to', dist, 'km away.');
+    db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
+    this.addingUser = false;
   }
 }
 // Register custom element definition using standard platform API
