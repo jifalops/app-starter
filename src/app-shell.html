@@ -140,7 +140,7 @@
 
           <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
             <neon-animatable name="users">
-              <user-map-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></user-map-page>
+              <users-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></users-page>
             </neon-animatable>
             <neon-animatable name="login">
               <login-register-page auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
@@ -218,7 +218,7 @@
 
       _fileForPage(page) {
         switch (page) {
-          case 'users':      return '/src/pages/user-map/user-map-page.html';
+          case 'users':      return '/src/pages/users/users-page.html';
           case 'user':       return '/src/pages/user/user-page.html';
           case 'login':      return '/src/pages/login-register/login-register-page.html';
           case 'register':   return '/src/pages/login-register/login-register-page.html';

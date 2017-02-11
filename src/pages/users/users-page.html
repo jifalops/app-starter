@@ -9,7 +9,7 @@
   user that has allowed themselves to be added.
   The map can be searched, optionally by the visitor's current location.
 -->
-<dom-module id="user-map-page">
+<dom-module id="users-page">
 <template>
   <style include="app-styles">
     :host {
@@ -41,8 +41,8 @@
   </paper-material>
 </template>
 <script>
-class UserMapPage extends Polymer.Element {
-  static get is() { return 'user-map-page'; }
+class UsersPage extends Polymer.Element {
+  static get is() { return 'users-page'; }
   static get config() {
     return { /* properties, observers meta data */
       properties: {
@@ -59,6 +59,6 @@ class UserMapPage extends Polymer.Element {
   }
 }
 // Register custom element definition using standard platform API
-customElements.define(UserMapPage.is, UserMapPage);
+customElements.define(UsersPage.is, UsersPage);
 </script>
 </dom-module>

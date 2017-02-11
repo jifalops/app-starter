@@ -10,4 +10,5 @@ A starting point for using Polymer, Firebase with email/username/provider login,
   https://www.polymer-project.org/2.0/docs/about_20#behaviors
 * google-map: Has styles outside of template and fills the paper-material
 * geofire-query: Works only if you copy the file locally  :(
-  
+* paper-input: using `--paper-input-container-input` causes errors.
+* paper-dropdown-menu: `--paper-dropdown-menu-input` does not set font size.

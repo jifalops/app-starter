@@ -1,0 +1,52 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-list/iron-list.html">
+<link rel="import" href="/src/header.html">
+<link rel="import" href="post-list-item.html">
+<link rel="import" href="/src/behaviors/post-behavior.html">
+
+<dom-module id="post-list">
+  <template>
+
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+
+      iron-list {
+        min-height: 400px;
+      }
+    </style>
+
+    <iron-list items="[[posts]]" as="post" id="list" selection-enabled scroll-target="document">
+      <template>
+        <div>
+          <post-list-item auth="[[auth]]" post="[[post]]" request$="[[post.isRequest]]"></post-list-item>
+        </div>
+      </template>
+    </iron-list>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'post-list',
+
+      properties: {
+        auth: Object,
+        posts: {
+          type: Array,
+        }
+      },
+
+      behaviors: [
+        DjBehaviors.MainBehavior,
+        DjBehaviors.PostBehavior
+      ],
+
+      notifyResize: function() {
+        this.$.list.notifyResize();
+      }
+    });
+
+  </script>
+
+</dom-module>
