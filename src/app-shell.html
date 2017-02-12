@@ -35,6 +35,14 @@
       app-drawer {
         --app-drawer-width: 200px;
       }
+
+      app-drawer paper-listbox a {
+        display: block;
+        padding: 0 20px;
+        line-height: 40px;
+        /*color: var(--accent-color);*/
+      }
+
       app-toolbar {
         background-color: var(--primary-color);
         color: #fff;
@@ -96,12 +104,22 @@
         </app-toolbar>
         <paper-listbox selected="[[routeData.page]]" attr-for-selected="name" role="navigation">
           <paper-item name="users">
-            <a plain class="flex" href="/users">User Map</a>
+            <a plain class="flex" href="/users">Users</a>
+          </paper-item>
+          <div class="divider"></div>
+          <paper-item name="test">
+            <a plain class="flex" href="/test">Test page</a>
+          </paper-item>
+          <div class="divider"></div>
+          <paper-item name="admin" disabled$="[[!auth]]">
+            <a plain class="flex" href="/admin">Admin</a>
           </paper-item>
           <div class="divider"></div>
           <paper-item name="feedback" disabled$="[[!auth]]">
             <a plain class="flex" href="/feedback">Feedback</a>
           </paper-item>
+
+
         </paper-listbox>
       </app-drawer>
 
@@ -127,16 +145,6 @@
 
         <!-- Content -->
         <div id="content" class="layout vertical">
-
-          <!-- Work around app-drawer issue -->
-          <div>
-            Nav drawer is broken:
-            <a href="/users">Users</a>
-            | <a href="/test">Test page</a>
-            | <a href="/admin" plain$="[[!auth]]">Admin page</a>
-            | <a href="/feedback" plain$="[[!auth]]">Feedback</a>
-          </div>
-
           <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
             <neon-animatable name="users">
               <users-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></users-page>
@@ -197,7 +205,7 @@
 
       // load page import on demand.
       var url = this.resolveUrl(file);
-      Polymer.Utils.importHref(url, function() {
+      this.importHref(url, function() {
         LOG && ROUTE && log.v('imported', url);
       }.bind(this), function() {
         LOG && log.e('failed to import', url);
