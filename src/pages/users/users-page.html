@@ -77,28 +77,17 @@
   </neon-animated-pages>
 </template>
 <script>
-class UsersPage extends Polymer.Element {
-  static get is() { return 'users-page'; }
-  static get config() {
-    return { /* properties, observers meta data */
-      properties: {
-        app: Object,
-        auth: Object,
-        route: Object
-      },
-      observers: [
-        '_pageChanged(routeData.page)'
-      ],
-    }
-  }
-  constructor() {
-    super();
-  }
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  _pageChanged(page) {
+Polymer({
+  is: 'users-page',
+  properties: {
+    app: Object,
+    auth: Object,
+    route: Object
+  },
+  observers: [
+    '_pageChanged(routeData.page)'
+  ],
+  _pageChanged: function(page) {
     if (!hasChild(this.route, 'prefix') || this.route.prefix != '/users') {
       return;
     }
@@ -117,22 +106,20 @@ class UsersPage extends Polymer.Element {
       LOG && log.e('failed to import', url);
     }, true);
     this._fixListOverlap(page);
-  }
+  },
 
-  _fixListOverlap(page) {
+  _fixListOverlap: function(page) {
     if (page == 'list' && hasChild(this.$.list, 'list', 'notifyResize')) {
       this.$.list.list.notifyResize();
     }
-  }
+  },
 
-  _fileForPage(page) {
+  _fileForPage: function(page) {
     switch (page) {
       case 'list':      return '/src/pages/users/user-list.html';
       case 'map':       return '/src/pages/users/user-map.html';
     }
   }
-}
-// Register custom element definition using standard platform API
-customElements.define(UsersPage.is, UsersPage);
+});
 </script>
 </dom-module>

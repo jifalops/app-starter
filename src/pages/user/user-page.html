@@ -90,29 +90,17 @@
   </paper-material>
 </template>
 <script>
-class UserPage extends Polymer.Element {
-  static get is() { return 'user-page'; }
-  static get config() {
-    return { /* properties, observers meta data */
-      properties: {
-        auth: Object,
-        route: Object
-      },
-      observers: [
-        '_loadProfile(auth, routeData.user)'
-      ]
-    }
-  }
-  constructor() {
-    super();
-    this.editName = false;
-    this.editPic = false;
-    this.amOwner = false;
-  }
-  connectedCallback() {
-    super.connectedCallback();
-  }
-  _loadProfile(auth, user) {
+Polymer({
+  is: 'user-page',
+  properties: {
+    auth: Object,
+    route: Object
+  },
+  observers: [
+    '_loadProfile(auth, routeData.user)'
+  ],
+
+  _loadProfile: function(auth, user) {
     if (auth && auth.uid == user) {
       USER && log.v('Using auth.profile');
       this.profile = auth.profile;
@@ -124,42 +112,40 @@ class UserPage extends Polymer.Element {
         this.profile = profile;
       }.bind(this));
     }
-  }
+  },
 
-  toggleEditName() {
+  toggleEditName: function() {
     this.editName = !this.editName;
-  }
-  toggleEditPic() {
+  },
+  toggleEditPic: function() {
     this.editPic = !this.editPic;
-  }
-  toggleElevated() {
+  },
+  toggleElevated: function() {
     db.users.setElevated(this.auth.uid, !this.auth.user.isElevated, null, showServerErrorToast);
-  }
+  },
 
 
-  updateName() {
+  updateName: function() {
     var name = this.$.nameInput.value;
     if (name && name.length >= 1 && name.length <= 16) {
       db.users.changeDisplayName(this.auth.uid, name, function() {
         this.editName = false;
       }.bind(this), showServerErrorToast);
     }
-  }
-  updatePic() {
+  },
+  updatePic: function() {
     var pic = this.$.picInput.value;
     if (pic && pic.length >= 10 && pic.length <= 250) {
       db.users.changeAvatar(this.auth.uid, pic, function() {
         this.editPic = false;
       }.bind(this), showServerErrorToast);
     }
-  }
+  },
 
   // TODO behavior
-  toggleString(condition, ifTrue, ifFalse) {
+  toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
   }
-}
-// Register custom element definition using standard platform API
-customElements.define(UserPage.is, UserPage);
+});
 </script>
 </dom-module>

@@ -93,117 +93,108 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
   </template>
 
   <script>
-    class GeoQueryInput extends Polymer.Element {
-      static get is() { return 'geo-query-input'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            /**
-             * Whether to use miles or kilometers. Defaults to miles.
-             */
-            metric: {
-              type: Boolean,
-              value: false,
-              reflectToAttribute: true
-            },
-
-            /**
-             * The label for the location input.
-             */
-            inputLabel: {
-              type: String,
-              value: 'Zip or description'
-            },
-
-            /**
-             * The error message for the location input.
-             */
-            errorMsg: {
-              type: String,
-              value: 'At least 3 characters'
-            },
-
-            /**
-             * The value of the location input.
-             */
-            location: {
-                type: String,
-                notify: true,
-                observer: '_locationChanged'
-            },
-
-            /**
-             * Whether to use the user's current location as opposed to the location input field.
-             */
-            useCurrentLocation: {
-                type: Boolean,
-                value: false,
-                reflectToAttribute: true,
-                notify: true,
-            },
-
-            /**
-             * The distance to search from [lat, lng], in miles or kilometers depending
-             * on the `metric` property.
-             */
-            radius: {
-                type: Number,
-                value: 50,
-                notify: true
-            },
-
-            /**
-             * The values for the radius dropdown chooser.
-             */
-            radiusOptions: {
-                type: Array,
-                value: [10, 25, 50, 100, 200]
-            }
-          },
-          observers: [
-            '_queryChanged(metric, radius, location, useCurrentLocation)'
-          ],
-        }
-      }
-      constructor() {
-        super();
-        this.debouncer = new Polymer.Debouncer(this);
-      }
-      connectedCallback() {
-        super.connectedCallback();
-      }
-
-      _locationChanged(loc, oldLoc) {
-        if (loc || oldLoc) {
-          this.useCurrentLocation = false;
-        }
-      }
-
-      _getDistanceUnit(metric) {
-          return metric ? 'km' : 'miles';
-      }
-
-      _queryChanged(metric, radius, location, useCurrentLocation) {
-        if (radius && (useCurrentLocation || (location && this.$.locationInput.validate()))) {
-          Polymer.Debouncer.debounce(this.debouncer, function() {
-            fire(this, 'query-changed', {
-              radiusKm: metric ? radius : milesToKm(radius),
-              location: location,
-              useCurrentLocation: useCurrentLocation
-            });
-          }.bind(this), 1000, this);
-        }
-      }
+  Polymer({
+    is: 'geo-query-input',
+    properties: {
+      /**
+       * Whether to use miles or kilometers. Defaults to miles.
+       */
+      metric: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
 
       /**
-       * Triggered when a user taps the submit button.
-       * @event query-changed
-       * @param {useCurrentLocation} boolean Whether the user's current location should be used.
-       * @param {location} string The string to geocode if not using the user's current location.
-       * @param {radiusKm} number The radius in kilometers to search from the center point.
+       * The label for the location input.
        */
+      inputLabel: {
+        type: String,
+        value: 'Zip or description'
+      },
+
+      /**
+       * The error message for the location input.
+       */
+      errorMsg: {
+        type: String,
+        value: 'At least 3 characters'
+      },
+
+      /**
+       * The value of the location input.
+       */
+      location: {
+          type: String,
+          notify: true,
+          observer: '_locationChanged'
+      },
+
+      /**
+       * Whether to use the user's current location as opposed to the location input field.
+       */
+      useCurrentLocation: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          notify: true,
+      },
+
+      /**
+       * The distance to search from [lat, lng], in miles or kilometers depending
+       * on the `metric` property.
+       */
+      radius: {
+          type: Number,
+          value: 50,
+          notify: true
+      },
+
+      /**
+       * The values for the radius dropdown chooser.
+       */
+      radiusOptions: {
+          type: Array,
+          value: [10, 25, 50, 100, 200]
+      }
+    },
+    observers: [
+      '_queryChanged(metric, radius, location, useCurrentLocation)'
+    ],
+
+    created: function() {
+      this.debouncer = new Polymer.Debouncer(this);
+    },
+
+    _locationChanged: function(loc, oldLoc) {
+      if (loc || oldLoc) {
+        this.useCurrentLocation = false;
+      }
+    },
+
+    _getDistanceUnit: function(metric) {
+        return metric ? 'km' : 'miles';
+    },
+
+    _queryChanged: function(metric, radius, location, useCurrentLocation) {
+      if (radius && (useCurrentLocation || (location && this.$.locationInput.validate()))) {
+        Polymer.Debouncer.debounce(this.debouncer, function() {
+          fire(this, 'query-changed', {
+            radiusKm: metric ? radius : milesToKm(radius),
+            location: location,
+            useCurrentLocation: useCurrentLocation
+          });
+        }.bind(this), 1000, this);
+      }
     }
-    // Register custom element definition using standard platform API
-    customElements.define(GeoQueryInput.is, GeoQueryInput);
+
+    /**
+     * Triggered when a user taps the submit button.
+     * @event query-changed
+     * @param {useCurrentLocation} boolean Whether the user's current location should be used.
+     * @param {location} string The string to geocode if not using the user's current location.
+     * @param {radiusKm} number The radius in kilometers to search from the center point.
+     */
+  });
   </script>
 </dom-module>

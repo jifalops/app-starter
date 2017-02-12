@@ -1,5 +1,5 @@
-<link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="/src/header.html">
 <!--
   firebase-auth-wrapper exposes the firebase-auth user and provides functions for
   registering, logging in, and logging out.
@@ -13,84 +13,72 @@
   </template>
 
   <script>
-    class FirebaseAuthWrapper extends Polymer.Element {
-      static get is() { return 'firebase-auth-wrapper'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            /**
-             * The user loaded by firebase-auth when authenticated.
-             */
-            user: {
-              type: Object,
-              value: null,
-              notify: true
-            },
-            /**
-             * To have usernames instead of email logins, add an email suffix
-             * here. Include the '@' symbol.
-             */
-            emailSuffix: {
-              type: String,
-              value: ''
-            },
-            /**
-             * Whether or not to ask for the corresponding email address
-             * when using a provider login. Does not work with Twitter.
-             */
-            addEmailScope: {
-              type: Boolean,
-              value: false,
-              reflectToAttribute: true
-            }
-          }
-        }
+  Polymer({
+    is: 'firebase-auth-wrapper',
+    properties: {
+      /**
+       * The user loaded by firebase-auth when authenticated.
+       */
+      user: {
+        type: Object,
+        value: null,
+        notify: true
+      },
+      /**
+       * To have usernames instead of email logins, add an email suffix
+       * here. Include the '@' symbol.
+       */
+      emailSuffix: {
+        type: String,
+        value: ''
+      },
+      /**
+       * Whether or not to ask for the corresponding email address
+       * when using a provider login. Does not work with Twitter.
+       */
+      addEmailScope: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
       }
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        super.connectedCallback();
-      }
+    },
 
-      registerUser(username, password, onSuccess, onFailure, onException) {
-        console.log("Registering new user,", username);
-        this.$.auth.createUserWithEmailAndPassword(username + this.emailSuffix, password)
-            .then(onSuccess, onFailure)
-            .catch(onException);
-      }
-
-      usernameLogin(username, password, onSuccess, onFailure, onException) {
-        console.log("Signing in with username/email...");
-        this.$.auth.signInWithEmailAndPassword(username + this.emailSuffix, password)
-            .then(onSuccess, onFailure)
-            .catch(onException);
-      }
-
-      /** Currently supported providers are 'google', 'facebook', 'github', 'twitter' */
-      providerLogin(providerName, onSuccess, onFailure, onException) {
-        var provider = this.$.auth._providerFromName(providerName);
-        // Twitter simple login doesn't have scopes.
-        if (this.addEmailScope && providerName != 'twitter') {
-          provider.addScope('email');
-        }
-        console.log("Signing in with " + providerName);
-        this.$.auth.signInWithPopup(provider)
-            .then(onSuccess, onFailure)
-            .catch(onException);
-      }
-
-      logout(onSuccess, onFailure, onException) {
-        this.$.auth.signOut()
+    registerUser: function(username, password, onSuccess, onFailure, onException) {
+      console.log("Registering new user,", username);
+      this.$.auth.createUserWithEmailAndPassword(username + this.emailSuffix, password)
           .then(onSuccess, onFailure)
           .catch(onException);
-      }
+    },
 
-      _onAuthError(e, detail) {
-        console.error('Exception using firebase-auth:', detail, e);
+    usernameLogin: function(username, password, onSuccess, onFailure, onException) {
+      console.log("Signing in with username/email...");
+      this.$.auth.signInWithEmailAndPassword(username + this.emailSuffix, password)
+          .then(onSuccess, onFailure)
+          .catch(onException);
+    },
+
+    /** Currently supported providers are 'google', 'facebook', 'github', 'twitter' */
+    providerLogin: function(providerName, onSuccess, onFailure, onException) {
+      var provider = this.$.auth._providerFromName(providerName);
+      // Twitter simple login doesn't have scopes.
+      if (this.addEmailScope && providerName != 'twitter') {
+        provider.addScope('email');
       }
+      console.log("Signing in with " + providerName);
+      this.$.auth.signInWithPopup(provider)
+          .then(onSuccess, onFailure)
+          .catch(onException);
+    },
+
+    logout: function(onSuccess, onFailure, onException) {
+      this.$.auth.signOut()
+        .then(onSuccess, onFailure)
+        .catch(onException);
+    },
+
+    _onAuthError: function(e, detail) {
+      console.error('Exception using firebase-auth:', detail, e);
     }
-    // Register custom element definition using standard platform API
-    customElements.define(FirebaseAuthWrapper.is, FirebaseAuthWrapper);
+  });
   </script>
 </dom-module>

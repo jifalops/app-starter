@@ -105,28 +105,17 @@
   </paper-material>
 </template>
 <script>
-class LoginRegisterPage extends Polymer.Element {
-  static get is() { return 'login-register-page'; }
-  static get config() {
-    return { /* properties, observers meta data */
-      properties: {
-        auth: Object,
-        register: {
-          type: Boolean,
-          value: false,
-          reflectToAttribute: true
-        }
-      }
+Polymer({
+  is: 'login-register-page',
+  properties: {
+    auth: Object,
+    register: {
+      type: Boolean,
+      value: false,
+      reflectToAttribute: true
     }
-  }
-  constructor() {
-    super();
-  }
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  _loginRegister(e) {
+  },
+  _loginRegister: function(e) {
     var el = e.tartget || e.srcElement;
     var data = {};
     data.provider = el.dataset.provider;
@@ -143,9 +132,9 @@ class LoginRegisterPage extends Polymer.Element {
 
     // LOG && log.v('firing login-register', data);
     fire(this, 'login-register', data);
-  }
+  },
 
-  _validateInput() {
+  _validateInput: function() {
     var user = this.$.username.value;
     var pass = this.$.password.value;
     var pass2 = this.$.passwordRepeat.value;
@@ -170,14 +159,12 @@ class LoginRegisterPage extends Polymer.Element {
       }
     }
     return true;
-  }
+  },
 
   // TODO behavior
-  toggleString(condition, ifTrue, ifFalse) {
+  toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
   }
-}
-// Register custom element definition using standard platform API
-customElements.define(LoginRegisterPage.is, LoginRegisterPage);
+});
 </script>
 </dom-module>

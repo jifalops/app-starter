@@ -39,23 +39,11 @@
   </paper-material>
 </template>
 <script>
-class TestPage extends Polymer.Element {
-  static get is() { return 'test-page'; }
-  static get config() {
-    return { /* properties, observers meta data */
-      properties: {
+Polymer({
+  is: 'test-page',
+  properties: {
 
-      }
-    }
   }
-  constructor() {
-    super();
-  }
-  connectedCallback() {
-    super.connectedCallback();
-  }
-}
-// Register custom element definition using standard platform API
-customElements.define(TestPage.is, TestPage);
+});
 </script>
 </dom-module>

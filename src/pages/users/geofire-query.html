@@ -10,239 +10,226 @@ An element for working with GeoFire's [`GeoQuery`](https://github.com/firebase/g
 
 <dom-module id="geofire-query">
   <script>
-    class GeofireQuery extends Polymer.Element {
-      static get is() { return 'geofire-query'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            /**
-             * The Geofire instance this query will use
-             */
-            geofire: {
-              type: Object,
-              value: null
-            },
+  Polymer({
+    is: 'geofire-query',
+    properties: {
+      /**
+       * The Geofire instance this query will use
+       */
+      geofire: {
+        type: Object,
+        value: null
+      },
 
-            /**
-             * The latitude for the query's center.
-             */
-            lat: Number,
+      /**
+       * The latitude for the query's center.
+       */
+      lat: Number,
 
-            /**
-             * The longitude for the query's center.
-             */
-            lng: Number,
+      /**
+       * The longitude for the query's center.
+       */
+      lng: Number,
 
-            /**
-             * The radius in kilometers around the query's center.
-             */
-            radius: Number,
+      /**
+       * The radius in kilometers around the query's center.
+       */
+      radius: Number,
 
-            /**
-             * Whether the query is active and listening for GeoQuery events.
-             */
-            idle: {
-              type: Boolean,
-              value: false,
-              reflectToAttribute: true,
-            //          observer: '_idleChanged'
-            },
+      /**
+       * Whether the query is active and listening for GeoQuery events.
+       */
+      idle: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+      //          observer: '_idleChanged'
+      },
 
-            /**
-             * An array managed by the GeoQuery events.
-             * Each element is an object with properties `key, lat, lng, location, distance`.
-             */
-            resultsArray: {
-              type: Array,
-              notify: true
-            },
+      /**
+       * An array managed by the GeoQuery events.
+       * Each element is an object with properties `key, lat, lng, location, distance`.
+       */
+      resultsArray: {
+        type: Array,
+        notify: true
+      },
 
-            /**
-             * An object managed by the GeoQuery events.
-             * It is a map of key => {`lat, lng, location, distance`}.
-             */
-            resultsObject: {
-              type: Object,
-              notify: true
-            }
-          },
-          observers: [
-            '_idleChanged(idle, query)',
-            '_queryChanged(geofire, lat, lng, radius)'
-          ]
-        }
+      /**
+       * An object managed by the GeoQuery events.
+       * It is a map of key => {`lat, lng, location, distance`}.
+       */
+      resultsObject: {
+        type: Object,
+        notify: true
       }
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        super.connectedCallback();
-      }
-
-      _idleChanged(idle, query) {
-        if (!query) return;
-        if (!idle) {
+    },
+    observers: [
+      '_idleChanged(idle, query)',
+      '_queryChanged(geofire, lat, lng, radius)'
+    ],
+    _idleChanged: function(idle, query) {
+      if (!query) return;
+      if (!idle) {
 
 
-          this.resultsObject = {};
-          this.resultsArray = [];
+        this.resultsObject = {};
+        this.resultsArray = [];
 
-          this.notifyPath('resultsObject');
-          this.notifyPath('resultsArray');
+        this.notifyPath('resultsObject');
+        this.notifyPath('resultsArray');
 
-          // Key entered event
-          this.onKeyEnteredRegistration = query.on('key_entered', function(key, location, distance) {
-            LOG && log.v('key-entered', key, location, distance);
+        // Key entered event
+        this.onKeyEnteredRegistration = query.on('key_entered', function(key, location, distance) {
+          LOG && log.v('key-entered', key, location, distance);
 
-            // Object changes
-            this.resultsObject[key] = {
-              lat: location[0],
-              lng: location[1],
-              location: location,
-              distance: distance
-            };
-            this.notifyPath('resultsObject.' + key);
-
-            // Array changes
-            var data = {
-              key: key,
-              lat: location[0],
-              lng: location[1],
-              location: location,
-              distance: distance
-            };
-            this.push('resultsArray', data);
-
-            fire(this, 'key-entered', data);
-          }.bind(this));
-
-          // Key exited event
-          this.onKeyExitedRegistration = query.on("key_exited", function(key, location, distance) {
-            LOG && log.v('key-exited', key, location, distance);
-
-            // Object changes
-            this.resultsObject[key] = null;
-            this.notifyPath('resultsObject.' + key);
-
-            // Array changes
-            for (var i = 0; i < this.resultsArray.length; i++) {
-              if (this.resultsArray[i].key == key) {
-                this.splice('resultsArray', i, 1);
-                break;
-              }
-            }
-
-            fire(this, 'key-exited', {
-              key: key,
-              lat: location[0],
-              lng: location[1],
-              location: location,
-              distance: distance
-            });
-          }.bind(this));
-
-          // Key moved event
-          this.onKeyMovedRegistration = query.on("key_moved", function(key, location, distance) {
-            LOG && log.v('key-moved', key, location, distance);
-
-            // Object changes
-            this.resultsObject[key] = {
-              lat: location[0],
-              lng: location[1],
-              location: location,
-              distance: distance
-            };
-            this.notifyPath('resultsObject.' + key);
-
-            // Array changes
-            var data = {
-              key: key,
-              lat: location[0],
-              lng: location[1],
-              location: location,
-              distance: distance
-            };
-            for (var i = 0; i < this.resultsArray.length; i++) {
-              if (this.resultsArray[i].key == key) {
-                this.resultsArray[i] = data;
-                this.notifyPath('resultsArray.' + i);
-                break;
-              }
-            }
-
-            fire(this, 'key-moved', data);
-          }.bind(this));
-
-          // Ready event
-          this.onReadyRegistration = query.on("ready", function() {
-            LOG && log.v('ready');
-            fire(this, 'ready');
-          }.bind(this));
-
-        } else {
-          // The query is idle, cancel event listeners and set the query to null
-          // so that it can be reused.
-          query.cancel();
-          query = null;
-
-          // This shouldn't be needed, but just in case.
-          if (this.query) {
-            this.query.cancel();
-            this.query = null;
-          }
-        }
-      }
-
-      _queryChanged(geofire, lat, lng, radius) {
-        if ((lat || lat === 0) && (lng || lng === 0) && radius) {
-          var criteria = {
-            center: [lat, lng],
-            radius: radius
+          // Object changes
+          this.resultsObject[key] = {
+            lat: location[0],
+            lng: location[1],
+            location: location,
+            distance: distance
           };
-          if (this.query) {
-            this.query.updateCriteria(criteria);
-          } else if (geofire) {
-            this.query = geofire.query(criteria);
+          this.notifyPath('resultsObject.' + key);
+
+          // Array changes
+          var data = {
+            key: key,
+            lat: location[0],
+            lng: location[1],
+            location: location,
+            distance: distance
+          };
+          this.push('resultsArray', data);
+
+          fire(this, 'key-entered', data);
+        }.bind(this));
+
+        // Key exited event
+        this.onKeyExitedRegistration = query.on("key_exited", function(key, location, distance) {
+          LOG && log.v('key-exited', key, location, distance);
+
+          // Object changes
+          this.resultsObject[key] = null;
+          this.notifyPath('resultsObject.' + key);
+
+          // Array changes
+          for (var i = 0; i < this.resultsArray.length; i++) {
+            if (this.resultsArray[i].key == key) {
+              this.splice('resultsArray', i, 1);
+              break;
+            }
           }
+
+          fire(this, 'key-exited', {
+            key: key,
+            lat: location[0],
+            lng: location[1],
+            location: location,
+            distance: distance
+          });
+        }.bind(this));
+
+        // Key moved event
+        this.onKeyMovedRegistration = query.on("key_moved", function(key, location, distance) {
+          LOG && log.v('key-moved', key, location, distance);
+
+          // Object changes
+          this.resultsObject[key] = {
+            lat: location[0],
+            lng: location[1],
+            location: location,
+            distance: distance
+          };
+          this.notifyPath('resultsObject.' + key);
+
+          // Array changes
+          var data = {
+            key: key,
+            lat: location[0],
+            lng: location[1],
+            location: location,
+            distance: distance
+          };
+          for (var i = 0; i < this.resultsArray.length; i++) {
+            if (this.resultsArray[i].key == key) {
+              this.resultsArray[i] = data;
+              this.notifyPath('resultsArray.' + i);
+              break;
+            }
+          }
+
+          fire(this, 'key-moved', data);
+        }.bind(this));
+
+        // Ready event
+        this.onReadyRegistration = query.on("ready", function() {
+          LOG && log.v('ready');
+          fire(this, 'ready');
+        }.bind(this));
+
+      } else {
+        // The query is idle, cancel event listeners and set the query to null
+        // so that it can be reused.
+        query.cancel();
+        query = null;
+
+        // This shouldn't be needed, but just in case.
+        if (this.query) {
+          this.query.cancel();
+          this.query = null;
         }
       }
+    },
 
-      /**
-       * Corresponds to the GeoQuery's `key_entered` event. Fires after updating the internal results.
-       * @event key-entered
-       * @param {key} string The location's identifier.
-       * @param {lat} number Latitude.
-       * @param {lng} number Longitude.
-       * @param {location} array [lat, lng] shorthand.
-       * @param {distance} number Distance from the query's center, in kilometers.
-       */
-
-      /**
-       * Corresponds to the GeoQuery's `key_exited` event. Fires after updating the internal results.
-       * @event key-exited
-       * @param {key} string The location's identifier.
-       * @param {lat} number Latitude.
-       * @param {lng} number Longitude.
-       * @param {location} array [lat, lng].
-       * @param {distance} number Distance from the query's center, in kilometers.
-       */
-
-      /**
-       * Corresponds to the GeoQuery's `key_moved` event. Fires after updating the internal results.
-       * @event key-moved
-       * @param {key} string The location's identifier.
-       * @param {lat} number Latitude.
-       * @param {lng} number Longitude.
-       * @param {location} array [lat, lng].
-       * @param {distance} number Distance from the query's center, in kilometers.
-       */
-
-      /**
-       * Corresponds to the GeoQuery's `ready` event. Fired when the initial result set of the query is ready.
-       * @event ready
-       */
+    _queryChanged: function(geofire, lat, lng, radius) {
+      if ((lat || lat === 0) && (lng || lng === 0) && radius) {
+        var criteria = {
+          center: [lat, lng],
+          radius: radius
+        };
+        if (this.query) {
+          this.query.updateCriteria(criteria);
+        } else if (geofire) {
+          this.query = geofire.query(criteria);
+        }
+      }
     }
-    // Register custom element definition using standard platform API
-    customElements.define(GeofireQuery.is, GeofireQuery);
+
+    /**
+     * Corresponds to the GeoQuery's `key_entered` event. Fires after updating the internal results.
+     * @event key-entered
+     * @param {key} string The location's identifier.
+     * @param {lat} number Latitude.
+     * @param {lng} number Longitude.
+     * @param {location} array [lat, lng] shorthand.
+     * @param {distance} number Distance from the query's center, in kilometers.
+     */
+
+    /**
+     * Corresponds to the GeoQuery's `key_exited` event. Fires after updating the internal results.
+     * @event key-exited
+     * @param {key} string The location's identifier.
+     * @param {lat} number Latitude.
+     * @param {lng} number Longitude.
+     * @param {location} array [lat, lng].
+     * @param {distance} number Distance from the query's center, in kilometers.
+     */
+
+    /**
+     * Corresponds to the GeoQuery's `key_moved` event. Fires after updating the internal results.
+     * @event key-moved
+     * @param {key} string The location's identifier.
+     * @param {lat} number Latitude.
+     * @param {lng} number Longitude.
+     * @param {location} array [lat, lng].
+     * @param {distance} number Distance from the query's center, in kilometers.
+     */
+
+    /**
+     * Corresponds to the GeoQuery's `ready` event. Fired when the initial result set of the query is ready.
+     * @event ready
+     */
+  });
   </script>
 </dom-module>

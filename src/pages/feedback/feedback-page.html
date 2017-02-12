@@ -30,33 +30,21 @@
   </template>
 
   <script>
-    class FeedbackPage extends Polymer.Element {
-      static get is() { return 'feedback-page'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            auth: Object
-          }
-        }
-      }
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        super.connectedCallback();
-      }
-      sendFeedback() {
-        var feedback = this.$.input.value;
-        if (feedback && feedback.length >= 10 && feedback.length <= 500) {
-          db.users.sendFeedback(this.auth.uid, feedback, function () {
-            showSuccessToast('Feedback sent!');
-          }, showServerErrorToast);
-        } else {
-          this.$.input.invalid = true;
-        }
+  Polymer({
+    is: 'feedback-page',
+    properties: {
+      auth: Object
+    },
+    sendFeedback: function() {
+      var feedback = this.$.input.value;
+      if (feedback && feedback.length >= 10 && feedback.length <= 500) {
+        db.users.sendFeedback(this.auth.uid, feedback, function () {
+          showSuccessToast('Feedback sent!');
+        }, showServerErrorToast);
+      } else {
+        this.$.input.invalid = true;
       }
     }
-    // Register custom element definition using standard platform API
-    customElements.define(FeedbackPage.is, FeedbackPage);
+  });
   </script>
 </dom-module>

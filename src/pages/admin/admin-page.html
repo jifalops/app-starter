@@ -33,56 +33,44 @@
   </template>
 
   <script>
-    class AdminPage extends Polymer.Element {
-      static get is() { return 'admin-page'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            auth: {
-              type: Object,
-              observer: '_authChanged'
-            },
-            hasRoot: {
-              type: Boolean,
-              value: true,
-              readOnly: true
-            },
-            hasAccess: {
-              type: Boolean,
-              value: false,
-              computed: '_hasAccess(auth, hasRoot)'
-            }
-          }
-        }
+  Polymer({
+    is: 'admin-page',
+    properties: {
+      auth: {
+        type: Object,
+        observer: '_authChanged'
+      },
+      hasRoot: {
+        type: Boolean,
+        value: true,
+        readOnly: true
+      },
+      hasAccess: {
+        type: Boolean,
+        value: false,
+        computed: '_hasAccess(auth, hasRoot)'
       }
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        super.connectedCallback();
-      }
+    },
 
-      _authChanged(auth, prev) {
-        if (auth && !prev) {
-          db.watch('/roles/hasRoot', function(hasRoot) {
-            this._setHasRoot(!isEmpty(hasRoot));
-          }.bind(this));
-        }
+    _authChanged: function(auth, prev) {
+      if (auth && !prev) {
+        db.watch('/roles/hasRoot', function(hasRoot) {
+          this._setHasRoot(!isEmpty(hasRoot));
+        }.bind(this));
       }
+    },
 
-      _hasAccess(auth, hasRoot) {
-        return auth && (!hasRoot || (auth.user && auth.user.isElevated));
-      }
+    _hasAccess: function(auth, hasRoot) {
+      return auth && (!hasRoot || (auth.user && auth.user.isElevated));
+    },
 
-      becomeRoot() {
-        db.admin.becomeRoot(this.auth.uid, function () {
-          showSuccessToast('You are now root.');
-        }, function () {
-          showErrorToast('Failed to become root.');
-        });
-      }
+    becomeRoot: function() {
+      db.admin.becomeRoot(this.auth.uid, function () {
+        showSuccessToast('You are now root.');
+      }, function () {
+        showErrorToast('Failed to become root.');
+      });
     }
-    // Register custom element definition using standard platform API
-    customElements.define(AdminPage.is, AdminPage);
+  });
   </script>
 </dom-module>

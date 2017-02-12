@@ -16,7 +16,6 @@
 <link rel="import" href="components/firebase-auth-wrapper.html">
 <link rel="import" href="components/auth-loader.html">
 <link rel="import" href="components/value-history.html">
-<link rel="import" href="components/main-navigation.html">
 <link rel="import" href="components/app-logo.html">
 <link rel="import" href="components/basic-toast.html">
 <link rel="import" href="components/dialogs/confirm-dialog.html">
@@ -171,87 +170,74 @@
   </template>
 
   <script>
-    class AppShell extends Polymer.Element {
-      static get is() { return 'app-shell'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            app: {
-              type: Object,
-              observer: '_onFirebaseAppChanged'
-            }
-          },
-          observers: [
-            '_routePageChanged(routeData.page)'
-          ],
-        }
+  Polymer({
+    is: 'app-shell',
+    properties: {
+      app: {
+        type: Object,
+        observer: '_onFirebaseAppChanged'
+      },
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+    },
+    _onFirebaseAppChanged: function(app, old) {
+      if (app && !old) {
+        LOG && log.d('Firebase app ready');
       }
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        super.connectedCallback();
+    },
+
+    _routePageChanged: function(page) {
+      LOG && ROUTE && log.v('page changed:', page);
+      var file = this._fileForPage(page);
+      if (!page || !file) {
+        redirect('/users/map');
+        return;
       }
 
-      _onFirebaseAppChanged(app, old) {
-        if (app && !old) {
-          LOG && log.d('Firebase app ready');
-        }
+      // load page import on demand.
+      var url = this.resolveUrl(file);
+      Polymer.Utils.importHref(url, function() {
+        LOG && ROUTE && log.v('imported', url);
+      }.bind(this), function() {
+        LOG && log.e('failed to import', url);
+      }, true);
+    },
+
+    _fileForPage: function(page) {
+      switch (page) {
+        case 'users':      return '/src/pages/users/users-page.html';
+        case 'user':       return '/src/pages/user/user-page.html';
+        case 'login':      return '/src/pages/login-register/login-register-page.html';
+        case 'register':   return '/src/pages/login-register/login-register-page.html';
+        case 'feedback':   return '/src/pages/feedback/feedback-page.html';
+        case 'admin':      return '/src/pages/admin/admin-page.html';
+        case 'test':       return '/src/pages/test/test-page.html';
       }
+    },
 
-      _routePageChanged(page) {
-        LOG && ROUTE && log.v('page changed:', page);
-        var file = this._fileForPage(page);
-        if (!page || !file) {
-          redirect('/users/map');
-          return;
-        }
-
-        // load page import on demand.
-        var url = this.resolveUrl(file);
-        Polymer.Utils.importHref(url, function() {
-          LOG && ROUTE && log.v('imported', url);
-        }.bind(this), function() {
-          LOG && log.e('failed to import', url);
-        }, true);
-      }
-
-      _fileForPage(page) {
-        switch (page) {
-          case 'users':      return '/src/pages/users/users-page.html';
-          case 'user':       return '/src/pages/user/user-page.html';
-          case 'login':      return '/src/pages/login-register/login-register-page.html';
-          case 'register':   return '/src/pages/login-register/login-register-page.html';
-          case 'feedback':   return '/src/pages/feedback/feedback-page.html';
-          case 'admin':      return '/src/pages/admin/admin-page.html';
-          case 'test':       return '/src/pages/test/test-page.html';
-        }
-      }
-
-      loginRegister(e, data) {
-        LOG && log.v('Signing in using', data.provider);
-        if (data.provider == 'username') {
-          if (data.isRegistering) {
-            this.username = data.username;
-            this.$.auth.registerUser(data.username, data.password, null,
-              showServerErrorToast, showServerErrorToast);
-          } else {
-            this.$.auth.usernameLogin(data.username, data.password, null,
-              showServerErrorToast, showServerErrorToast);
-          }
+    loginRegister: function(e, data) {
+      LOG && log.v('Signing in using', data.provider);
+      if (data.provider == 'username') {
+        if (data.isRegistering) {
+          this.username = data.username;
+          this.$.auth.registerUser(data.username, data.password, null,
+            showServerErrorToast, showServerErrorToast);
         } else {
-          this.$.auth.providerLogin(data.provider, null,
+          this.$.auth.usernameLogin(data.username, data.password, null,
             showServerErrorToast, showServerErrorToast);
         }
+      } else {
+        this.$.auth.providerLogin(data.provider, null,
+          showServerErrorToast, showServerErrorToast);
       }
+    },
 
-      logout() {
-        this.$.auth.logout(function() {
-          // goBack();
-        }, showServerErrorToast, showServerErrorToast);
-      }
+    logout: function() {
+      this.$.auth.logout(function() {
+        // goBack();
+      }, showServerErrorToast, showServerErrorToast);
     }
-    // Register custom element definition using standard platform API
-    customElements.define(AppShell.is, AppShell);
+  });
   </script>
 </dom-module>

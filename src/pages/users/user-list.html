@@ -45,31 +45,18 @@
   </template>
 
   <script>
-    class UserList extends Polymer.Element {
-      static get is() { return 'user-list'; }
-      static get config() {
-        return { /* properties, observers meta data */
-          properties: {
-            auth: Object,
-            users: {
-              type: Array,
-            }
-          }
-        }
+  Polymer({
+    is: 'user-list',
+    properties: {
+      auth: Object,
+      users: {
+        type: Array,
       }
-      constructor() {
-        super();
-      }
-      connectedCallback() {
-        super.connectedCallback();
-      }
-
-      notifyResize() {
-        this.$.list.notifyResize();
-      }
+    },
+    notifyResize() {
+      this.$.list.notifyResize();
     }
-    // Register custom element definition using standard platform API
-    customElements.define(UserList.is, UserList);
+  });
   </script>
 
 </dom-module>

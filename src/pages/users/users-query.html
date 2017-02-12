@@ -45,69 +45,62 @@
     </div>
 </template>
 <script>
-class UsersQuery extends Polymer.Element {
-  static get is() { return 'users-query'; }
-  static get config() {
-    return { /* properties, observers meta data */
-      properties: {
-        app: {
-          type: Object,
-          value: null,
-          observer: '_appChanged'
-        },
-        auth: Object,
-        geofire: {
-          type: Object,
-          value: null
-        },
+Polymer({
+  is: 'users-query',
+  properties: {
+    app: {
+      type: Object,
+      value: null,
+      observer: '_appChanged'
+    },
+    auth: Object,
+    geofire: {
+      type: Object,
+      value: null
+    },
 
-        lat: {
-          type: Number,
-          notify: true
-        },
-        lng: {
-          type: Number,
-          notify: true
-        },
-        radiusKm: {
-          type: Number,
-          notify: true
-        },
-        radiusOptions: {
-          type: Array,
-          value: function() { return [1000, 5000, 10000, 15000]; }
-        },
-        geoUsers: {
-          type: Array,
-          notify: true,
-          observer: '_geoUsersChanged'
-        },
-        profiles: {
-          type: Array,
-          notify: true
-        }
-      },
-      observers: [
-        '_userLocationChanged(useCurrentLocation, userLat, userLng)'
-      ]
+    lat: {
+      type: Number,
+      notify: true
+    },
+    lng: {
+      type: Number,
+      notify: true
+    },
+    radiusKm: {
+      type: Number,
+      notify: true
+    },
+    radiusOptions: {
+      type: Array,
+      value: function() { return [1000, 5000, 10000, 15000]; }
+    },
+    geoUsers: {
+      type: Array,
+      notify: true,
+      observer: '_geoUsersChanged'
+    },
+    profiles: {
+      type: Array,
+      notify: true
     }
-  }
-  constructor() {
-    super();
-    this.useCurrentLocation = false;
-  }
-  connectedCallback() {
-    super.connectedCallback();
-  }
+  },
+  observers: [
+    '_userLocationChanged(useCurrentLocation, userLat, userLng)'
+  ],
 
-  _appChanged(app, old) {
+  created: function() {
+    this.useCurrentLocation = false;
+  },
+
+  _appChanged: function(app, old) {
     if (app && !old) {
         LOG && log.d('Initializing geofire');
         this.geofire = new GeoFire(db.ref('geoUsers'));
     }
-  }
+  },
 
-  _geoUsersChanged(geoUsers, old) {
+  _geoUsersChanged: function(geoUsers, old) {
     LOG && log.v('geoUsers changed', geoUsers);
     this.profiles = [];
 
@@ -116,9 +109,9 @@ class UsersQuery extends Polymer.Element {
     for (var i = 0; i < geoUsers.length; i++) {
       this._loadProfile(geoUsers[i], i);
     }
-  }
+  },
 
-  _loadProfile(geoUser, index) {
+  _loadProfile: function(geoUser, index) {
     db.watch('/profiles/' + geoUser.key, function(profile) {
       profile.$key = geoUser.key;
       profile.lat = geoUser.lat;
@@ -135,9 +128,9 @@ class UsersQuery extends Polymer.Element {
       // this.profiles = [];
       // this.profiles = profiles;
     }.bind(this));
-  }
+  },
 
-  _queryChanged(e, data) {
+  _queryChanged: function(e, data) {
     LOG && log.v('Query changed', data);
     this.useCurrentLocation = data.useCurrentLocation;
     this.radiusKm = data.radiusKm;
@@ -160,46 +153,44 @@ class UsersQuery extends Polymer.Element {
         this.lng = cached[2];
       }
     }
-  }
+  },
 
-  _userLocationChanged(useCurrentLocation, userLat, userLng) {
+  _userLocationChanged: function(useCurrentLocation, userLat, userLng) {
     if (this.useCurrentLocation && userLat && userLng) {
       LOG && log.v('Map will use user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
       if (this.addingUser) this._doAddUser();
     }
-  }
+  },
 
-  _summary(geoUsers, len) {
+  _summary: function(geoUsers, len) {
     len = len || '~';
     return len + (len == 1 ? ' result.' : ' results.');
-  }
+  },
 
-  _addUser() {
+  _addUser: function() {
     this.addingUser = true;
     if (!this.useCurrentLocation) {
       this.useCurrentLocation = true;
     } else if (this.userLat && this.userLng) {
       this._doAddUser();
     }
-  }
+  },
 
-  _doAddUser() {
+  _doAddUser: function() {
     var lat = perturbCoordinate(this.userLat);
     var lng = perturbCoordinate(this.userLng);
     var dist = GeoFire.distance([this.userLat, this.userLng], [lat, lng]);
     LOG && log.v('Anonymizing to', dist, 'km away.');
     db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
     this.addingUser = false;
-  }
+  },
 
-  _onResultsReady() {
+  _onResultsReady: function() {
     // LOG && log.v('results ready', this.$.query.resultsArray);
     this.geoUsers = this.$.query.resultsArray;
   }
-}
-// Register custom element definition using standard platform API
-customElements.define(UsersQuery.is, UsersQuery);
+});
 </script>
 </dom-module>

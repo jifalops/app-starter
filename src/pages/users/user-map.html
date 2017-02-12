@@ -52,51 +52,41 @@
     </google-map>
 </template>
 <script>
-class UserMap extends Polymer.Element {
-  static get is() { return 'user-map'; }
-  static get config() {
-    return { /* properties, observers meta data */
-      properties: {
-        auth: Object,
-        users: Array,
-        lat: {
-          type: Number,
-          value: 41.651
-        },
-        lng: {
-          type: Number,
-          value: -83.542
-        },
-        radiusKm: {
-          type: Number,
-          value: 0
-        }
-      }
+Polymer({
+  is: 'user-map',
+  properties: {
+    auth: Object,
+    users: Array,
+    lat: {
+      type: Number,
+      value: 41.651
+    },
+    lng: {
+      type: Number,
+      value: -83.542
+    },
+    radiusKm: {
+      type: Number,
+      value: 0
     }
-  }
-  constructor() {
-    super();
-  }
-  connectedCallback() {
-    super.connectedCallback();
-  }
-  _filterLat(lat) {
+  },
+  _filterLat: function(lat) {
     return lat ? lat : 41.651;
-  }
-  _filterLng(lng) {
+  },
+  _filterLng: function(lng) {
     return lng ? lng : -83.542;
-  }
+  },
   /**
    * Convert miles to a google map's zoom, based on a zoom of 14 ~= 1 mile.
    */
-  _radiusToZoom(radius, metric) {
+  _radiusToZoom: function(radius, metric) {
     if (radius == 0) return 1;
     if (metric) radius = kmToMiles(radius);
     var zoom = Math.round(14 - Math.log(radius) / Math.LN2);
     // console.log('zoom', zoom);
     return zoom < 1 ? 1 : zoom;
-  }
-  _toggleInfoWindow(e) {
+  },
+  _toggleInfoWindow: function(e) {
     var marker = e.target.marker;
     var post = e.model.post;
     this.infoWindows = this.infoWindows || {};
@@ -112,18 +102,16 @@ class UserMap extends Polymer.Element {
       info.open(this.map, marker);
       this.infoWindows[post.$key] = info;
     }
-  }
-  _infoWindowClosed(e) {
+  },
+  _infoWindowClosed: function(e) {
     console.log('closed info window');
     var post = e.model.post;
     this.infoWindows = this.infoWindows || {};
     this.infoWindows[post.$key] = null;
-  }
-  _mapLoaded() {
+  },
+  _mapLoaded: function() {
     LOG && log.d('Google maps api has loaded');
   }
-}
-// Register custom element definition using standard platform API
-customElements.define(UserMap.is, UserMap);
+});
 </script>
 </dom-module>
