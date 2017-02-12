@@ -15,6 +15,7 @@ db.appName = '';
  * The app's Firebase database reference.
  */
 db.ref = function(path) {
+  // DB && log.v('checking firebase', firebase, firebase.app(db.appName));
   return firebase.app(db.appName).database().ref(path);
 };
 

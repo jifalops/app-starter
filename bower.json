@@ -5,7 +5,7 @@
   "dependencies": {
     "polymer": "^1.8.0",
     "firebase": "^3.6.8",
-    "polymerfire": "^0.10.3",
+    "polymerfire": "0.10.0",
     "iron-flex-layout": "^1.3.1",
     "paper-styles": "^1.1.5",
     "paper-input": "^1.1.23",
@@ -43,5 +43,8 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
     "web-component-tester": "^4.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "resolutions": {
+    "polymerfire": "0.10.0"
   }
 }
