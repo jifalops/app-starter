@@ -11,11 +11,12 @@
       }
 
       iron-list {
-        min-height: 400px;
+        /*min-height: 400px;*/
       }
     </style>
 
-    <paper-material>
+    <paper-material class="layout vertical">
+      <span class="font-title self-center">User list</span>
       <iron-list
         id="list"
         selection-enabled
@@ -28,6 +29,18 @@
           </div>
         </template>
       </iron-list>
+
+      <!-- FIXME use iron-list when it is available -->
+      <dom-repeat items="[[users]]" as="user">
+        <template>
+          <div class="font-subhead">User</div>
+          <div class="font-small">[[user.$key]]</div>
+          <div class="font-subhead">Name</div>
+          <div class="font-small">[[user.name]]</div>
+          <div class="font-subhead">Distance (km)</div>
+          <div class="font-small">[[user.distance]]</div>
+        </template>
+      </dom-repeat>
     </paper-material>
   </template>
 

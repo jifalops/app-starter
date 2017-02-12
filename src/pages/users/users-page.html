@@ -6,8 +6,6 @@
 <link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="/src/header.html">
 <link rel="import" href="users-query.html">
-<link rel="import" href="user-list.html">
-<link rel="import" href="user-map.html">
 
 
 <!--
@@ -33,14 +31,6 @@
     data="{{routeData}}"
     tail="{{subroute}}"></app-route>
 
-  <paper-tabs
-    fit-container
-    selected="[[routeData.page]]"
-    attr-for-selected="name"
-    role="navigation">
-    <paper-tab name="list"><a plain href='/users/list'><span>List</span></a></paper-tab>
-    <paper-tab name="map"><a plain href='/users/map'><span>Map</span></a></paper-tab>
-  </paper-tabs>
 
   <paper-material class="layout vertical">
     <span class="font-headline self-center">Users</span>
@@ -53,6 +43,16 @@
       radius-km="{{radiusKm}}">
     </users-query>
   </paper-material>
+
+  <paper-tabs
+    fit-container
+    selected="[[routeData.page]]"
+    attr-for-selected="name"
+    role="navigation">
+    <paper-tab name="list"><a plain href='/users/list'><span>List</span></a></paper-tab>
+    <paper-tab name="map"><a plain href='/users/map'><span>Map</span></a></paper-tab>
+  </paper-tabs>
+
 
   <neon-animated-pages selected="[[routeData.page]]" attr-for-selected="name">
     <neon-animatable name="list" entry-animation="slide-from-left-animation" exit-animation="slide-left-animation">
@@ -75,11 +75,6 @@
       </paper-material>
     </neon-animatable>
   </neon-animated-pages>
-
-
-  <paper-material>
-
-  </paper-material>
 </template>
 <script>
 class UsersPage extends Polymer.Element {

@@ -26,13 +26,23 @@
       map="{{map}}"
       on-google-map-ready="_mapLoaded"
       zoom="[[_radiusToZoom(radiusKm, 'true')]]">
+
+      <!-- <google-map-marker
+        latitude="41.1623"
+        longitude="-82.0871"
+        title="[[auth.profile.name]]"
+        click-events
+        map="[[map]]"
+        on-google-map-marker-click="_toggleInfoWindow"
+        on-google-map-marker-close="_infoWindowClosed">
+      </google-map-marker> -->
+
       <dom-repeat items="[[users]]" as="user">
         <template>
         <google-map-marker
           latitude="[[user.lat]]"
           longitude="[[user.lng]]"
           title="[[user.name]]"
-          click-events
           map="[[map]]"
           on-google-map-marker-click="_toggleInfoWindow"
           on-google-map-marker-close="_infoWindowClosed">

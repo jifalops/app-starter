@@ -26,15 +26,15 @@
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
   <geofire-query
+    id="query"
     geofire="[[geofire]]"
     lat="[[lat]]"
     lng="[[lng]]"
     radius="[[radiusKm]]"
-    results-array="{{geoUsers}}"></geofire-query>
+    on-ready="_onResultsReady"></geofire-query>
 
     <div class="layout vertical center">
       <geo-query-input
-        use-current-location$="{{useCurrentLocation}}"
         radius="1000"
         radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
@@ -88,7 +88,7 @@ class UsersQuery extends Polymer.Element {
         }
       },
       observers: [
-        '_userLocationChanged(userLat, userLng)'
+        '_userLocationChanged(useCurrentLocation, userLat, userLng)'
       ]
     }
   }
@@ -121,7 +121,10 @@ class UsersQuery extends Polymer.Element {
   _loadProfile(geoUser, index) {
     db.watch('/profiles/' + geoUser.key, function(profile) {
       profile.$key = geoUser.key;
+      profile.lat = geoUser.lat;
+      profile.lng = geoUser.lng;
       profile.distance = kmToMiles(geoUser.distance);
+
       LOG && log.v('setting profile index', index, profile);
       this.set('profiles.' + index, profile);
       // TODO can result in incorrect order.
@@ -136,11 +139,10 @@ class UsersQuery extends Polymer.Element {
 
   _queryChanged(e, data) {
     LOG && log.v('Query changed', data);
+    this.useCurrentLocation = data.useCurrentLocation;
     this.radiusKm = data.radiusKm;
     if (data.useCurrentLocation) {
-      this.lat = this.userLat;
-      this.lng = this.userLng;
-      if (this.addingUser) this._doAddUser();
+
     } else {
       this.cache = this.cache || {};
       var cached = this.cache[data.location];
@@ -160,10 +162,12 @@ class UsersQuery extends Polymer.Element {
     }
   }
 
-  _userLocationChanged(userLat, userLng) {
-    if (this.useCurrentLocation) {
+  _userLocationChanged(useCurrentLocation, userLat, userLng) {
+    if (this.useCurrentLocation && userLat && userLng) {
+      LOG && log.v('Map will use user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
+      if (this.addingUser) this._doAddUser();
     }
   }
 
@@ -188,6 +192,11 @@ class UsersQuery extends Polymer.Element {
     LOG && log.v('Anonymizing to', dist, 'km away.');
     db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
     this.addingUser = false;
+  }
+
+  _onResultsReady() {
+    // LOG && log.v('results ready', this.$.query.resultsArray);
+    this.geoUsers = this.$.query.resultsArray;
   }
 }
 // Register custom element definition using standard platform API
