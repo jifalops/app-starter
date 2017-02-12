@@ -82,7 +82,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
           value="{{location}}"
           label="[[inputLabel]]"
           auto-validate
-          autofocus          
+          autofocus
           minlength="3"
           error-message="[[errorMsg]]"></paper-input>
 
@@ -191,7 +191,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
               location: location,
               useCurrentLocation: useCurrentLocation
             });
-          }, 1000, this);
+          }.bind(this), 1000, this);
         }
       }
 

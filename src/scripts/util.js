@@ -112,3 +112,11 @@ function milesToKm(miles) {
 function kmToMiles(km) {
   return km / 1.60934;
 }
+
+function makeEnum() {
+  var e = {};
+  for (var i = 0; i < arguments.length; i++) {
+    e[arguments[i]] = arguments[i];
+  }
+  return Object.freeze(e);
+}
