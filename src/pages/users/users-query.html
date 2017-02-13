@@ -173,7 +173,7 @@ Polymer({
 
   _userLocationChanged: function(useCurrentLocation, userLat, userLng) {
     if (useCurrentLocation && userLat && userLng) {
-      LOG && log.v('Using user\'s coordinates');
+      GEOFIRE && log.v('Using user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
       if (this.addingUser) this._doAddUser();
@@ -181,7 +181,7 @@ Polymer({
   },
 
   _summary: function(geoUsers, len) {
-    len = len || '~';
+    if (!geoUsers) len = "~";    
     return len + (len == 1 ? ' result.' : ' results.');
   },
 

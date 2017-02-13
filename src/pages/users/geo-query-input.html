@@ -22,8 +22,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
         margin: 0 4px;
       }
       paper-dropdown-menu {
-        width: 4.1em;
-        margin: 0 4px;
+        max-width: 4em;
         --paper-dropdown-menu-input: {
           /*FIXME if this line is removed, setting the font size has no effect*/
           --paper-input-container: {
@@ -34,8 +33,16 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
           };
           --paper-input-container-input: {
             @apply --font-small;
+            text-align: right;
           };
         };
+      }
+      .radius-menu {
+        margin: 0 4px;
+      }
+      .unit-menu {
+        width: 3em;
+        margin-right: 4px;
       }
       paper-item {
         --paper-item: {
@@ -73,7 +80,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
     <div class="layout horizontal center wrap">
       <div>
         Within
-        <paper-dropdown-menu no-animations noink no-label-float>
+        <paper-dropdown-menu class="radius-menu" no-animations noink no-label-float>
           <paper-listbox
             class="dropdown-content"
             attr-for-selected="value"
@@ -85,7 +92,16 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
             <!-- </dom-repeat> -->
           </paper-listbox>
         </paper-dropdown-menu>
-        [[_getDistanceUnit(metric)]] of
+        <paper-dropdown-menu class="unit-menu" no-animations noink no-label-float>
+          <paper-listbox
+            class="dropdown-content"
+            attr-for-selected="value"
+            selected="{{unit}}">
+            <paper-item value="km">km</paper-item>
+            <paper-item value="mi">mi</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        of
       </div>
       <div class="layout horizontal center">
         <paper-input
@@ -108,12 +124,12 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
     is: 'geo-query-input',
     properties: {
       /**
-       * Whether to use miles or kilometers. Defaults to miles.
+       * Whether to use miles or kilometers ('mi' or 'km'). Defaults to miles.
        */
-      metric: {
-        type: Boolean,
-        value: false,
-        reflectToAttribute: true
+      unit: {
+        type: String,
+        value: 'mi',
+        notify: true
       },
 
       /**
@@ -153,7 +169,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
 
       /**
        * The distance to search from [lat, lng], in miles or kilometers depending
-       * on the `metric` property.
+       * on the `unit` property.
        */
       radius: {
           type: Number,
@@ -170,7 +186,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
       }
     },
     observers: [
-      '_queryChanged(metric, radius, location, useCurrentLocation)'
+      '_queryChanged(unit, radius, location, useCurrentLocation)'
     ],
 
     created: function() {
@@ -183,15 +199,11 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
       }
     },
 
-    _getDistanceUnit: function(metric) {
-        return metric ? 'km' : 'miles';
-    },
-
-    _queryChanged: function(metric, radius, location, useCurrentLocation) {
+    _queryChanged: function(unit, radius, location, useCurrentLocation) {
       if (radius && (useCurrentLocation || (location && this.$.locationInput.validate()))) {
         this.debounce('query-changed', function() {
           fire(this, 'query-changed', {
-            radiusKm: metric ? radius : milesToKm(radius),
+            radiusKm: unit == 'km' ? radius : milesToKm(radius),
             location: location,
             useCurrentLocation: useCurrentLocation
           });

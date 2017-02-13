@@ -16,7 +16,8 @@
       display: block;
     }
     google-map {
-      min-height: 300px;
+      height: calc(100vh - 214px);
+      max-height: 600px;
     }
   </style>
     <google-map
@@ -85,7 +86,7 @@ Polymer({
     if (metric) radius = kmToMiles(radius);
     var zoom = Math.round(14 - Math.log(radius) / Math.LN2);
     // console.log('zoom', zoom);
-    return zoom < 0 ? 0 : zoom;
+    return zoom < 1 ? 1 : zoom;
   },
   _toggleInfoWindow: function(e) {
     var marker = e.target.marker;
