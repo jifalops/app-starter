@@ -43,7 +43,7 @@
           <paper-material class="layout horizontal center justified">
             <iron-image class="avatar small" src="[[user.pic]]"></iron-image>
             <a class="font-subhead" href="/user/[[user.$key]]">[[user.$key]]</a>
-            <div class="font-small">[[_round(user.distance)]] mi</div>
+            <div class="font-small">[[_round(user.distance)]] [[user.distanceUnit]]</div>
           </paper-material>
         </div>
       </template>

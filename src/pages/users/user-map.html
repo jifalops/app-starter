@@ -99,7 +99,7 @@ Polymer({
     } else {
       var contentString = '<img style="height:24px; width:24px" src="'+user.pic+'"/>'
         + '<div style="font-weight: bold;"><a href="/user/'+user.$key+'">'+user.$key+'</a></div>'
-        + '<div>'+round(user.distance, 1)+' miles away</div>'
+        + '<div>'+round(user.distance, 1)+' '+user.distanceUnit+' away</div>'
         + '</div>';
       info = new google.maps.InfoWindow({
           content: contentString

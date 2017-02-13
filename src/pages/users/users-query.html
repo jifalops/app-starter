@@ -44,6 +44,7 @@
       <geo-query-input
         location="usa"
         radius="2000"
+        unit="{{unit}}"
         radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
     </div>
@@ -124,7 +125,8 @@ Polymer({
       profile.$key = geoUser.key;
       profile.lat = geoUser.lat;
       profile.lng = geoUser.lng;
-      profile.distance = kmToMiles(geoUser.distance);
+      profile.distanceUnit = this.unit;
+      profile.distance = this.unit == 'km' ? geoUser.distance : kmToMiles(geoUser.distance);
 
       // LOG && log.v('setting profile index', index, profile);
       // TODO doesn't notify
@@ -181,7 +183,7 @@ Polymer({
   },
 
   _summary: function(geoUsers, len) {
-    if (!geoUsers) len = "~";    
+    if (!geoUsers) len = "~";
     return len + (len == 1 ? ' result.' : ' results.');
   },
 
