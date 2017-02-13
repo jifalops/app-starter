@@ -3,6 +3,7 @@
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/from-now/from-now.html">
 <link rel="import" href="/src/header.html">
 <dom-module id="user-page">
 <template>
@@ -12,6 +13,9 @@
     }
     .font-subhead {
       margin-top: 24px;
+    }
+    iron-icon {
+      color: green;
     }
   </style>
 
@@ -61,7 +65,7 @@
 
 
     <div class="font-subhead">Created</div>
-    <div>[[profile.created]]</div>
+    <from-now time="[[profile.created]]"></from-now>
   </paper-material>
 
   <paper-material hidden$="[[!amOwner]]" class="layout vertical">
@@ -69,7 +73,7 @@
     <div class="font-subhead">Login method</div>
     <div>[[auth.user.provider]]</div>
     <div class="font-subhead">Last Activity</div>
-    <div>[[auth.user.lastActivity]]</div>
+    <from-now time="[[auth.user.lastActivity]]"></from-now>
 
     <div hidden$="[[!auth.user.isModerator]]">
       <div class="font-subhead">Elevate Privilages</div>
@@ -94,7 +98,19 @@ Polymer({
   is: 'user-page',
   properties: {
     auth: Object,
-    route: Object
+    route: Object,
+    amOwner: {
+      type: Boolean,
+      value: false
+    },
+    editName: {
+      type: Boolean,
+      value: false
+    },
+    editPic: {
+      type: Boolean,
+      value: false
+    },
   },
   observers: [
     '_loadProfile(auth, routeData.user)'

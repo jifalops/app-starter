@@ -30,7 +30,7 @@
     </paper-material> -->
 
     <div class="heading layout horizontal center justified">
-      <div>Avatar</div><div>User</div><div>Dist.</div>
+      <div>Image</div><div>User</div><div>Dist.</div>
     </div>
     <iron-list
       id="list"
@@ -42,7 +42,7 @@
         <div>
           <paper-material class="layout horizontal center justified">
             <iron-image class="avatar small" src="[[user.pic]]"></iron-image>
-            <div class="font-subhead">[[user.$key]]</div>
+            <a class="font-subhead" href="/user/[[user.$key]]">[[user.$key]]</a>
             <div class="font-small">[[_round(user.distance)]] mi</div>
           </paper-material>
         </div>

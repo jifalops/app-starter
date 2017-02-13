@@ -15,3 +15,4 @@ A starting point for using Polymer, Firebase with email/username/provider login,
 
 ## Polymer 1.8 bugs
 * dom-repeat does not show.
+* paper-toast appears unstyled in the bottom left corner and doesn't disappeat

@@ -41,7 +41,7 @@ function perturbAggressive(value, minMagnitude, maxMagnitude, loop) {
   var p;
   if (!loop) {
     p = minMagnitude * randomRange(1, maxMagnitude / minMagnitude);
-    if (Math.random() < 0) p = -p;
+    if (Math.random() < 0.5) p = -p;
   } else {
     p = 0;
     while(Math.abs(p) < minMagnitude) {
@@ -57,5 +57,5 @@ function perturbAggressive(value, minMagnitude, maxMagnitude, loop) {
 function perturbCoordinate(coord) {
   // one decimal place ~= 11.1 km
   // two decimal places ~= 1.1 km
-  return perturbAggressive(coord, 0.1, 0.01);
+  return perturbAggressive(coord, 0.01, 0.1);
 }

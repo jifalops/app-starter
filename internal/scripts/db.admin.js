@@ -15,6 +15,7 @@ db.admin = {
     updates['/users/' + user + '/isMaintainer']  = true;
     updates['/users/' + user + '/isModerator']   = true;
     updates['/users/' + user + '/isElevated']    = true;
+    updates['/users/' + user + '/role']          = 'Root';
     db.update(updates, onSuccess, onFailure);
   }
 };

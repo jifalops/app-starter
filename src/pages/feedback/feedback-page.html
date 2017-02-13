@@ -40,7 +40,8 @@
       if (feedback && feedback.length >= 10 && feedback.length <= 500) {
         db.users.sendFeedback(this.auth.uid, feedback, function () {
           showSuccessToast('Feedback sent!');
-        }, showServerErrorToast);
+          this.$.input.value = "";
+        }.bind(this), showServerErrorToast);
       } else {
         this.$.input.invalid = true;
       }

@@ -97,7 +97,7 @@ Polymer({
       this.infoWindows[user.$key] = null;
     } else {
       var contentString = '<img style="height:24px; width:24px" src="'+user.pic+'"/>'
-        + '<div style="font-weight: bold;">'+user.$key+'</div>'
+        + '<div style="font-weight: bold;"><a href="/user/'+user.$key+'">'+user.$key+'</a></div>'
         + '<div>'+round(user.distance, 1)+' miles away</div>'
         + '</div>';
       info = new google.maps.InfoWindow({

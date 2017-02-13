@@ -1,4 +1,12 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../../bower_components/iron-collapse-button/iron-collapse-button.html">
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/from-now/from-now.html">
 <link rel="import" href="/src/header.html">
 
 <dom-module id="admin-page">
@@ -6,6 +14,18 @@
     <style include="app-styles">
       :host {
         display: block;
+      }
+      iron-list {
+        min-height: 200px;
+      }
+      iron-collapse-button {
+        margin-top: 24px;
+      }
+      paper-dropdown-menu {
+        width: 8em;
+      }
+      .list-item {
+        margin: 4px 8px;
       }
     </style>
 
@@ -23,12 +43,79 @@
         You do not have permission to view this page.
       </div>
 
-      <dom-if if="[[hasAccess]]">
-        <template>
+      <!-- <dom-if if="[[hasAccess]]"> -->
+      <template is="dom-if" if="[[hasAccess]]">
         <div class="font-headline">Welcome</div>
         <div>[[auth.profile.name]]</div>
+        <template is="dom-if" if="[[auth.user.isMaintainer]]">
+          <firebase-query
+            path="/users"
+            data="{{users}}">
+          </firebase-query>
+          <iron-collapse-button opened>
+            <div slot="collapse-trigger" class="flex font-title">Users</div>
+            <div slot="collapse-content">
+              <iron-list
+                id="userList"
+                selection-enabled
+                items="[[users]]"
+                as="user">
+                <template>
+                  <div>
+                    <div class="list-item layout horizontal center justified">
+                      <a class="font-subhead" href="/user/[[user.$key]]">[[user.$key]]</a>
+                      <from-now time="[[user.lastActivity]]"></from-now>
+                      <paper-dropdown-menu no-animations noink disabled$="[[!_canChangeRole(auth, user)]]">
+                        <paper-listbox
+                          class="dropdown-content"
+                          attr-for-selected="value"
+                          selected="[[user.role]]">
+                          <paper-item value="User">User</paper-item>
+                          <paper-item value="Moderator">Moderator</paper-item>
+                          <paper-item disabled$="[[!auth.user.isAdmin]]" value="Maintainer">Maintainer</paper-item>
+                          <paper-item disabled$="[[!auth.user.isSuperAdmin]]"value="Admin">Admin</paper-item>
+                          <paper-item disabled$="[[!auth.user.isRoot]]" value="Super admin">Super admin</paper-item>
+                          <paper-item disabled value="Root">Root</paper-item>
+                        </paper-listbox>
+                      </paper-dropdown-menu>
+                    </div>
+                  </div>
+                </template>
+              </iron-list>
+            </div>
+          </iron-collapse-button>
         </template>
-      </dom-if>
+        <template is="dom-if" if="[[auth.user.isModerator]]">
+          <firebase-query
+            path="/feedback"
+            data="{{feedbacks}}"
+            limit-to-last="50">
+          </firebase-query>
+          <iron-collapse-button opened>
+            <div slot="collapse-trigger" class="flex font-title">Feedback</div>
+            <div slot="collapse-content">
+              <iron-list
+                id="feedbackList"
+                selection-enabled
+                items="[[feedbacks]]"
+                as="feedback">
+                <template>
+                  <div>
+                    <div class="list-item">
+                      <div class="layout horizontal center justified">
+                        <a class="font-subhead" href="/user/[[feedback.user]]">[[feedback.user]]</a>
+                        <from-now time="[[feedback.created]]"></from-now>
+                      </div>
+                      <div>[[feedback.text]]</div>
+                    </div>
+                  </div>
+                </template>
+              </iron-list>
+            </div>
+          </iron-collapse-button>
+        </template>
+      </template>
+      <!-- </dom-if> -->
     </paper-material>
   </template>
 
@@ -70,6 +157,13 @@
       }, function () {
         showErrorToast('Failed to become root.');
       });
+    },
+
+    _canChangeRole: function(auth, user) {
+      return (auth.user.isRoot && !user.isRoot)
+        || (auth.user.isSuperAdmin && !user.isSuperAdmin)
+        || (auth.user.isAdmin && !user.isAdmin)
+        || (auth.user.isMaintainer && !user.isMaintainer);
     }
   });
   </script>
