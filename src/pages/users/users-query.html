@@ -16,8 +16,9 @@
       margin-bottom: 4px;*/
     }
     geo-query-input {
-      border-bottom: 1px solid var(--divider-color);
+      /*border-bottom: 1px solid var(--divider-color);*/
       padding: 0;
+      margin: 0;
     }
     .summary {
       margin: 2px 8px;
@@ -139,25 +140,31 @@ Polymer({
   },
 
   _queryChanged: function(e, data) {
-    LOG && log.v('Query changed', data);
+    GEOFIRE && log.v('Query changed', data);
     this.hasInitialResults = false;
     this.useCurrentLocation = data.useCurrentLocation;
     this.radiusKm = data.radiusKm;
     if (data.useCurrentLocation) {
 
     } else {
-      this.cache = this.cache || {};
+      this.cache = this.cache || {
+        'usa': [
+          'United States',
+          37.09024, -95.712891,
+          'ChIJCzYy5IS16lQRQrfeQ5K5Oxw'
+        ]
+      };
       var cached = this.cache[data.location];
       if (!cached) {
-        LOG && log.v('geocoding', data.location);
+        LOG && log.i('Geocoding:', data.location);
         this.$.codec.geocode(data.location, function (address, lat, lng, place) {
-          LOG && log.v(address, lat, lng);
+          LOG && log.v(address, lat, lng, place);
           this.lat = lat;
           this.lng = lng;
           this.cache[data.location] = [address, lat, lng, place];
         }.bind(this));
       } else {
-        LOG && log.v('Using cached result', cached);
+        GEOFIRE && log.v('Using cached result', cached);
         this.lat = cached[1];
         this.lng = cached[2];
       }

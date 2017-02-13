@@ -29,29 +29,32 @@
       }
     </style>
 
-    <paper-material>
-      <div hidden$="[[hasRoot]]">
-        The root user is not defined yet.
-        <paper-button
-          class="primary-button"
-          on-tap="becomeRoot">
-          Become Root
-        </paper-button>
-      </div>
 
-      <div hidden$="[[hasAccess]]">
-        You do not have permission to view this page.
-      </div>
+    <paper-material hidden$="[[hasRoot]]">
+      The root user is not defined yet.
+      <paper-button
+        class="primary-button"
+        on-tap="becomeRoot">
+        Become Root
+      </paper-button>
+    </paper-material>
 
-      <!-- <dom-if if="[[hasAccess]]"> -->
-      <template is="dom-if" if="[[hasAccess]]">
-        <div class="font-headline">Welcome</div>
-        <div>[[auth.profile.name]]</div>
-        <template is="dom-if" if="[[auth.user.isMaintainer]]">
-          <firebase-query
-            path="/users"
-            data="{{users}}">
-          </firebase-query>
+    <paper-material hidden$="[[hasAccess]]">
+      You do not have permission to view this page.
+    </paper-material>
+
+    <!-- <dom-if if="[[hasAccess]]"> -->
+    <template is="dom-if" if="[[hasAccess]]">
+      <paper-material class="layout vertical center">
+        <div class="font-headline">Admin</div>
+        <div>Logged in as [[auth.uid]] ([[auth.user.role]])</div>
+      </paper-material>
+      <template is="dom-if" if="[[auth.user.isMaintainer]]">
+        <firebase-query
+          path="/users"
+          data="{{users}}">
+        </firebase-query>
+        <paper-material>
           <iron-collapse-button opened>
             <div slot="collapse-trigger" class="flex font-title">Users</div>
             <div slot="collapse-content">
@@ -84,13 +87,15 @@
               </iron-list>
             </div>
           </iron-collapse-button>
-        </template>
-        <template is="dom-if" if="[[auth.user.isModerator]]">
-          <firebase-query
-            path="/feedback"
-            data="{{feedbacks}}"
-            limit-to-last="50">
-          </firebase-query>
+        </paper-material>
+      </template>
+      <template is="dom-if" if="[[auth.user.isModerator]]">
+        <firebase-query
+          path="/feedback"
+          data="{{feedbacks}}"
+          limit-to-last="50">
+        </firebase-query>
+        <paper-material>
           <iron-collapse-button opened>
             <div slot="collapse-trigger" class="flex font-title">Feedback</div>
             <div slot="collapse-content">
@@ -113,11 +118,11 @@
               </iron-list>
             </div>
           </iron-collapse-button>
-        </template>
+        </paper-material>
       </template>
-      <!-- </dom-if> -->
-    </paper-material>
-  </template>
+    </template>
+    <!-- </dom-if> -->
+</template>
 
   <script>
   Polymer({

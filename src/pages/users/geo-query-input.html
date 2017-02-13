@@ -18,24 +18,23 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
         display: block;
         @apply --font-small;
       }
-      .container {
-        @apply --layout-horizontal;
-        @apply --layout-center;
-        @apply --layout-wrap;
-      }
-      .location-section {
-        @apply --layout-vertical;
-        margin-left: 16px;
-        /*margin-bottom: 1.8em;*/
-        top: -1em;
-        position: relative;
+      :host > div > div {
+        margin: 0 4px;
       }
       paper-dropdown-menu {
-        width: 5.5em;
-        margin: 0 6px 2em;
+        width: 4.1em;
+        margin: 0 4px;
         --paper-dropdown-menu-input: {
-          /*FIXME has no effect*/
-          @apply --font-small;
+          /*FIXME if this line is removed, setting the font size has no effect*/
+          --paper-input-container: {
+            /*FIXME if this line is removed, changing the icon size has no effect*/
+            --iron-icon: {};
+            --iron-icon-width: 16px;
+            --iron-icon-height: 16px;
+          };
+          --paper-input-container-input: {
+            @apply --font-small;
+          };
         };
       }
       paper-item {
@@ -45,25 +44,36 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
       }
       paper-input {
         margin-bottom: 8px;
-        width: 8em;
+        width: 6em;
         --paper-input-container-label: {
           @apply --font-small;
+          padding: 0;
+          margin: 0;
         };
         /*FIXME causes exceptions on 2.0-preview */
         --paper-input-container-input: {
           @apply --font-small;
         };
+        --paper-input-container: {
+          padding: 0;
+          margin: 0;
+        }
       }
       paper-checkbox {
         --paper-checkbox-size: 14px;
+        --paper-checkbox-label-spacing: 4px;
+      }
+      .or {
+        @apply --font-tiny;
+        margin: 0 4px;
+        font-style: italic;
       }
     </style>
 
-    <div class="container">
-
-        <span>Within</span>
-
-        <paper-dropdown-menu no-animations noink>
+    <div class="layout horizontal center wrap">
+      <div>
+        Within
+        <paper-dropdown-menu no-animations noink no-label-float>
           <paper-listbox
             class="dropdown-content"
             attr-for-selected="value"
@@ -75,10 +85,9 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
             <!-- </dom-repeat> -->
           </paper-listbox>
         </paper-dropdown-menu>
-
-        <span>[[_getDistanceUnit(metric)]] of</span>
-
-      <div class="location-section">
+        [[_getDistanceUnit(metric)]] of
+      </div>
+      <div class="layout horizontal center">
         <paper-input
           id="locationInput"
           value="{{location}}"
@@ -86,11 +95,11 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
           auto-validate
           autofocus
           minlength="3"
-          error-message="[[errorMsg]]"></paper-input>
-
-        <paper-checkbox noink checked="{{useCurrentLocation}}">my location</paper-checkbox>
+          error-message="[[errorMsg]]">
+        </paper-input>
+        <span class="or">or</span>
+        <paper-checkbox noink checked="{{useCurrentLocation}}">me</paper-checkbox>
       </div>
-
     </div>
   </template>
 
