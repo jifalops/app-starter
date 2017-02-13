@@ -1,6 +1,7 @@
 <!-- <link rel="import" href="../../../bower_components/paper-material/paper-material.html"> -->
 <link rel="import" href="../../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="/src/header.html">
 
 <!--
@@ -15,7 +16,7 @@
       display: block;
     }
     google-map {
-      min-height: 350px;
+      min-height: 300px;
     }
   </style>
     <google-map
@@ -37,18 +38,18 @@
         on-google-map-marker-close="_infoWindowClosed">
       </google-map-marker> -->
 
-      <dom-repeat items="[[users]]" as="user">
-        <template>
+      <!-- <dom-repeat > -->
+        <template is="dom-repeat" items="[[users]]" as="user">
         <google-map-marker
           latitude="[[user.lat]]"
           longitude="[[user.lng]]"
           title="[[user.name]]"
-          map="[[map]]"
+          click-events
           on-google-map-marker-click="_toggleInfoWindow"
-          on-google-map-marker-close="_infoWindowClosed">
-        </google-map-marker>
+          on-google-map-marker-close="_infoWindowClosed"
+          map="[[map]]"></google-map-marker>
         </template>
-      <dom-repeat>
+      <!-- <dom-repeat> -->
     </google-map>
 </template>
 <script>
@@ -84,30 +85,34 @@ Polymer({
     if (metric) radius = kmToMiles(radius);
     var zoom = Math.round(14 - Math.log(radius) / Math.LN2);
     // console.log('zoom', zoom);
-    return zoom < 1 ? 1 : zoom;
+    return zoom < 0 ? 0 : zoom;
   },
   _toggleInfoWindow: function(e) {
     var marker = e.target.marker;
-    var post = e.model.post;
+    var user = e.model.user;
     this.infoWindows = this.infoWindows || {};
-    var info = this.infoWindows[post.$key];
+    var info = this.infoWindows[user.$key];
     if (info) {
       info.close();
-      this.infoWindows[post.$key] = null;
+      this.infoWindows[user.$key] = null;
     } else {
-      var contentString = 'content';
+      var contentString = '<img style="height:24px; width:24px" src="'+user.pic+'"/>'
+        + '<div style="font-weight: bold;">'+user.$key+'</div>'
+        + '<div>'+round(user.distance, 1)+' miles away</div>'
+        + '</div>';
       info = new google.maps.InfoWindow({
           content: contentString
       });
       info.open(this.map, marker);
-      this.infoWindows[post.$key] = info;
+      this.infoWindows[user.$key] = info;
     }
   },
   _infoWindowClosed: function(e) {
     console.log('closed info window');
-    var post = e.model.post;
+    var user = e.model.user;
+    if (!user) return;
     this.infoWindows = this.infoWindows || {};
-    this.infoWindows[post.$key] = null;
+    this.infoWindows[user.$key] = null;
   },
   _mapLoaded: function() {
     LOG && log.d('Google maps api has loaded');

@@ -247,11 +247,11 @@
                 class="layout vertical">
           <paper-item class="layout horizontal center-justified">
             <template is="dom-if" if="[[auth.profile.pic]]">
-              <a plain href="/user/[[auth.name]]" on-tap="toggleUserInfoDialog">
+              <a plain href$="/user/[[auth.name]]" on-tap="toggleUserInfoDialog">
                 <iron-image class="avatar" src="[[auth.profile.pic]]"></iron-image>
               </a>
             </template>
-            <a plain href="/user/[[auth.name]]" on-tap="toggleUserInfoDialog">Profile</a>
+            <a plain href$="/user/[[auth.name]]" on-tap="toggleUserInfoDialog">Profile</a>
           </paper-item>
           <paper-item class="layout horizontal center-justified" hidden$="[[!auth.user.isElevated]]">
             <a plain href="/admin" on-tap="toggleUserInfoDialog">Admin page</a>

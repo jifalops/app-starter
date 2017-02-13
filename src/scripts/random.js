@@ -37,25 +37,25 @@ function perturb(value, magnitude) {
 }
 
 /** Has the same effect as perturb, but with a guaranteed minimum change. */
-function perturbAggressive(value, magnitude, minDelta, loop) {
+function perturbAggressive(value, minMagnitude, maxMagnitude, loop) {
   var p;
   if (!loop) {
-    p = minDelta * randomRange(1, magnitude / minDelta);
+    p = minMagnitude * randomRange(1, maxMagnitude / minMagnitude);
     if (Math.random() < 0) p = -p;
   } else {
     p = 0;
-    while(Math.abs(p) < minDelta) {
-      p = randomMagnitude(magnitude);
+    while(Math.abs(p) < minMagnitude) {
+      p = randomMagnitude(maxMagnitude);
     }
   }
   return value + p
 }
 
 /**
- * Returns a coordinate that is roughly between 1.67 and 16.67 Km away.
+ * Returns a coordinate that is roughly between 1.1 and 11.1 km away.
  */
 function perturbCoordinate(coord) {
   // one decimal place ~= 11.1 km
   // two decimal places ~= 1.1 km
-  return perturbAggressive(coord, 0.15, 0.015);
+  return perturbAggressive(coord, 0.1, 0.01);
 }

@@ -5,6 +5,7 @@
 <link rel="import" href="../../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="/src/header.html">
+<link rel="import" href="/src/geofire-import.html">
 <link rel="import" href="users-query.html">
 
 
@@ -19,9 +20,6 @@
     :host {
       display: block;
     }
-    user-map {
-      min-height: 400px;
-    }
   </style>
 
   <app-route
@@ -31,19 +29,6 @@
     data="{{routeData}}"
     tail="{{subroute}}"></app-route>
 
-
-  <paper-material class="layout vertical">
-    <span class="font-headline self-center">Users</span>
-    <users-query
-      app="[[app]]"
-      auth="[[auth]]"
-      profiles="{{profiles}}"
-      lat="{{lat}}"
-      lng="{{lng}}"
-      radius-km="{{radiusKm}}">
-    </users-query>
-  </paper-material>
-
   <paper-tabs
     fit-container
     selected="[[routeData.page]]"
@@ -52,6 +37,20 @@
     <paper-tab name="list"><a plain href='/users/list'><span>List</span></a></paper-tab>
     <paper-tab name="map"><a plain href='/users/map'><span>Map</span></a></paper-tab>
   </paper-tabs>
+
+  <div class="layout vertical">
+    <span class="font-subhead self-center">Users</span>
+    <users-query
+      app="[[app]]"
+      auth="[[auth]]"
+      profiles="{{profiles}}"
+      lat="{{lat}}"
+      lng="{{lng}}"
+      radius-km="{{radiusKm}}">
+    </users-query>
+  </div>
+
+
 
 
   <neon-animated-pages selected="[[routeData.page]]" attr-for-selected="name">
@@ -63,8 +62,8 @@
       </user-list>
     </neon-animatable>
     <neon-animatable name="map" entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
-      <!-- FIXME If paper-material is part of user-map, the map has a small height. -->
-      <paper-material>
+      <!-- FIXME If paper-material is part of user-map in 2.0-preview, the map has a small height. -->
+      <!-- <paper-material> -->
         <user-map
           auth="[[auth]]"
           users="[[profiles]]"
@@ -72,7 +71,7 @@
           lng="[[lng]]"
           radius-km="[[radiusKm]]">
         </user-map>
-      </paper-material>
+      <!-- </paper-material> -->
     </neon-animatable>
   </neon-animated-pages>
 </template>
@@ -100,7 +99,7 @@ Polymer({
 
     var url = this.resolveUrl(file);
     this.importHref(url, function() {
-      LOG && ROUTE && log.v('imported', url);
+      ROUTE && log.v('imported', url);
       this._fixListOverlap(page);
     }.bind(this), function() {
       LOG && log.e('failed to import', url);

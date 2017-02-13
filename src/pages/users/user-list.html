@@ -1,5 +1,6 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
-<!-- <link rel="import" href="../../../bower_components/iron-list/iron-list.html"> -->
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="/src/header.html">
 
 <dom-module id="user-list">
@@ -9,39 +10,44 @@
       :host {
         display: block;
       }
-
       iron-list {
-        /*min-height: 400px;*/
+        min-height: 400px;
+      }
+      paper-material {
+        padding: 16px 16px 8px 16px;
+        margin: 6px 12px;
+        border-radius: 6px;
+      }
+      .heading {
+        padding: 0 16px;
+        margin: 12px 12px 0;
+        font-weight: bold;
       }
     </style>
 
-    <paper-material class="layout vertical">
+    <!-- <paper-material class="layout vertical">
       <span class="font-title self-center">User list</span>
-      <iron-list
-        id="list"
-        selection-enabled
-        scroll-target="document"
-        items="[[users]]"
-        as="user">
-        <template>
-          <div>
-            User [[user]]
-          </div>
-        </template>
-      </iron-list>
+    </paper-material> -->
 
-      <!-- FIXME use iron-list when it is available -->
-      <dom-repeat items="[[users]]" as="user">
-        <template>
-          <div class="font-subhead">User</div>
-          <div class="font-small">[[user.$key]]</div>
-          <div class="font-subhead">Name</div>
-          <div class="font-small">[[user.name]]</div>
-          <div class="font-subhead">Distance (km)</div>
-          <div class="font-small">[[user.distance]]</div>
-        </template>
-      </dom-repeat>
-    </paper-material>
+    <div class="heading layout horizontal center justified">
+      <div>Avatar</div><div>User</div><div>Dist.</div>
+    </div>
+    <iron-list
+      id="list"
+      selection-enabled
+      scroll-target="document"
+      items="[[users]]"
+      as="user">
+      <template>
+        <div>
+          <paper-material class="layout horizontal center justified">
+            <iron-image class="avatar small" src="[[user.pic]]"></iron-image>
+            <div class="font-subhead">[[user.$key]]</div>
+            <div class="font-small">[[_round(user.distance)]] mi</div>
+          </paper-material>
+        </div>
+      </template>
+    </iron-list>
   </template>
 
   <script>
@@ -53,8 +59,12 @@
         type: Array,
       }
     },
-    notifyResize() {
+    notifyResize: function() {
       this.$.list.notifyResize();
+    },
+    // TODO behavior
+    _round: function(dist) {
+      return round(dist, 1)
     }
   });
   </script>

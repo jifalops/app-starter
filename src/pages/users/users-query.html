@@ -12,14 +12,16 @@
   <style include="app-styles">
     :host {
       display: block;
+      /*@apply --shadow-elevation-2dp;
+      margin-bottom: 4px;*/
     }
     geo-query-input {
       border-bottom: 1px solid var(--divider-color);
       padding: 0;
     }
     .summary {
-      margin: 4px 8px;
-      padding: 4px 8px;
+      margin: 2px 8px;
+      padding: 2px 8px;
     }
   </style>
   <geo-location idle$="[[!useCurrentLocation]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
@@ -30,18 +32,22 @@
     geofire="[[geofire]]"
     lat="[[lat]]"
     lng="[[lng]]"
-    radius="[[radiusKm]]"
-    on-ready="_onResultsReady"></geofire-query>
+    on-key-entered="_onResultsReady"
+    on-key-exited="_onResultsReady"
+    on-key-moved="_onResultsReady"
+    on-ready="_onResultsReady"
+    radius="[[radiusKm]]"></geofire-query>
 
     <div class="layout vertical center">
       <geo-query-input
-        radius="1000"
+        location="usa"
+        radius="2000"
         radius-options="[[radiusOptions]]"
         on-query-changed="_queryChanged"></geo-query-input>
     </div>
     <div class="summary layout horizontal center justified">
       <span>[[_summary(geoUsers, geoUsers.length)]]</span>
-      <paper-button disabled$="[[!auth]]" raised class="primary-button" on-tap="_addUser">Add Me</paper-button>
+      <paper-button disabled$="[[!auth]]" raised class="small primary-button" on-tap="_addUser">Add Me</paper-button>
     </div>
 </template>
 <script>
@@ -73,7 +79,7 @@ Polymer({
     },
     radiusOptions: {
       type: Array,
-      value: function() { return [1000, 5000, 10000, 15000]; }
+      value: function() { return [1000, 2000, 5000, 10000, 15000]; }
     },
     geoUsers: {
       type: Array,
@@ -83,15 +89,15 @@ Polymer({
     profiles: {
       type: Array,
       notify: true
+    },
+    useCurrentLocation: {
+      type: Boolean,
+      value: false
     }
   },
   observers: [
     '_userLocationChanged(useCurrentLocation, userLat, userLng)'
   ],
-
-  created: function() {
-    this.useCurrentLocation = false;
-  },
 
   _appChanged: function(app, old) {
     if (app && !old) {
@@ -101,7 +107,7 @@ Polymer({
   },
 
   _geoUsersChanged: function(geoUsers, old) {
-    LOG && log.v('geoUsers changed', geoUsers);
+    GEOFIRE && log.v('geoUsers changed', geoUsers);
     this.profiles = [];
 
     if (isEmpty(geoUsers)) return;
@@ -118,10 +124,11 @@ Polymer({
       profile.lng = geoUser.lng;
       profile.distance = kmToMiles(geoUser.distance);
 
-      LOG && log.v('setting profile index', index, profile);
-      this.set('profiles.' + index, profile);
+      // LOG && log.v('setting profile index', index, profile);
+      // TODO doesn't notify
+      // this.set('profiles.' + index, profile);
       // TODO can result in incorrect order.
-      // this.push('profiles', profile);
+      this.push('profiles', profile);
       // TODO uses correct order, but issues with notifying changes
       // var profiles = this.profiles;
       // profiles[index] = profile;
@@ -132,6 +139,7 @@ Polymer({
 
   _queryChanged: function(e, data) {
     LOG && log.v('Query changed', data);
+    this.hasInitialResults = false;
     this.useCurrentLocation = data.useCurrentLocation;
     this.radiusKm = data.radiusKm;
     if (data.useCurrentLocation) {
@@ -156,8 +164,8 @@ Polymer({
   },
 
   _userLocationChanged: function(useCurrentLocation, userLat, userLng) {
-    if (this.useCurrentLocation && userLat && userLng) {
-      LOG && log.v('Map will use user\'s coordinates');
+    if (useCurrentLocation && userLat && userLng) {
+      LOG && log.v('Using user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
       if (this.addingUser) this._doAddUser();
@@ -182,14 +190,20 @@ Polymer({
     var lat = perturbCoordinate(this.userLat);
     var lng = perturbCoordinate(this.userLng);
     var dist = GeoFire.distance([this.userLat, this.userLng], [lat, lng]);
-    LOG && log.v('Anonymizing to', dist, 'km away.');
+    LOG && log.i('Anonymizing to', round(dist, 1), 'km away.');
     db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
     this.addingUser = false;
   },
 
-  _onResultsReady: function() {
-    // LOG && log.v('results ready', this.$.query.resultsArray);
-    this.geoUsers = this.$.query.resultsArray;
+  _onResultsReady: function(e) {
+    // LOG && log.v('results ready');
+    if (e.type == 'ready') {
+      this.hasInitialResults = true;
+    }
+    if (this.hasInitialResults) {
+      this.geoUsers = [];
+      this.geoUsers = this.$.query.resultsArray;
+    }
   }
 });
 </script>

@@ -26,10 +26,12 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
       .location-section {
         @apply --layout-vertical;
         margin-left: 16px;
-        margin-bottom: 1.8em;
+        /*margin-bottom: 1.8em;*/
+        top: -1em;
+        position: relative;
       }
       paper-dropdown-menu {
-        width: 4em;
+        width: 5.5em;
         margin: 0 6px 2em;
         --paper-dropdown-menu-input: {
           /*FIXME has no effect*/
@@ -47,10 +49,10 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
         --paper-input-container-label: {
           @apply --font-small;
         };
-        /*FIXME causes exceptions */
-        /*--paper-input-container-input: {
+        /*FIXME causes exceptions on 2.0-preview */
+        --paper-input-container-input: {
           @apply --font-small;
-        };*/
+        };
       }
       paper-checkbox {
         --paper-checkbox-size: 14px;
@@ -66,11 +68,11 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
             class="dropdown-content"
             attr-for-selected="value"
             selected="{{radius}}">
-            <dom-repeat items="[[radiusOptions]]">
-            <template>
+            <!-- <dom-repeat items="[[radiusOptions]]"> -->
+            <template is="dom-repeat" items="[[radiusOptions]]">
               <paper-item value="[[item]]">[[item]]</paper-item>
             </template>
-            </dom-repeat>
+            <!-- </dom-repeat> -->
           </paper-listbox>
         </paper-dropdown-menu>
 
@@ -163,7 +165,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
     ],
 
     created: function() {
-      this.debouncer = new Polymer.Debouncer(this);
+      // this.debouncer = new Polymer.Debouncer(this);
     },
 
     _locationChanged: function(loc, oldLoc) {
@@ -178,7 +180,7 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
 
     _queryChanged: function(metric, radius, location, useCurrentLocation) {
       if (radius && (useCurrentLocation || (location && this.$.locationInput.validate()))) {
-        Polymer.Debouncer.debounce(this.debouncer, function() {
+        this.debounce('query-changed', function() {
           fire(this, 'query-changed', {
             radiusKm: metric ? radius : milesToKm(radius),
             location: location,

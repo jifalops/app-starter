@@ -7,8 +7,9 @@
  * Categorical logging filters
  */
 const DB = true;
-const USER = true;
+const USER = false;
 const ROUTE = false;
+const GEOFIRE = false;
 
 function fire(context, name, data, options) {
   options = options || {};
@@ -35,7 +36,7 @@ function goBack() {
       }
     }
   }
-  redirect('/users');
+  redirect('/users/list');
 }
 
 function showSuccessToast(text, duration, properties) {

@@ -9,6 +9,8 @@
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
@@ -32,13 +34,6 @@
       }
       app-drawer {
         --app-drawer-width: 200px;
-      }
-
-      app-drawer paper-listbox a {
-        display: block;
-        padding: 0 20px;
-        line-height: 40px;
-        /*color: var(--accent-color);*/
       }
 
       app-toolbar {
@@ -102,7 +97,7 @@
         </app-toolbar>
         <paper-listbox selected="[[routeData.page]]" attr-for-selected="name" role="navigation">
           <paper-item name="users">
-            <a plain class="flex" href="/users">Users</a>
+            <a plain class="flex" href="/users/list">Users</a>
           </paper-item>
           <div class="divider"></div>
           <paper-item name="test">
@@ -134,7 +129,7 @@
                 | <a href="/register">Register</a>
               </div>
               <div hidden$="[[!auth]]">
-                <a href="/user/[[auth.uid]]">[[auth.uid]]</span>
+                <a href$="/user/[[auth.uid]]">[[auth.profile.name]]</span>
                 | <a href="javascript:" on-tap="logout">logout</a>
               </div>
             </div>
@@ -183,10 +178,12 @@
         type: Object,
         observer: '_onFirebaseAppChanged'
       },
-      observers: [
-        '_routePageChanged(routeData.page)'
-      ],
     },
+
+    observers: [
+      '_routePageChanged(routeData.page)'
+    ],
+
     _onFirebaseAppChanged: function(app, old) {
       if (app && !old) {
         LOG && log.d('Firebase app ready');
@@ -194,7 +191,7 @@
     },
 
     _routePageChanged: function(page) {
-      LOG && ROUTE && log.v('page changed:', page);
+      ROUTE && log.v('page changed:', page);
       var file = this._fileForPage(page);
       if (!page || !file) {
         redirect('/users/map');
@@ -204,7 +201,7 @@
       // load page import on demand.
       var url = this.resolveUrl(file);
       this.importHref(url, function() {
-        LOG && ROUTE && log.v('imported', url);
+        ROUTE && log.v('imported', url);
       }.bind(this), function() {
         LOG && log.e('failed to import', url);
       }, true);

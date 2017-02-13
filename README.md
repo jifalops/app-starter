@@ -2,7 +2,7 @@
 A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.
 
 
-## Bugs
+## Polymer 2.0-preview bugs
 * app-location: calling `redirect` does not change the url (but has the other desired effects).
 * paper-input: minlength is not enforced
 * app-layout: the drawer does not show, probably because it depends on behaviors,
@@ -12,3 +12,6 @@ A starting point for using Polymer, Firebase with email/username/provider login,
 * geofire-query: Works only if you copy the file locally  :(
 * paper-input: using `--paper-input-container-input` causes errors.
 * paper-dropdown-menu: `--paper-dropdown-menu-input` does not set font size.
+
+## Polymer 1.8 bugs
+* dom-repeat does not show.
