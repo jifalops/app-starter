@@ -7,8 +7,7 @@ path /profiles {
   /{user} is Profile;
 }
 
-type Profile {
-  created: FinalNow
+type Profile {  
   name: DisplayName
   pic: PicUrl
   write() { key() == me() && this != null }

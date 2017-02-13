@@ -143,10 +143,10 @@
               <users-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></users-page>
             </neon-animatable>
             <neon-animatable name="login">
-              <login-register-page auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
+              <login-register-page id="loginPage" auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
             </neon-animatable>
             <neon-animatable name="register">
-              <login-register-page auth="[[auth]]" register on-login-register="loginRegister"></login-register-page>
+              <login-register-page id="registerPage" auth="[[auth]]" register on-login-register="loginRegister"></login-register-page>
             </neon-animatable>
             <neon-animatable name="user">
               <user-page auth="[[auth]]" route="[[subroute]]"></user-page>
@@ -224,11 +224,16 @@
       if (data.provider == 'username') {
         if (data.isRegistering) {
           this.username = data.username;
-          this.$.auth.registerUser(data.username, data.password, null,
-            showServerErrorToast, showServerErrorToast);
+          this.$.auth.registerUser(data.username, data.password, function() {
+            this.$.registerPage.$.username.value = '';
+            this.$.registerPage.$.password.value = '';
+            this.$.registerPage.$.passwordRepeat.value = '';
+          }.bind(this), showServerErrorToast, showServerErrorToast);
         } else {
-          this.$.auth.usernameLogin(data.username, data.password, null,
-            showServerErrorToast, showServerErrorToast);
+          this.$.auth.usernameLogin(data.username, data.password, function() {
+            this.$.loginPage.$.username.value = '';
+            this.$.loginPage.$.password.value = '';
+          }.bind(this), showServerErrorToast, showServerErrorToast);
         }
       } else {
         this.$.auth.providerLogin(data.provider, null,

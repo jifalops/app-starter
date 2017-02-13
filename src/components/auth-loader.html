@@ -122,13 +122,13 @@
 
       user.provider = this._getProvider(data.providerId);
       user.role = 'User';
+      user.created = db.timestamp();
       user.lastActivity = db.timestamp();
       //  user.email = authRaw.email || data.email;
       //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
 
       profile.pic = authRaw.photoURL || data.photoURL || '/images/unknown-user.jpg';
       profile.name = authRaw.displayName || data.displayName || username;
-      profile.created = db.timestamp();
 
       if (profile.pic.length > 250) {
         profile.pic = '/images/unknown-user.jpg';

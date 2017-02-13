@@ -9,6 +9,7 @@ path /users {
 
 type User {
   provider: Provider
+  created: FinalNow
   lastActivity: CurrentTimestamp
   isModerator:    IsModerator     | Null
   isMaintainer:   IsMaintainer    | Null

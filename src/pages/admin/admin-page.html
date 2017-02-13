@@ -68,7 +68,7 @@
                   <div>
                     <div class="list-item layout horizontal center justified">
                       <a class="font-subhead" href="/user/[[user.$key]]">[[user.$key]]</a>
-                      <from-now time="[[user.lastActivity]]"></from-now>
+                      <from-now time="[[user.created]]"></from-now>
                       <paper-dropdown-menu no-animations noink disabled$="[[!_canChangeRole(auth, user)]]">
                         <paper-listbox
                           class="dropdown-content"

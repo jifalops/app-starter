@@ -62,16 +62,14 @@
       <paper-input id="picInput" value="[[profile.pic]]"></paper-input>
       <iron-icon icon="check" on-tap="updatePic"></iron-icon>
     </div>
-
-
-    <div class="font-subhead">Created</div>
-    <from-now time="[[profile.created]]"></from-now>
   </paper-material>
 
   <paper-material hidden$="[[!amOwner]]" class="layout vertical">
     <span class="font-title self-center">Private Info</span>
     <div class="font-subhead">Login method</div>
     <div>[[auth.user.provider]]</div>
+    <div class="font-subhead">Created</div>
+    <from-now time="[[auth.user.created]]"></from-now>
     <div class="font-subhead">Last Activity</div>
     <from-now time="[[auth.user.lastActivity]]"></from-now>
 
