@@ -12,7 +12,7 @@ type User {
   created: FinalNow
   lastActivity: CurrentTimestamp
   role: UserRole
-  isElevated: Boolean | Null
+  isElevated: Boolean
   read() { key() == me() }
   write() { key() == me() && this != null }
 }
@@ -24,22 +24,6 @@ type Provider extends String {
 type UserRole extends String {
   write() { true }
   validate() { root.roles[$user] == this || (root.roles[$user] == null && this == 'User') }
-}
-
-type IsModerator extends Boolean {
-  validate() { this == isModerator($user) }
-}
-type IsMaintainer extends Boolean {
-  validate() { this == isMaintainer($user) }
-}
-type IsAdmin extends Boolean {
-  validate() { this == isAdmin($user) }
-}
-type IsSuperAdmin extends Boolean {
-  validate() { this == isSuperAdmin($user) }
-}
-type IsRoot extends Boolean {
-  validate() { this == isRoot($user) }
 }
 
 isElevated(user) { root.users[user].isElevated }

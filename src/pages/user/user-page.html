@@ -73,21 +73,14 @@
     <div class="font-subhead">Last Activity</div>
     <from-now time="[[auth.user.lastActivity]]"></from-now>
 
-    <div hidden$="[[!auth.user.isModerator]]">
+    <div hidden$="[[!_hasPrivilages(auth.user.role)]]">
       <div class="font-subhead">Elevate Privilages</div>
-      <a
-        href="javascript:"
+      <a href="javascript:"
         on-tap="toggleElevated"
       >[[toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
 
-      <div class="font-subhead">Roles</div>
-      <div class="font-small">
-        <div>Moderator</div>
-        <div hidden$="[[!auth.user.isMaintainer]]">Maintainer</div>
-        <div hidden$="[[!auth.user.isAdmin]]">Admin</div>
-        <div hidden$="[[!auth.user.isSuperAdmin]]">Super Admin</div>
-        <div hidden$="[[!auth.user.isRoot]]">Root</div>
-      </div>
+      <div class="font-subhead">Role</div>
+      <div>[[auth.user.role]]</div>
     </div>
   </paper-material>
 </template>
@@ -126,6 +119,12 @@ Polymer({
         this.profile = profile;
       }.bind(this));
     }
+  },
+
+  // TODO behavior
+  _hasPrivilages: function(role) {
+    if (this.auth && this.auth.user) this.auth.user.isElevated = Boolean(this.auth.user.isElevated);
+    return isModerator(role);
   },
 
   toggleEditName: function() {

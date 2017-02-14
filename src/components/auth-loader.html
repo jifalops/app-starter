@@ -124,6 +124,7 @@
       user.created = db.timestamp();
       user.lastActivity = db.timestamp();
       user.role = 'User';
+      user.isElevated = false;
       //  user.email = authRaw.email || data.email;
       //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
 

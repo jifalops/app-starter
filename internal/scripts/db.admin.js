@@ -13,7 +13,7 @@ db.admin = {
   setRole: function(user, targetUser, role, onSuccess, onFailure) {
     DB && console.log('Setting role for', targetUser, 'to', role);
     var updates = db.userActionUpdate(user);
-    updates['/roles/' + targetUser] = role;
+    updates['/roles/' + targetUser] = role == 'User' ? null : role;
     updates['/users/' + targetUser + '/role'] = role;
     db.update(updates, onSuccess, onFailure);
   }
