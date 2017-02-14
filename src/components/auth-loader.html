@@ -121,9 +121,9 @@
       var data = authRaw.providerData[0];
 
       user.provider = this._getProvider(data.providerId);
-      user.role = 'User';
       user.created = db.timestamp();
       user.lastActivity = db.timestamp();
+      user.role = 'User';
       //  user.email = authRaw.email || data.email;
       //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
 
@@ -139,6 +139,7 @@
 
       db.users.createUser(authRaw.uid, username, user, profile, function() {
         showInfoToast('Welcome!');
+        goBack();
       }, showServerErrorToast);
     },
 

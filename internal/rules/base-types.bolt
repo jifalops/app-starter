@@ -50,6 +50,5 @@ type RecordedAction {
 }
 
 amAuthed() { auth.uid != null }
-//isAuthed(uid) { amAuthed() && auth.uid == uid }
 isUnchanged(value) { prior(value) == null || value == prior(value) }
 isUnchangedDefault(value, default) { value == (prior(value) == null ? default : prior(value)) }

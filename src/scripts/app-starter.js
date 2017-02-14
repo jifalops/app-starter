@@ -39,6 +39,9 @@ function goBack() {
   redirect('/users/list');
 }
 
+/*
+ * Toasts
+ */
 function showSuccessToast(text, duration, properties) {
   document.getElementById('app').$['toast'].show('success', text, duration, properties);
 }
@@ -51,15 +54,48 @@ function showInfoToast(text, duration, properties) {
 function showWarningToast(text, duration, properties) {
   document.getElementById('app').$['toast'].show('warning', text, duration, properties);
 }
-
 function showServerErrorToast() {
   showErrorToast('Server error, try again.');
 }
 
+/*
+ * Dialogs
+ */
 function showConfirmDialog(header, content, footer, confirm, cancel, onClosed) {
   document.getElementById('app').$['confirmDialog'].show(header, content, footer, confirm, cancel, onClosed);
 }
-
 function showSetUsernameDialog(uid, provider, onUsernameChosen) {
   document.getElementById('app').$['setUsernameDialog'].show(uid, provider, onUsernameChosen);
+}
+
+/*
+ *  Privilage checking
+ */
+function isModerator(role) {
+  return role && role.match(/^(Moderator|Maintainer|Admin|Super Admin|Root)$/);
+}
+function isMaintainer(role) {
+  return role && role.match(/^(Maintainer|Admin|Super Admin|Root)$/);
+}
+function isAdmin(role) {
+  return role && role.match(/^(Admin|Super Admin|Root)$/);
+}
+function isSuperAdmin(role) {
+  return role && role.match(/^(Super Admin|Root)$/);
+}
+function isRoot(role) {
+  return role == 'Root';
+}
+function rolesLessThan(role) {
+  switch(role) {
+    case 'Moderator':   return ['User'];
+    case 'Maintainer':  return ['User', 'Moderator'];
+    case 'Admin':       return ['User', 'Moderator', 'Maintainer'];
+    case 'Super Admin': return ['User', 'Moderator', 'Maintainer', 'Admin'];
+    case 'Root':        return ['User', 'Moderator', 'Maintainer', 'Admin', 'Super Admin'];
+    default:            return [];
+  }
+}
+function isRoleGreaterThan(r1, r2) {
+  return rolesLessThan(r1).includes(r2);
 }

@@ -194,7 +194,7 @@
       ROUTE && log.v('page changed:', page);
       var file = this._fileForPage(page);
       if (!page || !file) {
-        redirect('/users/map');
+        redirect('/users/list');
         return;
       }
 
@@ -220,7 +220,6 @@
     },
 
     loginRegister: function(e, data) {
-      LOG && log.v('Signing in using', data.provider);
       if (data.provider == 'username') {
         if (data.isRegistering) {
           this.username = data.username;
@@ -228,15 +227,17 @@
             this.$.registerPage.$.username.value = '';
             this.$.registerPage.$.password.value = '';
             this.$.registerPage.$.passwordRepeat.value = '';
+            goBack();
           }.bind(this), showServerErrorToast, showServerErrorToast);
         } else {
           this.$.auth.usernameLogin(data.username, data.password, function() {
             this.$.loginPage.$.username.value = '';
             this.$.loginPage.$.password.value = '';
+            goBack();
           }.bind(this), showServerErrorToast, showServerErrorToast);
         }
       } else {
-        this.$.auth.providerLogin(data.provider, null,
+        this.$.auth.providerLogin(data.provider, goBack,
           showServerErrorToast, showServerErrorToast);
       }
     },

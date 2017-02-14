@@ -6,8 +6,8 @@ path /geoUsers {
   read() { true }
   index() { 'g' }
   /{user} is Geofire {
-    read() { amUser(key()) }
-    write() { amUser(key()) }
+    read() { isMe(key()) }
+    write() { isMe(key()) }
   }
 }
 

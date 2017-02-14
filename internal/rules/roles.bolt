@@ -2,50 +2,39 @@
 // roles.bolt
 //
 
-path /roles is Roles;
-
-
-type Roles {
-  hasRoot: HasRoot
-  root: RootUser
-  superAdmins: SuperAdmin[]
-  admins: Admin[]
-  maintainers: Maintainer[]
-  moderators: Moderator[]
-  read() { amSuperAdmin() }
+path /roles {
+  read() { amMaintainer() }
+  /{user} is Role;
 }
 
-type HasRoot extends Readable<Boolean> {
-  write() { this == true }
-}
-
-type RootUser extends FinalAuth {
-  write() { this == me() }
-  /*validate() { isSuperAdmin(this) }*/
-}
-type SuperAdmin {
-  write() { amRoot() }
-  /*validate() { isAdmin(this) }*/
-}
-type Admin {
-  write() { amSuperAdmin() }
-  /*validate() { isMaintainer(this) }*/
-}
-type Maintainer {
-  write() { amAdmin() }
-  /*validate() { isModerator(this) }*/
-}
-type Moderator {
-  write() { amMaintainer() }
-  /*validate() { userExists(key()) }*/
+path /hasRoot is Boolean {
+  read() { true }
+  create() { this == true && amRoot() }
 }
 
 
-isModerator(user) {  root.roles.moderators[user] != null }
-isMaintainer(user) { root.roles.maintainers[user] != null }
-isAdmin(user) {      root.roles.admins[user] != null }
-isSuperAdmin(user) { root.roles.superAdmins[user] != null }
-isRoot(user) {       root.roles.root == user }
+type Role extends String {
+  read() { isMe(key()) || amModerator() }
+  create() {
+    (this == 'Root' && prior(!root.hasRoot) && root.hasRoot)
+      || (this == 'Super Admin' && prior(amRoot()))
+      || (this == 'Admin' && prior(amSuperAdmin()))
+      || (this == 'Maintainer' && prior(amAdmin()))
+      || (this == 'Moderator' && prior(amMaintainer()))
+  }
+  delete() {
+    (prior(this) == 'Super Admin' && prior(amRoot()))
+      || (prior(this) == 'Admin' && prior(amSuperAdmin()))
+      || (prior(this) == 'Maintainer' && prior(amAdmin()))
+      || (prior(this) == 'Moderator' && prior(amMaintainer()))
+  }
+}
+
+isModerator(user) {  root.roles[user].test(/^(Moderator|Maintainer|Admin|Super Admin|Root)$/) }
+isMaintainer(user) { root.roles[user].test(/^(Maintainer|Admin|Super Admin|Root)$/) }
+isAdmin(user) {      root.roles[user].test(/^(Admin|Super Admin|Root)$/) }
+isSuperAdmin(user) { root.roles[user].test(/^(Super Admin|Root)$/) }
+isRoot(user) {       root.roles[user] == 'Root' }
 
 amModerator() {     isModerator(me())   && amElevated() }
 amMaintainer() {    isMaintainer(me())  && amElevated() }

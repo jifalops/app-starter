@@ -23,7 +23,7 @@
         margin-top: 24px;
       }
       paper-dropdown-menu {
-        width: 8em;
+        width: 9em;
       }
       .list-item {
         margin: 4px 8px;
@@ -50,7 +50,7 @@
         <div class="font-headline">Admin</div>
         <div>Logged in as [[auth.uid]] ([[auth.user.role]])</div>
       </paper-material>
-      <template is="dom-if" if="[[auth.user.isMaintainer]]">
+      <template is="dom-if" if="[[_hasPrivilage('Maintainer', auth.user.role)]]">
         <firebase-query
           path="/users"
           data="{{users}}">
@@ -66,22 +66,28 @@
                 as="user">
                 <template>
                   <div>
-                    <div class="list-item layout horizontal center justified">
-                      <a class="font-subhead" href="/user/[[user.$key]]">[[user.$key]]</a>
-                      <from-now time="[[user.created]]"></from-now>
-                      <paper-dropdown-menu no-animations noink disabled$="[[!_canChangeRole(auth, user)]]">
-                        <paper-listbox
-                          class="dropdown-content"
-                          attr-for-selected="value"
-                          selected="[[user.role]]">
-                          <paper-item value="User">User</paper-item>
-                          <paper-item value="Moderator">Moderator</paper-item>
-                          <paper-item disabled$="[[!auth.user.isAdmin]]" value="Maintainer">Maintainer</paper-item>
-                          <paper-item disabled$="[[!auth.user.isSuperAdmin]]"value="Admin">Admin</paper-item>
-                          <paper-item disabled$="[[!auth.user.isRoot]]" value="Super admin">Super admin</paper-item>
-                          <paper-item disabled value="Root">Root</paper-item>
-                        </paper-listbox>
-                      </paper-dropdown-menu>
+                    <div class="list-item layout horizontal center">
+                      <a class="font-subhead flex" href="/user/[[user.$key]]">[[user.$key]]</a>
+                      <from-now class="flex align-center" time="[[user.created]]"></from-now>
+                      <div hidden$="[[_isRoleGreaterThan(auth.user.role, user.role)]]" class="flex align-right">
+                        [[user.role]]
+                      </div>
+                      <div class="flex align-right" hidden$="[[!_isRoleGreaterThan(auth.user.role, user.role)]]">
+                        <paper-dropdown-menu
+                          no-animations
+                          noink
+                          no-label-float>
+                          <paper-listbox
+                            class="dropdown-content"
+                            attr-for-selected="value"
+                            on-iron-activate="_onRoleSelected"
+                            selected="[[user.role]]">
+                            <template is="dom-repeat" items="[[_rolesLessThan(auth.user.role)]]" as="role">
+                              <paper-item value="[[role]]">[[role]]</paper-item>
+                            </template>
+                          </paper-listbox>
+                        </paper-dropdown-menu>
+                      </div>
                     </div>
                   </div>
                 </template>
@@ -90,7 +96,7 @@
           </iron-collapse-button>
         </paper-material>
       </template>
-      <template is="dom-if" if="[[auth.user.isModerator]]">
+      <template is="dom-if" if="[[_hasPrivilage('Moderator', auth.user.role)]]">
         <firebase-query
           path="/feedback"
           data="{{feedbacks}}"
@@ -145,9 +151,29 @@
       }
     },
 
+    // TODO behavior (divided)
+    _hasPrivilage: function(privilage, role) {
+      switch (privilage) {
+        case 'Moderator': return isModerator(role);
+        case 'Maintainer': return isMaintainer(role);
+        case 'Admin': return isAdmin(role);
+        case 'Super Admin': return isSuperAdmin(role);
+        case 'Root': return isRoot(role);
+        default: return false;
+      }
+    },
+    // TODO behavior
+    _rolesLessThan: function(role) {
+      return rolesLessThan(role);
+    },
+    // TODO behavior
+    _isRoleGreaterThan: function(r1, r2) {
+      return isRoleGreaterThan(r1, r2);
+    },
+
     _authChanged: function(auth, prev) {
       if (auth && !prev) {
-        db.watch('/roles/hasRoot', function(hasRoot) {
+        db.watch('/hasRoot', function(hasRoot) {
           this._setHasRoot(!isEmpty(hasRoot));
         }.bind(this));
       }
@@ -165,11 +191,9 @@
       });
     },
 
-    _canChangeRole: function(auth, user) {
-      return (auth.user.isRoot && !user.isRoot)
-        || (auth.user.isSuperAdmin && !user.isSuperAdmin)
-        || (auth.user.isAdmin && !user.isAdmin)
-        || (auth.user.isMaintainer && !user.isMaintainer);
+    _onRoleSelected: function(e, data) {
+      // LOG && log.v('Role selected', e, data);
+      db.admin.setRole(this.auth.uid, e.model.user.$key, data.selected, null, showServerErrorToast);
     }
   });
   </script>

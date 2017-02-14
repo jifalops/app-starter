@@ -12,7 +12,7 @@ type Feedback {
   user: FinalAuth
   text: FeedbackText
   created: FinalNow
-  create() { amUser(this.user) }
+  create() { isMe(this.user) }
 }
 
 type FeedbackText extends FinalString {

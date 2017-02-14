@@ -1,10 +1,7 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
-
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/src/header.html">
-<!-- <link rel="import" href="inputs/uname-input.html"> -->
 
 <dom-module id="set-username-dialog">
   <template>
@@ -12,26 +9,28 @@
       :host {
         display: block;
       }
-      paper-dialog {
-        padding: 8px;
-        font-size: small;
-      }
     </style>
 
     <paper-dialog id="dialog" modal class="layout vertical">
-      <div>Thank you for logging in using [[provider]].</div>
-      <div>Please select a username to use as your identity.</div>
-      <div class="layout horizontal center">
-        <!-- <uname-input id="unameInput"></uname-input> -->
-        <!--<paper-icon-button icon="check"-->
-                   <!--on-tap="_checkUsername"></paper-icon-button>-->
-      </div>
-      <div>[[availableResult]]</div>
-      <paper-button class="small primary-button self-center"
-              on-tap="buttonTapped">
-        asdf
-        <!-- [[toggleString(usernameAvailable, 'Set Username', 'Check Availability')]] -->
-        </paper-button>
+      <div class="font-title">Choose a username.</div>
+      <div>You have authenticated using [[provider]], but do not yet have a username.</div>
+      <paper-input
+        id="unameInput"
+        class="layout self-center"
+        minlength="4"
+        maxlength="16"
+        label=""
+        value="{{uname}}"
+        no-label-float
+        required
+        autofocus
+        auto-validate>
+      </paper-input>
+
+      <div class="layout self-center">[[availableResult]]</div>
+      <paper-button class="small primary-button self-center" on-tap="_buttonTapped">
+        [[toggleString(usernameAvailable, 'Set Username', 'Check Availability')]]
+      </paper-button>
     </paper-dialog>
   </template>
 
@@ -43,17 +42,28 @@
           type: Boolean,
           value: false,
           readOnly: true
+        },
+        uname: {
+          type: String,
+          observer: '_unameChanged'
         }
       },
-      behaviors: [
-        // DjBehaviors.MainBehavior
-      ],
+
+      // TODO behavior
+      toggleString: function(condition, ifTrue, ifFalse) {
+        return condition ? ifTrue : ifFalse;
+      },
 
       show: function(uid, provider, onUsernameChosen) {
         this.uid = uid;
         this.provider = provider;
         this.onUsernameChosen = onUsernameChosen;
         this.$.dialog.open();
+      },
+
+      _unameChanged: function(uname, old) {
+        this.usernameAvailable = false;
+        this.availableResult = '';
       },
 
       _checkUsername: function() {
@@ -74,19 +84,8 @@
       _saveUsername: function() {
         this.onUsernameChosen(this.username);
         this.$.dialog.close();
-//                db.users.setUsername(this.uid, this.username, function() {
-//                    showInfoToast('Welcome ' + this.username + '!');
-//                }, showServerErrorToast);
-//                showConfirmDialog('', 'Set username to ' + this.username + '? This cannot be undone.', '',
-//                        'Save', 'Cancel', function(confirmed) {
-//                            if (confirmed) {
-//                                db.users.setUsername(this.auth, this.username, function() {
-//                                    showSuccessToast('Username set.');
-//                                }, showServerErrorToast);
-//                            }
-//                        }.bind(this));
       },
-      buttonTapped: function() {
+      _buttonTapped: function() {
         if (this.usernameAvailable) {
           this._saveUsername();
         } else {
