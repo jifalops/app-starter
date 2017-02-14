@@ -6,10 +6,10 @@
 /*
  * Categorical logging filters
  */
-const DB = true;
-const USER = false;
-const ROUTE = false;
-const GEOFIRE = false;
+var DB = true;
+var USER = false;
+var ROUTE = false;
+var GEOFIRE = false;
 
 function fire(context, name, data, options) {
   options = options || {};
@@ -53,6 +53,9 @@ function showInfoToast(text, duration, properties) {
 }
 function showWarningToast(text, duration, properties) {
   document.getElementById('app').$['toast'].show('warning', text, duration, properties);
+}
+function showDefaultToast(text, duration, properties) {
+  document.getElementById('app').$['toast'].show('default', text, duration, properties);
 }
 function showServerErrorToast() {
   showErrorToast('Server error, try again.');

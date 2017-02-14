@@ -23,6 +23,8 @@
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
 
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
 <dom-module id="app-shell">
   <template>
     <style include="app-styles">
@@ -164,7 +166,6 @@
         </div>
       </app-header-layout>
     </app-drawer-layout>
-
     <basic-toast id="toast"></basic-toast>
     <confirm-dialog id="confirmDialog"></confirm-dialog>
     <set-username-dialog id="setUsernameDialog"></set-username-dialog>

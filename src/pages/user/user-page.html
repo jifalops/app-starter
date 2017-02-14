@@ -74,13 +74,12 @@
     <from-now time="[[auth.user.lastActivity]]"></from-now>
 
     <div hidden$="[[!_hasPrivilages(auth.user.role)]]">
-      <div class="font-subhead">Elevate Privilages</div>
-      <a href="javascript:"
-        on-tap="toggleElevated"
-      >[[toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
-
       <div class="font-subhead">Role</div>
       <div>[[auth.user.role]]</div>
+
+      <div class="font-subhead">Elevate Privilages</div>
+      <a href="javascript:" on-tap="toggleElevated"
+        >[[toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
     </div>
   </paper-material>
 </template>

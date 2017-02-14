@@ -1,5 +1,6 @@
 <link rel="import" href="/src/header.html">
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <dom-module id="test-page">
 <template>
   <style include="app-styles">
@@ -9,11 +10,15 @@
     .colors > div {
       padding: 8px 16px;
     }
+    .toast {
+      @apply --font-default2;
+    }
   </style>
-  <paper-material class="layout vertical">
-    <span class="font-headline self-center">Testing</span>
-
-    <span class="font-subhead">Colors</span>
+  <paper-material>
+    <div class="font-headline align-center">Testing</div>
+  </paper-material>
+  <paper-material>
+    <div class="font-title align-center">Colors</div>
     <div class="colors layout horizontal justified">
       <div class="bgcolor-primary">primary</div>
       <div class="bgcolor-primary-dark">primary-dark</div>
@@ -30,11 +35,27 @@
       <div class="warning">Warning</div>
       <div class="error">Error</div>
     </div>
+    <div class="colors toast layout horizontal justified">
+      <div class="success">Success</div>
+      <div class="info">Info</div>
+      <div class="warning">Warning</div>
+      <div class="error">Error</div>
+    </div>
     <div class="colors layout horizontal justified">
       <div class="text-primary">text-primary</div>
       <div class="text-secondary">text-secondary</div>
       <div class="text-disabled">text-disabled</div>
       <div class="text-light" style="background-color:#000;">text-light</div>
+    </div>
+  </paper-material>
+  <paper-material>
+    <div class="font-title align-center">Buttons &amp; Toasts</div>
+    <div class="layout horizontal center center-justified">
+      <paper-button raised class="primary-button" on-tap="_showSuccessToast">Success</paper-button>
+      <paper-button class="secondary-button" on-tap="_showInfoToast">Info</paper-button>
+      <paper-button class="primary-button small" on-tap="_showWarningToast">Warning</paper-button>
+      <paper-button raised class="secondary-button small" on-tap="_showErrorToast">Error</paper-button>
+      <paper-button raised on-tap="_showDefaultToast">Default</paper-button>
     </div>
   </paper-material>
 </template>
@@ -43,6 +64,21 @@ Polymer({
   is: 'test-page',
   properties: {
 
+  },
+  _showSuccessToast: function() {
+    showSuccessToast();
+  },
+  _showInfoToast: function() {
+    showInfoToast();
+  },
+  _showWarningToast: function() {
+    showWarningToast();
+  },
+  _showErrorToast: function() {
+    showErrorToast();
+  },
+  _showDefaultToast: function() {
+    showDefaultToast();
   }
 });
 </script>
