@@ -11,8 +11,8 @@ A starting point for using Polymer, Firebase with email/username/provider login,
 * google-map: Has styles outside of template and fills the paper-material
 * geofire-query: Works only if you copy the file locally  :(
 * paper-input: using `--paper-input-container-input` causes errors.
-* paper-dropdown-menu: `--paper-dropdown-menu-input` does not set font size.
 
 ## Polymer 1.8 bugs
 * dom-repeat does not show.
-* paper-toast appears unstyled in the bottom left corner and doesn't disappeat
+* paper-dropdown-menu does not overlay other items in iron-list.
+  https://github.com/PolymerElements/paper-menu-button/issues/9
