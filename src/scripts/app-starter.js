@@ -6,8 +6,8 @@
 /*
  * Categorical logging filters
  */
-var DB = true;
-var USER = false;
+var DB = false;
+var AUTH = false;
 var ROUTE = false;
 var GEOFIRE = false;
 
@@ -26,36 +26,36 @@ function redirect(path) {
 
 function goBack() {
   var history = document.getElementById('app').history;
-  console.log('history', history, 'length', length(history));
+  // console.log('history', history, 'length', length(history));
   if (history && history.length > 0) {
     for (var i = history.length - 1; i >= 0; i--) {
       if (history[i].path != '/login' && history[i].path != '/register') {
-        console.log('redirecting to ', history[i].path);
+        LOG && log.v('Redirecting to ', history[i].path);
         redirect(history[i].path);
         return;
       }
     }
   }
-  redirect('/users/list');
+  redirect('/users/map');
 }
 
 /*
  * Toasts
  */
 function showSuccessToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].show('success', text, duration, properties);
+  document.getElementById('app').$['toast'].showSuccessToast(text, duration, properties);
 }
 function showErrorToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].show('error', text, duration, properties);
+  document.getElementById('app').$['toast'].showErrorToast(text, duration, properties);
 }
 function showInfoToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].show('info', text, duration, properties);
+  document.getElementById('app').$['toast'].showInfoToast(text, duration, properties);
 }
 function showWarningToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].show('warning', text, duration, properties);
+  document.getElementById('app').$['toast'].showWarningToast(text, duration, properties);
 }
 function showDefaultToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].show('default', text, duration, properties);
+  document.getElementById('app').$['toast'].showDefaultToast(text, duration, properties);
 }
 function showServerErrorToast() {
   showErrorToast('Server error, try again.');
@@ -64,8 +64,8 @@ function showServerErrorToast() {
 /*
  * Dialogs
  */
-function showConfirmDialog(header, content, footer, confirm, cancel, onClosed) {
-  document.getElementById('app').$['confirmDialog'].show(header, content, footer, confirm, cancel, onClosed);
+function showConfirmDialog(header, content, confirm, cancel, onClosed) {
+  document.getElementById('app').$['confirmDialog'].show(header, content, confirm, cancel, onClosed);
 }
 function showSetUsernameDialog(uid, provider, onUsernameChosen) {
   document.getElementById('app').$['setUsernameDialog'].show(uid, provider, onUsernameChosen);

@@ -22,7 +22,7 @@ path /usernames {
 
 type Username extends String {
   validate() {
-    this.length >= 4 && this.length <= 16 && this.test(/^[a-zA-Z0-9_\-]+$/)
+    this.length >= 3 && this.length <= 16 && this.test(/^[a-zA-Z0-9_\-]+$/)
   }
 }
 

@@ -82,7 +82,7 @@ Polymer({
     },
     radiusOptions: {
       type: Array,
-      value: function() { return [1000, 2000, 5000, 10000, 15000]; }
+      value: function() { return [100, 1000, 2000, 5000, 10000]; }
     },
     geoUsers: {
       type: Array,
@@ -164,6 +164,9 @@ Polymer({
           this.lat = lat;
           this.lng = lng;
           this.cache[data.location] = [address, lat, lng, place];
+          if (this.addingUser) {
+            this._doAddUser(lat, lng);
+          }
         }.bind(this));
       } else {
         GEOFIRE && log.v('Using cached result', cached);
@@ -178,7 +181,7 @@ Polymer({
       GEOFIRE && log.v('Using user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
-      if (this.addingUser) this._doAddUser();
+      if (this.addingUser) this._doAddUser(userLat, userLng);
     }
   },
 
@@ -189,18 +192,22 @@ Polymer({
 
   _addUser: function() {
     this.addingUser = true;
-    if (!this.useCurrentLocation) {
-      this.useCurrentLocation = true;
-    } else if (this.userLat && this.userLng) {
-      this._doAddUser();
+    if (this.useCurrentLocation && this.userLat && this.userLng) {
+      this._doAddUser(this.userLat, this.userLng);
+    } else if (!this.useCurrentLocation && this.lat && this.lng) {
+      this._doAddUser(this.lat, this.lng);
     }
   },
 
-  _doAddUser: function() {
-    var lat = perturbCoordinate(this.userLat);
-    var lng = perturbCoordinate(this.userLng);
-    var dist = GeoFire.distance([this.userLat, this.userLng], [lat, lng]);
-    LOG && log.i('Anonymizing to', round(dist, 1), 'km away.');
+  _doAddUser: function(lat, lng) {
+    // if (this.useCurrentLocation) {
+      var coords = [lat, lng];
+      lat = perturbCoordinate(lat);
+      lng = perturbCoordinate(lng);
+      var dist = GeoFire.distance(coords, [lat, lng]);
+      if (this.unit == 'mi') dist = kmToMiles(dist);
+      showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + this.unit + ' away.');
+    // }
     db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
     this.addingUser = false;
   },

@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="/src/header.html">
 
-<dom-module id="basic-toast">
+<dom-module id="basic-toasts">
   <template>
     <style include="app-styles">
       :host {
@@ -43,21 +43,34 @@
   </template>
   <script>
     Polymer({
-      is: 'basic-toast',
-      show: function(type, text, duration, properties) {
-        text = text || ucFirst(type);
-        var toast;
-        switch (type) {
-          case 'success': toast = this.$.successToast; break;
-          case 'info':    toast = this.$.infoToast;    break;
-          case 'warning': toast = this.$.warningToast; break;
-          case 'error':   toast = this.$.errorToast;   break;
-          default:        toast = this.$.defaultToast; break;
-        }
-        toast.show(this._makeProperties(text, duration, properties));
+      is: 'basic-toasts',
+
+      showSuccessToast: function(text, duration, properties) {
+        text = text || 'Success';
+        this.$.successToast.show(this._makeProperties(text, duration, properties));
       },
+      showInfoToast: function(text, duration, properties) {
+        text = text || 'Info';
+        LOG && log.i('Toast:', text);
+        this.$.infoToast.show(this._makeProperties(text, duration, properties));
+      },
+      showWarningToast: function(text, duration, properties) {
+        text = text || 'Warning';
+        LOG && log.w('Toast:', text);
+        this.$.warningToast.show(this._makeProperties(text, duration, properties));
+      },
+      showErrorToast: function(text, duration, properties) {
+        text = text || 'Error';
+        LOG && log.e('Toast:', text);
+        this.$.errorToast.show(this._makeProperties(text, duration, properties));
+      },
+      showDefaultToast: function(text, duration, properties) {
+        text = text || 'Default';
+        this.$.defaultToast.show(this._makeProperties(text, duration, properties));
+      },
+
       _makeProperties: function(text, duration, properties) {
-        duration = duration || (duration === 0 ? 0 : 3000);
+        duration = duration || (duration === 0 ? 0 : 5000);
         properties = properties || {};
         properties.text = text;
         properties.duration = duration;

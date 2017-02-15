@@ -419,10 +419,10 @@
 
       _onLoginSuccess: function (response) {
         if (this.registeringUser) {
-          USER && console.log('User creation successful!', response);
+          AUTH && console.log('User creation successful!', response);
           this.fire('username-registered', this.username);
         } else {
-          USER && console.log('Login successful.', response);
+          AUTH && console.log('Login successful.', response);
         }
         this.loginDialogHidden = true;
         this.$.username.value = '';

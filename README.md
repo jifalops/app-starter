@@ -16,3 +16,4 @@ A starting point for using Polymer, Firebase with email/username/provider login,
 * dom-repeat does not show.
 * paper-dropdown-menu does not overlay other items in iron-list.
   https://github.com/PolymerElements/paper-menu-button/issues/9
+* paper-dropdown-menu --paper-input-container-input does not change with `@media` styles

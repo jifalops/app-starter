@@ -18,15 +18,44 @@
       iron-list {
         height: calc(100vh - 296px);
         max-height: 400px;
+        @apply --font-small;
       }
       iron-collapse-button {
         margin-top: 24px;
       }
       paper-dropdown-menu {
-        width: 9em;
+        max-width: 7em;
+        --paper-dropdown-menu-input: {
+          /*FIXME if this line is removed, setting the font size has no effect*/
+          --paper-input-container: {
+            /*FIXME if this line is removed, changing the icon size has no effect*/
+            --iron-icon: {};
+            --iron-icon-width: 16px;
+            --iron-icon-height: 16px;
+          };
+          --paper-input-container-input: {
+            @apply --font-small;
+          };
+        };
+      }
+      paper-item {
+        --paper-item: {
+          @apply --font-small;
+        };
       }
       .list-item {
         margin: 4px 8px;
+      }
+
+      @media (max-width: 400px) {
+        from-now {
+          @apply --font-tiny;
+        }
+      }
+      @media (max-width: 300px) {
+        from-now {
+          display: none;
+        }
       }
     </style>
 
@@ -53,6 +82,7 @@
       <template is="dom-if" if="[[_hasPrivilage('Maintainer', auth.user.role)]]">
         <firebase-query
           path="/users"
+          order-by-child="role"
           data="{{users}}">
         </firebase-query>
         <paper-material>
@@ -67,7 +97,7 @@
                 <template>
                   <div>
                     <div class="list-item layout horizontal center">
-                      <a class="font-subhead flex" href="/user/[[user.$key]]">[[user.$key]]</a>
+                      <a class="flex" href="/user/[[user.$key]]">[[user.$key]]</a>
                       <from-now class="flex align-center" time="[[user.created]]"></from-now>
                       <div hidden$="[[_isRoleGreaterThan(auth.user.role, user.role)]]" class="flex align-right">
                         [[user.role]]
@@ -193,7 +223,23 @@
 
     _onRoleSelected: function(e, data) {
       // LOG && log.v('Role selected', e, data);
-      db.admin.setRole(this.auth.uid, e.model.user.$key, data.selected, null, showServerErrorToast);
+      var el = e.target || e.srcElement;
+      var user = e.model.user.$key;
+      var prevRole = e.model.user.role;
+      var role = data.selected;
+      var msg = 'Change "'+user+'" from '+prevRole+' to '+role+'?';
+      if (role != prevRole) {
+        showConfirmDialog('Role', msg, 'Confirm', 'Cancel', function(result) {
+          if (result === true) {
+            db.admin.setRole(this.auth.uid, user, role, null, function() {
+              el.selected = prevRole;
+              showServerErrorToast();
+            });
+          } else {
+            el.selected = prevRole;
+          }
+        }.bind(this));
+      }
     }
   });
   </script>

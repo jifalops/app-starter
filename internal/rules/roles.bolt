@@ -15,18 +15,17 @@ path /hasRoot is Boolean {
 
 type Role extends String {
   read() { isMe(key()) || amModerator() }
-  create() {
+  write() {
     (this == 'Root' && prior(!root.hasRoot) && root.hasRoot)
       || (this == 'Super Admin' && prior(amRoot()))
       || (this == 'Admin' && prior(amSuperAdmin()))
       || (this == 'Maintainer' && prior(amAdmin()))
       || (this == 'Moderator' && prior(amMaintainer()))
-  }
-  delete() {
-    (prior(this) == 'Super Admin' && prior(amRoot()))
-      || (prior(this) == 'Admin' && prior(amSuperAdmin()))
-      || (prior(this) == 'Maintainer' && prior(amAdmin()))
-      || (prior(this) == 'Moderator' && prior(amMaintainer()))
+      || (this == null
+        && ((prior(this) == 'Super Admin' && prior(amRoot()))
+          || (prior(this) == 'Admin' && prior(amSuperAdmin()))
+          || (prior(this) == 'Maintainer' && prior(amAdmin()))
+          || (prior(this) == 'Moderator' && prior(amMaintainer()))))
   }
 }
 

@@ -17,12 +17,11 @@
             with-backdrop
             on-iron-overlay-opened="_onOpened"
             on-iron-overlay-closed="_onClosed">
-      <div class="subhead">[[header]]</div>
+      <div class="font-title">[[header]]</div>
       <paper-dialog-scrollable>
-        <div>[[content]]</div>
-        <content></content>
+        <div class="font-default2">[[content]]</div>
+        <slot></slot>
       </paper-dialog-scrollable>
-      <div>[[footer]]</div>
       <div class="buttons">
         <paper-button dialog-dismiss>
           [[cancel]]
@@ -45,7 +44,6 @@
         },
         header: String,
         content: String,
-        footer: String,
         confirm: {
           type: String,
           value: 'Confirm'
@@ -63,10 +61,9 @@
       behaviors: [
         // DjBehaviors.MainBehavior
       ],
-      show: function(header, content, footer, confirm, cancel, onClosed) {
+      show: function(header, content, confirm, cancel, onClosed) {
         this.header = header;
         this.content = content;
-        this.footer = footer;
         this.confirm = confirm;
         this.cancel = cancel;
         this.onClosed = onClosed;
@@ -74,7 +71,7 @@
       },
       _onOpened: function(e) {
         this._setDisabled(true);
-        setTimeout(function() { this._setDisabled(false); }.bind(this), 1500);
+        setTimeout(function() { this._setDisabled(false); }.bind(this), 1000);
       },
       _onClosed: function(e) {
         this.onClosed(e.detail.confirmed || false);

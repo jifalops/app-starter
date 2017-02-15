@@ -19,7 +19,7 @@
 <link rel="import" href="components/auth-loader.html">
 <link rel="import" href="components/value-history.html">
 <link rel="import" href="components/app-logo.html">
-<link rel="import" href="components/basic-toast.html">
+<link rel="import" href="components/basic-toasts.html">
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
 
@@ -99,7 +99,7 @@
         </app-toolbar>
         <paper-listbox selected="[[routeData.page]]" attr-for-selected="name" role="navigation">
           <paper-item name="users">
-            <a plain class="flex" href="/users/list">Users</a>
+            <a plain class="flex" href="/users/map">Users</a>
           </paper-item>
           <div class="divider"></div>
           <paper-item name="test">
@@ -166,7 +166,7 @@
         </div>
       </app-header-layout>
     </app-drawer-layout>
-    <basic-toast id="toast"></basic-toast>
+    <basic-toasts id="toast"></basic-toasts>
     <confirm-dialog id="confirmDialog"></confirm-dialog>
     <set-username-dialog id="setUsernameDialog"></set-username-dialog>
   </template>
@@ -195,7 +195,7 @@
       ROUTE && log.v('page changed:', page);
       var file = this._fileForPage(page);
       if (!page || !file) {
-        redirect('/users/list');
+        redirect('/users/map');
         return;
       }
 
