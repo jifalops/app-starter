@@ -1,6 +1,11 @@
 # app-starter
 A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.
 
+####TODO
+* Add login/register toasts for wrong user/pass etc.
+* Add forgot password flow for login/register (complex).
+* Cloud messaging / notifications
+* User to user communication
 
 ## Polymer 2.0-preview bugs
 * app-location: calling `redirect` does not change the url (but has the other desired effects).

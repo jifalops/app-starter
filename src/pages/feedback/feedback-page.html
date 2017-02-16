@@ -25,7 +25,7 @@
         minlength="10"
         maxlength="500">
       </paper-textarea>
-      <paper-button disabled$="[[!auth]]" class="primary-button" raised on-tap="sendFeedback">Send</paper-button>
+      <paper-button class="primary-button" raised on-tap="sendFeedback">Send</paper-button>
     </paper-material>
   </template>
 
@@ -36,6 +36,10 @@
       auth: Object
     },
     sendFeedback: function() {
+      if (!this.auth) {
+        showInfoToast('Please login to leave feedback.');
+        return;
+      }
       var feedback = this.$.input.value;
       if (feedback && feedback.length >= 10 && feedback.length <= 500) {
         db.users.sendFeedback(this.auth.uid, feedback, function () {
