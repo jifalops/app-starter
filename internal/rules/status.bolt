@@ -1,0 +1,28 @@
+//
+// status.bolt
+//
+
+path /status is Status;
+
+
+type Status {
+  hasRoot: HasRoot
+  offline: Offline | Null
+
+  read() { amAdmin() }
+}
+
+type HasRoot extends Boolean {
+  read() { true }
+  create() { this == true && amRoot() }
+}
+
+type Offline extends Boolean {
+  read() { true }
+  write() { amSuperAdmin() }
+}
+
+hasRoot() { root.status['hasRoot'] }
+
+// TODO no rules currently use this, so the site is only offline from the UI perspective.
+isOffline() { root.status['offline'] }

@@ -40,11 +40,12 @@
       as="user">
       <template>
         <div>
-          <paper-material class="layout horizontal center justified">
-            <iron-image class="avatar small" src="[[user.pic]]"></iron-image>
-            <a class="font-subhead" href="/user/[[user.$key]]">[[user.$key]]</a>
-            <div class="font-small">[[_round(user.distance)]] [[user.distanceUnit]]</div>
-          </paper-material>
+          <a plain href="/user/[[user.$key]]"
+            ><paper-material class="layout horizontal center justified">
+              <iron-image class="avatar small" src="[[user.pic]]"></iron-image>
+              <span class="font-subhead">[[user.$key]]</span>
+              <div class="font-small">[[_round(user.distance)]] [[user.distanceUnit]]</div>
+            </paper-material></a>
         </div>
       </template>
     </iron-list>

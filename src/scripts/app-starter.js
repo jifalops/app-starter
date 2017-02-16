@@ -6,7 +6,7 @@
 /*
  * Categorical logging filters
  */
-var DB = false;
+var DB = true;
 var AUTH = false;
 var ROUTE = false;
 var GEOFIRE = false;

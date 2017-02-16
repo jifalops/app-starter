@@ -7,16 +7,10 @@ path /roles {
   /{user} is Role;
 }
 
-path /hasRoot is Boolean {
-  read() { true }
-  create() { this == true && amRoot() }
-}
-
-
 type Role extends String {
   read() { isMe(key()) || amModerator() }
   write() {
-    (this == 'Root' && prior(!root.hasRoot) && root.hasRoot)
+    (this == 'Root' && prior(!hasRoot()) && hasRoot())
       || (this == 'Super Admin' && prior(amRoot()))
       || (this == 'Admin' && prior(amSuperAdmin()))
       || (this == 'Maintainer' && prior(amAdmin()))

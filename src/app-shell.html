@@ -14,6 +14,7 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="header.html">
 <link rel="import" href="components/firebase-auth-wrapper.html">
 <link rel="import" href="components/auth-loader.html">
@@ -125,13 +126,13 @@
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <app-logo hidden$="[[wideLayout]]"></app-logo>
             <span class="flex"></span>
-            <div class="font-small">
+            <div class="font-small text-primary">
               <div hidden$="[[auth]]">
                 <a href="/login">Login</a>
                 | <a href="/register">Register</a>
               </div>
               <div hidden$="[[!auth]]">
-                <a href$="/user/[[auth.uid]]">[[auth.profile.name]]</span>
+                <a href$="/user/[[auth.uid]]">[[auth.profile.name]]</a>
                 | <a href="javascript:" on-tap="logout">logout</a>
               </div>
             </div>
@@ -162,6 +163,12 @@
             <neon-animatable name="test">
               <test-page auth="[[auth]]"></test-page>
             </neon-animatable>
+            <neon-animatable name="offline">
+              <paper-material>
+                <div class="font-headline">Offline</div>
+                <div>We are currently down for maintenance. Please try again later.</div>
+              </paper-material>
+            </neon-animatable>
           </neon-animated-pages>
         </div>
       </app-header-layout>
@@ -182,17 +189,27 @@
     },
 
     observers: [
-      '_routePageChanged(routeData.page)'
+      '_routePageChanged(routeData.page, offline, auth)'
     ],
 
     _onFirebaseAppChanged: function(app, old) {
-      if (app && !old) {
-        LOG && log.d('Firebase app ready');
+      if (app) {
+        LOG && !old && log.d('Firebase app ready');
+        db.watch('/status/offline', function(offline){
+          this.offline = offline;
+        }.bind(this));
       }
     },
 
-    _routePageChanged: function(page) {
+    _routePageChanged: function(page, offline, auth) {
       ROUTE && log.v('page changed:', page);
+
+      if (offline && (page != 'login'
+          && !(hasChild(auth, 'user', 'role') && isAdmin(auth.user.role)))) {
+        redirect('/offline');
+        return;
+      }
+
       var file = this._fileForPage(page);
       if (!page || !file) {
         redirect('/users/map');

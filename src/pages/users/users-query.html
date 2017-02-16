@@ -6,6 +6,8 @@
 <link rel="import" href="/src/header.html">
 <link rel="import" href="geofire-query.html">
 <link rel="import" href="geo-query-input.html">
+<link rel="import" href="../../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+<link rel="import" href="../../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <dom-module id="users-query">
 <template>
@@ -29,6 +31,14 @@
   <geo-location idle$="[[!useCurrentLocation]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
+  <app-localstorage-document key="geoCache" data="{{cache}}">
+  <app-indexeddb-mirror
+    session="[[auth.uid]]"
+    key="profiles"
+    data="{{liveProfiles}}"
+    persisted-data="{{profiles}}">
+  </app-indexeddb-mirror>
+
   <geofire-query
     id="query"
     geofire="[[geofire]]"
@@ -50,7 +60,7 @@
     </div>
     <div class="summary layout horizontal center justified">
       <span>[[_summary(geoUsers, geoUsers.length)]]</span>
-      <paper-button disabled$="[[!auth]]" raised class="small primary-button" on-tap="_addUser">Add Me</paper-button>
+      <paper-button raised class="small primary-button" on-tap="_addUser">Add Me</paper-button>
     </div>
 </template>
 <script>
@@ -96,6 +106,16 @@ Polymer({
     useCurrentLocation: {
       type: Boolean,
       value: false
+    },
+    cache: {
+      type: Object,
+      value: function() { return {
+        'usa': [
+          'United States',
+          37.09024, -95.712891,
+          'ChIJCzYy5IS16lQRQrfeQ5K5Oxw'
+        ]
+      }; }
     }
   },
   observers: [
@@ -111,7 +131,7 @@ Polymer({
 
   _geoUsersChanged: function(geoUsers, old) {
     GEOFIRE && log.v('geoUsers changed', geoUsers);
-    this.profiles = [];
+    this.liveProfiles = [];
 
     if (isEmpty(geoUsers)) return;
 
@@ -132,7 +152,7 @@ Polymer({
       // TODO doesn't notify
       // this.set('profiles.' + index, profile);
       // TODO can result in incorrect order.
-      this.push('profiles', profile);
+      this.push('liveProfiles', profile);
       // TODO uses correct order, but issues with notifying changes
       // var profiles = this.profiles;
       // profiles[index] = profile;
@@ -149,13 +169,6 @@ Polymer({
     if (data.useCurrentLocation) {
 
     } else {
-      this.cache = this.cache || {
-        'usa': [
-          'United States',
-          37.09024, -95.712891,
-          'ChIJCzYy5IS16lQRQrfeQ5K5Oxw'
-        ]
-      };
       var cached = this.cache[data.location];
       if (!cached) {
         LOG && log.i('Geocoding:', data.location);
@@ -200,6 +213,10 @@ Polymer({
   },
 
   _doAddUser: function(lat, lng) {
+    if (!this.auth) {
+      showInfoToast('Login to set your position.');
+      return;
+    }
     // if (this.useCurrentLocation) {
       var coords = [lat, lng];
       lat = perturbCoordinate(lat);

@@ -3,6 +3,7 @@
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="/src/header.html">
 <!--
 `geo-query-input`
@@ -79,6 +80,11 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
 
     <div class="layout horizontal center wrap">
       <div>
+        <!-- FIXME if these viewless elements are top-level, there is no space between "of" and the paper-input.         -->
+        <app-localstorage-document key="radius" data="{{radius}}">
+        <app-localstorage-document key="unit" data="{{unit}}">
+        <app-localstorage-document key="location" data="{{location}}">
+        <app-localstorage-document key="useCurrentLocation" data="{{useCurrentLocation}}">
         Within
         <paper-dropdown-menu class="radius-menu" no-animations noink no-label-float>
           <paper-listbox
@@ -109,12 +115,13 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
           value="{{location}}"
           label="[[inputLabel]]"
           auto-validate
-          autofocus
+          always-float-label
+          focused="{{locationInputFocused}}"
           minlength="3"
           error-message="[[errorMsg]]">
         </paper-input>
         <span class="or">or</span>
-        <paper-checkbox noink checked="{{useCurrentLocation}}">me</paper-checkbox>
+        <paper-checkbox noink checked="{{useCurrentLocation}}" on-change="_blurCheckbox">me</paper-checkbox>
       </div>
     </div>
   </template>
@@ -186,7 +193,8 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
       }
     },
     observers: [
-      '_queryChanged(unit, radius, location, useCurrentLocation)'
+      '_queryChanged(unit, radius, location, useCurrentLocation)',
+      '_locationInputFocusChanged(locationInputFocused)'
     ],
 
     created: function() {
@@ -199,6 +207,12 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
       }
     },
 
+    _locationInputFocusChanged: function(focused) {
+      if (focused) {
+        this.$.locationInput.$.input.select();
+      }
+    },
+
     _queryChanged: function(unit, radius, location, useCurrentLocation) {
       if (radius && (useCurrentLocation || (location && this.$.locationInput.validate()))) {
         this.debounce('query-changed', function() {
@@ -207,8 +221,14 @@ A Polymer element for specifying latitude, longitude, and search radius for geog
             location: location,
             useCurrentLocation: useCurrentLocation
           });
+          this.$.locationInput.blur();
         }.bind(this), 1000, this);
       }
+    },
+
+    _blurCheckbox: function(e) {
+      var el = e.srcElement || e.target;
+      el.blur();
     }
 
     /**

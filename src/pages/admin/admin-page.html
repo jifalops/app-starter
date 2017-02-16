@@ -1,12 +1,15 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../../bower_components/iron-collapse-button/iron-collapse-button.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/from-now/from-now.html">
+<link rel="import" href="../../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="/src/header.html">
 
 <dom-module id="admin-page">
@@ -23,8 +26,9 @@
       iron-collapse-button {
         margin-top: 24px;
       }
+
       paper-dropdown-menu {
-        max-width: 7em;
+        width: 7em;
         --paper-dropdown-menu-input: {
           /*FIXME if this line is removed, setting the font size has no effect*/
           --paper-input-container: {
@@ -38,6 +42,11 @@
           };
         };
       }
+
+      :host([wide=true]) > paper-material {
+        display: none !important;
+      }
+
       paper-item {
         --paper-item: {
           @apply --font-small;
@@ -59,6 +68,10 @@
       }
     </style>
 
+    <iron-media-query
+      query="(min-width: 801px)"
+      query-matches="{{wide}}">
+    </iron-media-query>
 
     <paper-material hidden$="[[hasRoot]]">
       The root user is not defined yet.
@@ -75,10 +88,32 @@
 
     <!-- <dom-if if="[[hasAccess]]"> -->
     <template is="dom-if" if="[[hasAccess]]">
-      <paper-material class="layout vertical center">
-        <div class="font-headline">Admin</div>
-        <div>Logged in as [[auth.uid]] ([[auth.user.role]])</div>
+      <paper-material>
+
+        <!-- Heading -->
+        <div class="font-headline align-center">Admin</div>
+        <div class="align-center">Logged in as [[auth.uid]] ([[auth.user.role]])</div>
+
+        <!-- Offline status -->
+        <firebase-document
+          path="/status/offline"
+          data="{{offline}}">
+        </firebase-document>
+        <div class="layout horizontal center justified">
+          <div>
+            <span class="font-subhead">Site is currently</span>
+            <span hidden$="[[!_isEmpty(offline)]]" class="success font-code">online</span>
+            <span hidden$="[[_isEmpty(offline)]]" class="error font-code">offline</span>
+          </div>
+          <template is="dom-if" if="[[_hasPrivilage('Super Admin', auth.user.role)]]">
+            <paper-toggle-button checked$="[[!_isEmpty(offline)]]" on-change="_offlineToggled">
+              <span class="font-code">Offline</span>
+            </paper-toggle-button>
+          </template>
+        </div>
       </paper-material>
+
+      <!-- User list -->
       <template is="dom-if" if="[[_hasPrivilage('Maintainer', auth.user.role)]]">
         <firebase-query
           path="/users"
@@ -126,6 +161,8 @@
           </iron-collapse-button>
         </paper-material>
       </template>
+
+      <!-- Feedback list -->
       <template is="dom-if" if="[[_hasPrivilage('Moderator', auth.user.role)]]">
         <firebase-query
           path="/feedback"
@@ -178,7 +215,16 @@
         type: Boolean,
         value: false,
         computed: '_hasAccess(auth, hasRoot)'
+      },
+      offline: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    // TODO behavior
+    _isEmpty: function(val) {
+      return isEmpty(val);
     },
 
     // TODO behavior (divided)
@@ -203,7 +249,7 @@
 
     _authChanged: function(auth, prev) {
       if (auth && !prev) {
-        db.watch('/hasRoot', function(hasRoot) {
+        db.watch('/status/hasRoot', function(hasRoot) {
           this._setHasRoot(!isEmpty(hasRoot));
         }.bind(this));
       }
@@ -240,6 +286,22 @@
           }
         }.bind(this));
       }
+    },
+
+    _offlineToggled: function(e) {
+      LOG && log.d('Site offline status is being toggled');
+      var el = e.target || e.srcElement;
+      var offline = !isEmpty(this.offline);
+      showConfirmDialog(
+          'Go ' + (offline ? 'online' : 'offline'),
+          'Take the site ' + (offline ? 'online' : 'offline') + '?',
+          'Confirm', 'Cancel', function(result) {
+        if (result === true) {
+          db.admin.setOffline(this.auth.uid, !offline, null, showServerErrorToast);
+        } else {
+          el.checked = offline;
+        }
+      }.bind(this));
     }
   });
   </script>
