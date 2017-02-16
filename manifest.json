@@ -4,6 +4,7 @@
   "description": "A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.",
   "start_url": "/?homescreen=1",
   "display": "standalone",
+  "gcm_sender_id": "103953800507",
   "icons": [{
       "src": "images/app-icon-32.png",
       "type": "image/png",

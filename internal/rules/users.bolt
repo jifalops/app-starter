@@ -12,7 +12,7 @@ type User {
   created: FinalNow
   lastActivity: CurrentTimestamp
   role: UserRole
-  isElevated: Boolean
+  isElevated: Boolean  
   read() { key() == me() }
   write() { key() == me() && this != null }
 }

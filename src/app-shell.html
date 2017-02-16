@@ -15,6 +15,8 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="header.html">
 <link rel="import" href="components/firebase-auth-wrapper.html">
 <link rel="import" href="components/auth-loader.html">
@@ -58,6 +60,17 @@
       storage-bucket="app-starter-8f1a5.appspot.com"
       messaging-sender-id="435083496955">
     </firebase-app>
+
+    <firebase-messaging
+      id="messaging"
+      token="{{messagingToken}}"
+      on-message="_handleMessage">
+    </firebase-messaging>
+
+    <firebase-document
+      path="/profiles/[[auth.uid]]/messagingToken"
+      data="[[messagingToken]]">
+    </firebase-document>
 
     <firebase-auth-wrapper
       id="auth"
@@ -189,7 +202,9 @@
     },
 
     observers: [
-      '_routePageChanged(routeData.page, offline, auth)'
+      '_routePageChanged(routeData.page, offline, auth)',
+      '_messagingTokenChanged(messagingToken, auth)',
+      '_authChanged(auth)'
     ],
 
     _onFirebaseAppChanged: function(app, old) {
@@ -198,6 +213,12 @@
         db.watch('/status/offline', function(offline){
           this.offline = offline;
         }.bind(this));
+      }
+    },
+
+    _authChanged: function(auth) {
+      if (auth) {
+        this._requestMessagingPermission();
       }
     },
 
@@ -255,8 +276,9 @@
           }.bind(this), showServerErrorToast, showServerErrorToast);
         }
       } else {
-        this.$.auth.providerLogin(data.provider, goBack,
-          showServerErrorToast, showServerErrorToast);
+        this.$.auth.providerLogin(data.provider, function() {
+          goBack();
+        }.bind(this), showServerErrorToast, showServerErrorToast);
       }
     },
 
@@ -264,6 +286,22 @@
       this.$.auth.logout(function() {
         // goBack();
       }, showServerErrorToast, showServerErrorToast);
+    },
+
+    _requestMessagingPermission: function() {
+      this.$.messaging.requestPermission().then(function() {
+        LOG && log.v('Messaging permission was granted.');
+        this.messaging = true;
+      }, function(err) {
+        LOG && log.v('Messaging permission was denied.', err);
+        this.messaging = false;
+      });
+    },
+    _messagingTokenChanged: function(token, auth) {
+      LOG && log.v('Messaging token changed.', token);
+    },
+    _handleMessage: function(a, b, c) {
+      LOG && log.v('Message received', a, b, c);
     }
   });
   </script>

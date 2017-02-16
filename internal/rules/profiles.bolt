@@ -7,9 +7,10 @@ path /profiles {
   /{user} is Profile;
 }
 
-type Profile {  
+type Profile {
   name: DisplayName
   pic: PicUrl
+  messagingToken: MessagingToken | Null
   write() { key() == me() && this != null }
 }
 
@@ -18,4 +19,7 @@ type DisplayName extends String {
 }
 type PicUrl extends String {
   validate() { this.length >= 10 && this.length <= 250 }
+}
+type MessagingToken extends String {
+  validate() { this.length >= 1 && this.length <= 512 }
 }
