@@ -2,6 +2,7 @@
 A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.
 
 ####TODO
+* Setup login providers (only google is currently available)
 * Add login/register toasts for wrong user/pass etc.
 * Add forgot password flow for login/register (complex).
 * Cloud messaging / notifications

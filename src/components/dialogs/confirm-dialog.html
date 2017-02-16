@@ -11,6 +11,9 @@
       :host {
         display: block;
       }
+      .buttons {
+        margin-top: 16px;
+      }
     </style>
     <paper-dialog id="dialog"
             modal$="[[modal]]"
@@ -18,10 +21,10 @@
             on-iron-overlay-opened="_onOpened"
             on-iron-overlay-closed="_onClosed">
       <div class="font-title">[[header]]</div>
-      <paper-dialog-scrollable>
+      <!-- <paper-dialog-scrollable> -->
         <div class="font-default2">[[content]]</div>
         <slot></slot>
-      </paper-dialog-scrollable>
+      <!-- </paper-dialog-scrollable> -->
       <div class="buttons">
         <paper-button dialog-dismiss>
           [[cancel]]

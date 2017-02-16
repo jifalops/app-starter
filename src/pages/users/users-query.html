@@ -109,13 +109,7 @@ Polymer({
     },
     cache: {
       type: Object,
-      value: function() { return {
-        'usa': [
-          'United States',
-          37.09024, -95.712891,
-          'ChIJCzYy5IS16lQRQrfeQ5K5Oxw'
-        ]
-      }; }
+      value: function() { return {}; }
     }
   },
   observers: [
@@ -169,6 +163,15 @@ Polymer({
     if (data.useCurrentLocation) {
 
     } else {
+      if (isEmpty(this.cache)) {
+        this.cache = {
+          'usa': [
+            'United States',
+            37.09024, -95.712891,
+            'ChIJCzYy5IS16lQRQrfeQ5K5Oxw'
+          ]
+        };
+      }
       var cached = this.cache[data.location];
       if (!cached) {
         LOG && log.i('Geocoding:', data.location);
