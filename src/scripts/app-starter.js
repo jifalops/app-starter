@@ -40,6 +40,13 @@ function goBack() {
 }
 
 /*
+ * Notifications
+ */
+function showNotification(title, options, autoClose, onClose) {
+  document.getElementById('app').$['notifications'].show(title, options, autoClose, onClose);  
+}
+
+/*
  * Toasts
  */
 function showSuccessToast(text, duration, properties) {

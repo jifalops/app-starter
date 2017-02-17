@@ -2,7 +2,6 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../components/app-notifications.html">
 <dom-module id="test-page">
 <template>
   <style include="app-styles">
@@ -16,8 +15,6 @@
       @apply --font-default2;
     }
   </style>
-
-  <app-notifications id="notifications"></app-notifications>
 
   <paper-material>
     <div class="font-headline align-center">Testing</div>
@@ -68,8 +65,10 @@
     <div>
       <paper-input label="Title" value="{{notification.title}}"></paper-input>
       <paper-input label="Options" value="{{notification.options}}"></paper-input>
-      <paper-input label="Auto close" value="{{notification.autoClose}}"></paper-input>
+      <paper-input label="Auto close (ms)" value="{{notification.autoClose}}"></paper-input>
       <paper-button raised class="primary-button small" on-tap="_showNotification">Show Notification</paper-button>
+      <paper-button raised class="primary-button small" on-tap="_showNotificationDelayed">
+        Show Notification Delayed 5s</paper-button>
     </div>
   </paper-material>
 </template>
@@ -104,11 +103,16 @@ Polymer({
   },
 
   _showNotification: function() {
-    this.$.notifications.show(this.notification.title,
-      JSON.parse(this.notification.options), this.notification.autoClose, function() {
+    showNotification(this.notification.title, JSON.parse(this.notification.options),
+      this.notification.autoClose, function() {
         showInfoToast('Notification closed');
       }
     );
+  },
+  _showNotificationDelayed: function() {
+    setTimeout(function() {
+      this._showNotification();
+    }.bind(this), 5000);
   }
 });
 </script>

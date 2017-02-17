@@ -25,6 +25,7 @@
 <link rel="import" href="components/basic-toasts.html">
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
+<link rel="import" href="components/app-notifications.html">
 
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
@@ -70,6 +71,8 @@
       path="/user/[[auth.uid]]/messagingToken"
       data="[[messagingToken]]">
     </firebase-document>
+
+    <app-notifications id="notifications"></app-notifications>
 
     <firebase-auth-wrapper
       id="auth"
