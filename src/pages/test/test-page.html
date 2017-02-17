@@ -1,6 +1,8 @@
 <link rel="import" href="/src/header.html">
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../components/app-notifications.html">
 <dom-module id="test-page">
 <template>
   <style include="app-styles">
@@ -14,6 +16,9 @@
       @apply --font-default2;
     }
   </style>
+
+  <app-notifications id="notifications"></app-notifications>
+
   <paper-material>
     <div class="font-headline align-center">Testing</div>
   </paper-material>
@@ -58,13 +63,30 @@
       <paper-button raised on-tap="_showDefaultToast">Default</paper-button>
     </div>
   </paper-material>
+  <paper-material>
+    <div class="font-title align-center">Notifications</div>
+    <div>
+      <paper-input label="Title" value="{{notification.title}}"></paper-input>
+      <paper-input label="Options" value="{{notification.options}}"></paper-input>
+      <paper-input label="Auto close" value="{{notification.autoClose}}"></paper-input>
+      <paper-button raised class="primary-button small" on-tap="_showNotification">Show Notification</paper-button>
+    </div>
+  </paper-material>
 </template>
 <script>
 Polymer({
   is: 'test-page',
   properties: {
-
+    notification: {
+      type: Object,
+      value: {
+        title: 'title',
+        options: '{ "tag": "app", "body": "body", "icon": "/images/app-icon-32.png" }',
+        autoClose: 0
+      }
+    }
   },
+
   _showSuccessToast: function() {
     showSuccessToast();
   },
@@ -79,6 +101,14 @@ Polymer({
   },
   _showDefaultToast: function() {
     showDefaultToast();
+  },
+
+  _showNotification: function() {
+    this.$.notifications.show(this.notification.title,
+      JSON.parse(this.notification.options), this.notification.autoClose, function() {
+        showInfoToast('Notification closed');
+      }
+    );
   }
 });
 </script>

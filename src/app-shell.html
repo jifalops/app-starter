@@ -66,9 +66,8 @@
       token="{{messagingToken}}"
       on-message="_handleMessage">
     </firebase-messaging>
-
     <firebase-document
-      path="/profiles/[[auth.uid]]/messagingToken"
+      path="/user/[[auth.uid]]/messagingToken"
       data="[[messagingToken]]">
     </firebase-document>
 
@@ -202,9 +201,7 @@
     },
 
     observers: [
-      '_routePageChanged(routeData.page, offline, auth)',
-      '_messagingTokenChanged(messagingToken, auth)',
-      '_authChanged(auth)'
+      '_routePageChanged(routeData.page, offline, auth)'
     ],
 
     _onFirebaseAppChanged: function(app, old) {
@@ -288,20 +285,8 @@
       }, showServerErrorToast, showServerErrorToast);
     },
 
-    _requestMessagingPermission: function() {
-      this.$.messaging.requestPermission().then(function() {
-        LOG && log.v('Messaging permission was granted.');
-        this.messaging = true;
-      }, function(err) {
-        LOG && log.v('Messaging permission was denied.', err);
-        this.messaging = false;
-      });
-    },
-    _messagingTokenChanged: function(token, auth) {
-      LOG && log.v('Messaging token changed.', token);
-    },
-    _handleMessage: function(a, b, c) {
-      LOG && log.v('Message received', a, b, c);
+    _handleMessage: function() {
+      LOG && log.v('Message received', arguments);
     }
   });
   </script>
