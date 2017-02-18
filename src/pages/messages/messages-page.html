@@ -2,6 +2,7 @@
 <link rel="import" href="../../../bower_components/iron-collapse-button/iron-collapse-button.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../header.html">
+<link rel="import" href="last-message.html">
 <dom-module id="messages-page">
 <template>
   <style include="app-styles">
@@ -11,35 +12,35 @@
     iron-list {
       height: calc(100vh - 296px);
       max-height: 400px;
-      @apply --font-small;
     }
     iron-collapse-button {
       margin-top: 24px;
+    }
+    .list-item {
+      padding: 16px 16px 8px 16px;
+      margin: 6px 12px;
+      border-radius: 6px;
     }
   </style>
 
   <paper-material>
     <div class="font-headline align-center">Messages</div>
   </paper-material>
-  <paper-material>
+
     <iron-list
-      id="list"
-      items="[[_objectToArray(auth.user.messages)]]"
-      as="user">
-      <template>
-        <div>
-          <iron-collapse-button opened>
-            <div slot="collapse-trigger" class="flex font-title">[[user.key]]</div>
-            <div slot="collapse-content">
-              <template is="dom-repeat" items="[[_objectToArray(user.val)]]" as="msg">
-                <div>[[msg.key]] at [[msg.val]]</div>
-              </template>
-            </div>
-          </iron-collapse-button>
-        </div>
-      </template>
-    </iron-list>
-  </paper-material>
+    id="list"
+    scroll-target="document"
+    items="[[_objectToArray(auth.user.messages)]]"
+    as="user">
+    <template>
+      <div>
+        <paper-material class="list-item">
+          <div class="font-subhead">[[user.key]]</div>
+          <last-message data="[[_lastMessage(auth, user.val)]]"></last-message>
+        </paper-material>
+      </div>
+    </template>
+  </iron-list>
 </template>
 <script>
 Polymer({
@@ -51,7 +52,14 @@ Polymer({
   // TODO behavior
   _objectToArray: function(obj) {
     return objectToArray(obj);
-  }
+  },
+
+  _lastMessage: function(auth, chat) {
+    return auth.user.chats[chat];
+  },
+  notifyResize: function() {
+    this.$.list.notifyResize();
+  },
 });
 </script>
 </dom-module>

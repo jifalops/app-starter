@@ -1,0 +1,37 @@
+//
+// chats.bolt
+//
+
+path /chats {
+  read() { amAdmin() }
+  /{chat} {
+    read() { amInChat($chat) }
+    /{user} {
+      create() { userExists($user) && amInChat($chat) && prior(!chatExists($chat)) }
+      validate() { this == now }
+    }
+  }
+}
+
+path /chatMessages/{chat} {
+  read() { amAdmin() }
+  /{msg} is Message;
+}
+
+
+type Message {
+  author: FinalAuth
+  text: MessageText
+  created: FinalNow
+  read() { amInChat($chat) }
+  create() { amInChat($chat) }
+}
+
+type MessageText extends String {
+  validate() { this.length >= 1 && this.length <= 2000}
+}
+
+
+chatExists(chat) { root.chats[chat] != null }
+isInChat(user, chat) { root.chats[chat][user] != null }
+amInChat(chat) { isInChat(me(), chat) }

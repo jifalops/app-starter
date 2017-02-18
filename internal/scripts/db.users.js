@@ -54,18 +54,37 @@ db.users = {
     db.update(updates, onSuccess, onFailure);
   },
 
-  sendMessage: function(user, otherUser, msg, onSuccess, onFailure) {
-    DB && console.log('Sending message to ' + otherUser);
-    var key = db.newKey('/messages');
+  sendMessage: function(user, otherUsers, chat, msg, onSuccess, onFailure) {
+    DB && console.log('Sending message to', otherUsers);
     var updates = db.userActionUpdate(user);
-    updates['/messages/' + key] = {
-      from: user,
-      to: otherUser,
+
+    if (!chat) {
+      chat = db.newKey('/chats');
+      updates['/chats/' + chat + '/' + user] = db.timestamp();
+      for (var i = 0; i < otherUsers.length; i++) {
+        updates['/chats/' + chat + '/' + otherUsers[i]] = db.timestamp();
+      }
+    }
+
+    var msgObj = {
+      author: user,
       text: msg,
       created: db.timestamp()
     };
-    updates['/users/' + user + '/messages/' + otherUser + '/' + key] = db.timestamp();
-    updates['/users/' + otherUser + '/messages/' + user + '/' + key] = db.timestamp();
+
+    var key = db.newKey('/chatMessages/' + chat);
+
+    updates['/chatMessages/' + chat + '/' + key] = msgObj;
+
+    updates['/users/' + user + '/chats/' + chat] = msgObj;
+    for (var i = 0; i < otherUsers.length; i++) {
+      updates['/users/' + otherUsers[i] + '/chats/' + chat] = msgObj;
+      // The following line allows lookup of a chat-id from a username,
+      // and connects the 1-to-1 chat implementation with the many-to-many chat rules base.
+      updates['/users/' + otherUsers[i] + '/messages/' + user] = chat;
+      updates['/users/' + user + '/messages/' + otherUsers[i]] = chat;
+    }
+
     db.update(updates, onSuccess, onFailure);
   },
 };

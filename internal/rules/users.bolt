@@ -5,9 +5,13 @@
 path /users {
   read() { amMaintainer() }
   /{user} is User {
-    path /messages/{otherUser}/{msg} {
-      create() { isMe($otherUser) }
-      validate() { root.messages[$msg] != null }
+    // NOTE chats allow many to many messaging,
+    // but only 1 to 1 messaging is used in app-starter.
+    // `messages` here is used to lookup the chat id when
+    // sending a message to another user.
+    path /chats/{chat} is ChatLastMessage;
+    path /messages/{otherUser} {
+      write() { this != null && isInChat($otherUser, this) && amInChat(this) }
     }
   }
 }
@@ -34,6 +38,14 @@ type UserRole extends String {
 
 type MessagingToken extends String {
   validate() { this.length >= 1 && this.length <= 256 }
+}
+
+type ChatLastMessage {
+  author: String
+  text: MessageText
+  created: CurrentTimestamp
+  write() { this != null && isInChat($user, $chat) && amInChat($chat) }
+  validate() { isInChat(this.author, $chat) }
 }
 
 isElevated(user) { root.users[user].isElevated }

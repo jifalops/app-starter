@@ -26,6 +26,7 @@ type Username extends String {
   }
 }
 
+
 me() { root.uids[auth.uid] }
 userExists(user) { root.usernames[user.toLowerCase()] != null }
 isMe(user) { root.uids[auth.uid] == user }

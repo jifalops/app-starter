@@ -176,8 +176,11 @@ Polymer({
 
   sendMsg: function() {
     var msg = this.$.msgInput.value;
-    if (msg && msg.length >= 1 && msg.length <= 500) {
-      db.users.sendMessage(this.auth.uid, this.routeData.user, msg, showSuccessToast, showServerErrorToast);
+    if (msg && msg.length >= 1 && msg.length <= 2000) {
+      var user = this.auth.uid;
+      var otherUser = this.routeData.user;
+      var chat = this.auth.user.messages && this.auth.user.messages[otherUser];
+      db.users.sendMessage(user, [otherUser], chat, msg, showSuccessToast, showServerErrorToast);
     }
   },
 

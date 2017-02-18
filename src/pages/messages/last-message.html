@@ -1,0 +1,34 @@
+<link rel="import" href="../../../bower_components/from-now/from-now.html">
+<link rel="import" href="../../header.html">
+
+<dom-module id="last-message">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+      .author {
+        display: inline-block;
+        min-width: 4em;
+      }
+      from-now {
+        float: right;
+      }
+    </style>
+    <div>
+      <span class="author font-default2">[[data.author]]:</span>
+      <span class="font-default">[[data.text]]</span>
+      <from-now class="font-small text-secondary" time="[[data.created]]"></from-now>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'last-message',
+      properties: {
+        data: Object
+      }
+    });
+  </script>
+</dom-module>
