@@ -14,9 +14,9 @@ path /uids {
 // lowercase(user)
 path /usernames {
   read() { amAdmin() }
-  /{user} is FinalNow {
+  /{user} is Boolean {
     read() { true }
-    create() { key() == root.uids[auth.uid].toLowerCase() }
+    create() { this == true && key() == root.uids[auth.uid].toLowerCase() }
   }
 }
 

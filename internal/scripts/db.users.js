@@ -5,7 +5,7 @@ db.users = {
     DB && console.log('Creating user ' + username);
     var updates = {};
     updates['/uids/' + uid] = username;
-    updates['/usernames/' + username.toLowerCase()] = db.timestamp();
+    updates['/usernames/' + username.toLowerCase()] = true;
     updates['/profiles/' + username] = profile;
     updates['/users/' + username] = user;
     db.update(updates, onSuccess, onFailure);
