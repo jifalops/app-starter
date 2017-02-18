@@ -77,7 +77,7 @@
     <firebase-auth-wrapper
       id="auth"
       user="{{authRaw}}"
-      email-suffix="@users.gather.ink">
+      email-suffix="@users.app-starter.com">
     </firebase-auth-wrapper>
 
     <auth-loader
@@ -129,8 +129,10 @@
           <paper-item name="feedback">
             <a plain class="flex" href="/feedback">Feedback</a>
           </paper-item>
-
-
+          <div class="divider"></div>
+          <paper-item name="messages">
+            <a plain class="flex" href="/messages">Messages</a>
+          </paper-item>
         </paper-listbox>
       </app-drawer>
 
@@ -177,6 +179,9 @@
             </neon-animatable>
             <neon-animatable name="test">
               <test-page auth="[[auth]]"></test-page>
+            </neon-animatable>
+            <neon-animatable name="messages">
+              <messages-page auth="[[auth]]"></messages-page>
             </neon-animatable>
             <neon-animatable name="offline">
               <paper-material>
@@ -255,6 +260,7 @@
         case 'feedback':   return '/src/pages/feedback/feedback-page.html';
         case 'admin':      return '/src/pages/admin/admin-page.html';
         case 'test':       return '/src/pages/test/test-page.html';
+        case 'messages':   return '/src/pages/messages/messages-page.html';
       }
     },
 

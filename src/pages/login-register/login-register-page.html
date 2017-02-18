@@ -45,7 +45,7 @@
         required
         auto-validate
         label="Password"
-        minlength="4"
+        minlength="6"
         maxlength="32">
       </paper-input>
       <paper-input
@@ -55,7 +55,7 @@
         required
         auto-validate
         label="Confirm password"
-        minlength="4"
+        minlength="6"
         maxlength="32">
       </paper-input>
 
@@ -156,12 +156,12 @@ Polymer({
       this.$.username.invalid = true;
       return false;
     }
-    if (!pass || pass.length < 4 || pass.length > 32) {
+    if (!pass || pass.length < 6 || pass.length > 32) {
       this.$.password.invalid = true;
       return false;
     }
     if (this.register) {
-      if (!pass2 || pass2.length < 4 || pass2.length > 32) {
+      if (!pass2 || pass2.length < 6 || pass2.length > 32) {
         this.$.passwordRepeat.invalid = true;
         return false;
       }

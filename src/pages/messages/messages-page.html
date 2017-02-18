@@ -1,0 +1,57 @@
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/iron-collapse-button/iron-collapse-button.html">
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../header.html">
+<dom-module id="messages-page">
+<template>
+  <style include="app-styles">
+    :host {
+      display: block;
+    }
+    iron-list {
+      height: calc(100vh - 296px);
+      max-height: 400px;
+      @apply --font-small;
+    }
+    iron-collapse-button {
+      margin-top: 24px;
+    }
+  </style>
+
+  <paper-material>
+    <div class="font-headline align-center">Messages</div>
+  </paper-material>
+  <paper-material>
+    <iron-list
+      id="list"
+      items="[[_objectToArray(auth.user.messages)]]"
+      as="user">
+      <template>
+        <div>
+          <iron-collapse-button opened>
+            <div slot="collapse-trigger" class="flex font-title">[[user.key]]</div>
+            <div slot="collapse-content">
+              <template is="dom-repeat" items="[[_objectToArray(user.val)]]" as="msg">
+                <div>[[msg.key]] at [[msg.val]]</div>
+              </template>
+            </div>
+          </iron-collapse-button>
+        </div>
+      </template>
+    </iron-list>
+  </paper-material>
+</template>
+<script>
+Polymer({
+  is: 'messages-page',
+  properties: {
+
+  },
+
+  // TODO behavior
+  _objectToArray: function(obj) {
+    return objectToArray(obj);
+  }
+});
+</script>
+</dom-module>

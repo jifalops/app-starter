@@ -52,5 +52,20 @@ db.users = {
       created: db.timestamp()
     };
     db.update(updates, onSuccess, onFailure);
-  }
+  },
+
+  sendMessage: function(user, otherUser, msg, onSuccess, onFailure) {
+    DB && console.log('Sending message to ' + otherUser);
+    var key = db.newKey('/messages');
+    var updates = db.userActionUpdate(user);
+    updates['/messages/' + key] = {
+      from: user,
+      to: otherUser,
+      text: msg,
+      created: db.timestamp()
+    };
+    updates['/users/' + user + '/messages/' + otherUser + '/' + key] = db.timestamp();
+    updates['/users/' + otherUser + '/messages/' + user + '/' + key] = db.timestamp();
+    db.update(updates, onSuccess, onFailure);
+  },
 };

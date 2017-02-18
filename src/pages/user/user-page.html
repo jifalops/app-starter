@@ -62,6 +62,18 @@
       <paper-input id="picInput" value="[[profile.pic]]"></paper-input>
       <iron-icon icon="check" on-tap="updatePic"></iron-icon>
     </div>
+
+    <div hidden$="[[amOwner]]" class="align-center">
+      <a href="javascript:"
+        class="font-default"
+        on-tap="toggleSendingMsg"
+      >[[toggleString(sendingMsg, 'done', 'Send message')]]</a>
+      <div hidden$="[[!sendingMsg]]">
+        <paper-input id="msgInput" value="[[msg]]"></paper-input>
+        <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon>
+      </div>
+    </div>
+
   </paper-material>
 
   <paper-material hidden$="[[!amOwner]]" class="layout vertical">
@@ -98,6 +110,10 @@ Polymer({
       value: false
     },
     editPic: {
+      type: Boolean,
+      value: false
+    },
+    sendingMsg: {
       type: Boolean,
       value: false
     },
@@ -151,6 +167,17 @@ Polymer({
       db.users.changeAvatar(this.auth.uid, pic, function() {
         this.editPic = false;
       }.bind(this), showServerErrorToast);
+    }
+  },
+
+  toggleSendingMsg: function() {
+    this.sendingMsg = !this.sendingMsg;
+  },
+
+  sendMsg: function() {
+    var msg = this.$.msgInput.value;
+    if (msg && msg.length >= 1 && msg.length <= 500) {
+      db.users.sendMessage(this.auth.uid, this.routeData.user, msg, showSuccessToast, showServerErrorToast);
     }
   },
 

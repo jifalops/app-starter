@@ -5,7 +5,7 @@ A starting point for using Polymer, Firebase with email/username/provider login,
 * Setup login providers (only google is currently available)
 * Add login/register toasts for wrong user/pass etc.
 * Add forgot password flow for login/register (complex).
-* Cloud messaging / notifications
+* ~~Cloud messaging / notifications~~
 * User to user communication
 
 ## Polymer 2.0-preview bugs

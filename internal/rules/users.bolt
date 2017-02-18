@@ -4,7 +4,12 @@
 
 path /users {
   read() { amMaintainer() }
-  /{user} is User;
+  /{user} is User {
+    path /messages/{otherUser}/{msg} {
+      create() { isMe($otherUser) }
+      validate() { root.messages[$msg] != null }
+    }
+  }
 }
 
 type User {
