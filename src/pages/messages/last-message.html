@@ -11,14 +11,14 @@
         display: inline-block;
         min-width: 4em;
       }
-      from-now {
-        float: right;
-      }
     </style>
+    <div class="layout horizontal center justified">
+      <span class="font-subhead">[[user]]</span>
+      <from-now class="font-small text-secondary" time="[[data.created]]"></from-now>
+    </div>
     <div>
       <span class="author font-default2">[[data.author]]:</span>
       <span class="font-default">[[data.text]]</span>
-      <from-now class="font-small text-secondary" time="[[data.created]]"></from-now>
     </div>
 
   </template>
@@ -27,6 +27,7 @@
     Polymer({
       is: 'last-message',
       properties: {
+        user: String,
         data: Object
       }
     });

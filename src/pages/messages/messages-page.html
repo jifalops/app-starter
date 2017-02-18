@@ -34,9 +34,8 @@
     as="user">
     <template>
       <div>
-        <paper-material class="list-item">
-          <div class="font-subhead">[[user.key]]</div>
-          <last-message data="[[_lastMessage(auth, user.val)]]"></last-message>
+        <paper-material class="list-item">          
+          <last-message user="[[user.key]]" data="[[_lastMessage(auth, user.val)]]"></last-message>
         </paper-material>
       </div>
     </template>
