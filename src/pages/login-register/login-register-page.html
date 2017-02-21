@@ -77,7 +77,7 @@
       <div class="font-small layout horizontal wrap around-justified">
         <div class="layout vertical center"
           on-tap="_loginRegister"
-          data="google">
+          data-provider="google">
           <iron-image src="/images/google-icon.svg"></iron-image>
           Google
         </div>
@@ -118,6 +118,7 @@ Polymer({
   },
   _loginRegister: function(e) {
     var el = e.tartget || e.srcElement;
+    console.log(arguments);
     var data = {};
     data.provider = el.dataset.provider;
 

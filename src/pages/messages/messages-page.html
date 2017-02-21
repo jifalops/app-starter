@@ -2,7 +2,7 @@
 <link rel="import" href="../../../bower_components/iron-collapse-button/iron-collapse-button.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../../header.html">
-<link rel="import" href="last-message.html">
+<link rel="import" href="chat-summary-toggle.html">
 <dom-module id="messages-page">
 <template>
   <style include="app-styles">
@@ -34,8 +34,13 @@
     as="user">
     <template>
       <div>
-        <paper-material class="list-item">          
-          <last-message user="[[user.key]]" data="[[_lastMessage(auth, user.val)]]"></last-message>
+        <paper-material class="list-item">
+          <chat-summary-toggle
+            auth="[[auth]]"
+            user="[[user.key]]"
+            last-msg="[[_lastMessage(auth, user.val)]]"
+            chat="[[user.val]]">
+          </chat-summary-toggle>
         </paper-material>
       </div>
     </template>

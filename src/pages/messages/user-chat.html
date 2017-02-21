@@ -1,0 +1,66 @@
+<link rel="import" href="../../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../../bower_components/chat-window/chat-window.html">
+<link rel="import" href="../../header.html">
+
+<dom-module id="user-chat">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+      chat-window {
+        @apply --font-small;
+        --chat-messages-height: 12em;
+        --paper-input-container-input: {
+          margin: 0 2px;
+        }
+        --chat-message-text: {
+          background-color: #f0f0f0;
+          padding: 6px 8px;
+          margin: 4px 0;
+          border-radius: 6px;
+        };
+        --chat-input-button: {
+          color: var(--dark-primary-color);
+        }
+      }
+    </style>
+    <firebase-query
+      path="/chatMessages/[[chat]]"
+      data="{{messages}}">
+    </firebase-query>
+    <div class="font-subhead">[[user]]</div>
+    <chat-window
+      author="[[auth.uid]]"
+      single-line
+      input-text="{{text}}"
+      messages="[[messages]]"
+      on-send="_sendMsg">
+    </chat-window>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'user-chat',
+      properties: {
+        auth: Object,
+        user: String,
+        chat: String
+      },
+
+      observers: [
+        '_messagesChanged(messages)'
+      ],
+
+      _messagesChanged(msgs) {
+        // LOG && log.v('messages', msgs, msgs ? msgs.length : '');
+      },
+
+      _sendMsg: function(e, msg) {
+        db.users.sendMessage(this.auth.uid, [this.user], this.chat, msg, function() {
+          this.text = '';
+        }.bind(this), showServerErrorToast);
+      }
+    });
+  </script>
+</dom-module>
