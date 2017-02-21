@@ -59,7 +59,7 @@ Polymer({
   },
 
   _lastMessage: function(auth, chat) {
-    return auth.user.chats[chat];
+    return auth && auth.user.chats[chat];
   },
   notifyResize: function() {
     this.$.list.notifyResize();

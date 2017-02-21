@@ -14,7 +14,7 @@ path /chats {
 }
 
 path /chatMessages/{chat} {
-  read() { amAdmin() }
+  read() { amInChat($chat) || amAdmin() }
   /{msg} is Message;
 }
 
@@ -23,7 +23,6 @@ type Message {
   author: FinalAuth
   text: MessageText
   created: FinalNow
-  read() { amInChat($chat) }
   create() { amInChat($chat) }
 }
 
