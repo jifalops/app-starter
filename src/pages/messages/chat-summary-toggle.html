@@ -9,7 +9,25 @@
       :host {
         display: block;
       }
+      .author {
+        display: inline-block;
+        min-width: 4em;
+      }
     </style>
+
+    <div class="container" on-tap="_toggleOpened">
+      <div hidden$="[[opened]]">
+        <last-message user="[[user]]" data="[[lastMsg]]"></last-message>
+      </div>
+      <template is="dom-if" if="[[opened]]">
+        <div hidden$="[[!opened]]">
+          <user-chat auth="[[auth]]" chat="[[chat]]" user="[[user]]"></user-chat>
+        </div>
+      </template>
+    </div>
+
+<!--
+
     <toggle-area value$="{{opened}}">
       <div slot="trigger">
 
@@ -26,9 +44,9 @@
         <last-message user="[[user]]" data="[[lastMsg]]"></last-message>
       </div>
       <div slot="collapse-content">
-        <user-chat auth="[[auth]]" chat="[[chat]]" user="[[user]]"></user-chat>
+
       </div>
-    </iron-collapse-button>
+    </iron-collapse-button> -->
   </template>
 
   <script>
@@ -41,8 +59,12 @@
         chat: String,
         opened: {
           type: Boolean,
-          value: false
+          value: false,
+          reflectToAttribute: true
         }
+      },
+      _toggleOpened: function() {
+        this.opened = !this.opened;
       }
     });
   </script>
