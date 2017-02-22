@@ -7,7 +7,7 @@ path /uids {
   read() { amAdmin() }
   /{uid} is Username {
     read() { auth.uid == key() }
-    create() { auth.uid == key() && userExists(this) }
+    create() { auth.uid == key() && userExists(this) && prior(!userExists(this)) }
   }
 }
 

@@ -64,8 +64,7 @@
           raised
           class="primary-button"
           id="loginRegisterButton"
-          on-tap="_loginRegister"
-          data-provider="username">
+          on-tap="_usernameLogin">
           [[toggleString(register, 'Register', 'Sign In')]]
         </paper-button>
       </div>
@@ -76,26 +75,22 @@
 
       <div class="font-small layout horizontal wrap around-justified">
         <div class="layout vertical center"
-          on-tap="_loginRegister"
-          data-provider="google">
+          on-tap="_googleLogin">
           <iron-image src="/images/google-icon.svg"></iron-image>
           Google
         </div>
         <div class="layout vertical center"
-          on-tap="_loginRegister"
-          data-provider="facebook">
+          on-tap="_facebookLogin">
           <iron-image src="/images/facebook-icon.svg"></iron-image>
           Facebook
         </div>
         <div class="layout vertical center"
-          on-tap="_loginRegister"
-          data-provider="twitter">
+          on-tap="_twitterLogin">
           <iron-image src="/images/twitter-icon.svg"></iron-image>
           Twitter
         </div>
         <div class="layout vertical center"
-          on-tap="_loginRegister"
-          data-provider="github">
+          on-tap="_githubLogin">
           <iron-image src="/images/github-icon.svg"></iron-image>
           Github
         </div>
@@ -116,27 +111,24 @@ Polymer({
       reflectToAttribute: true
     }
   },
-  _loginRegister: function(e) {
-    var el = e.tartget || e.srcElement;
-    console.log(arguments);
+  
+  _usernameLogin: function() { this._loginRegister('username'); },
+  _googleLogin:   function() { this._loginRegister('google'); },
+  _facebookLogin: function() { this._loginRegister('facebook'); },
+  _twitterLogin:  function() { this._loginRegister('twitter'); },
+  _githubLogin:   function() { this._loginRegister('github'); },
+  _loginRegister: function(provider) {
     var data = {};
-    data.provider = el.dataset.provider;
-
-    if (!data.provider && el.src) {
-      if (el.src.includes('google')) data.provider = 'google';
-      else if (el.src.includes('facebook')) data.provider = 'facebook';
-      else if (el.src.includes('twitter')) data.provider = 'twitter';
-      else if (el.src.includes('github')) data.provider = 'github';
-    }
+    data.provider = provider;
 
     if (!data.provider) {
-      LOG && log.a('No provider given');
+      LOG && log.w('No provider given');
       return;
     }
 
     if (data.provider == 'username') {
-      data.isRegistering = this.register;
       if (this._validateInput()) {
+        data.isRegistering = this.register;
         data.username = this.$.username.value;
         data.password = this.$.password.value;
       } else {
