@@ -1,8 +1,5 @@
-<link rel="import" href="../../../bower_components/iron-collapse-button/iron-collapse-button.html">
-<link rel="import" href="../../../bower_components/toggle-area/toggle-area.html">
 <link rel="import" href="../../header.html">
-<link rel="import" href="last-message.html">
-<link rel="import" href="user-chat.html">
+<link rel="import" href="../../components/user-chat.html">
 <dom-module id="chat-summary-toggle">
   <template>
     <style include="app-styles">
@@ -15,16 +12,20 @@
       }
     </style>
 
-    <div class="container" on-tap="_toggleOpened">
-      <div hidden$="[[opened]]">
-        <last-message user="[[user]]" data="[[lastMsg]]"></last-message>
-      </div>
-      <template is="dom-if" if="[[opened]]">
-        <div hidden$="[[!opened]]">
-          <user-chat auth="[[auth]]" chat="[[chat]]" user="[[user]]"></user-chat>
-        </div>
-      </template>
+    <div on-tap="_toggleOpened" class="layout horizontal center justified">
+      <span class="font-subhead">[[user]]</span>
+      <from-now class="font-small text-secondary" time="[[lastMsg.created]]"></from-now>
     </div>
+    <div hidden$="[[opened]]" on-tap="_toggleOpened">
+      <span class="author">[[lastMsg.author]]:</span>
+      <span class="font-small">[[lastMsg.text]]</span>
+    </div>
+    <template is="dom-if" if="[[opened]]">
+      <div hidden$="[[!opened]]">
+        <user-chat auth="[[auth]]" chat="[[chat]]" user="[[user]]"></user-chat>
+      </div>
+    </template>
+
 
 <!--
 

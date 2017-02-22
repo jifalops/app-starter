@@ -1,6 +1,6 @@
-<link rel="import" href="../../../bower_components/polymerfire/firebase-query.html">
-<link rel="import" href="../../../bower_components/chat-window/chat-window.html">
-<link rel="import" href="../../header.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/chat-window/chat-window.html">
+<link rel="import" href="../header.html">
 
 <dom-module id="user-chat">
   <template>
@@ -13,7 +13,7 @@
         --chat-messages-height: 12em;
 
         --chat-messages-scroller: {
-          border: 2px inset #eee;
+          border: 2px inset #f8f8f8;
         }
 
         --paper-input-container-input: {
@@ -31,10 +31,11 @@
       }
     </style>
     <firebase-query
+      disabled="[[!chat]]"
       path="/chatMessages/[[chat]]"
       data="{{messages}}">
     </firebase-query>
-    <div class="font-subhead">[[user]]</div>
+    <!-- <div class="font-subhead">[[user]]</div> -->
     <chat-window
       author="[[auth.uid]]"
       single-line

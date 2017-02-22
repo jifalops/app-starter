@@ -5,6 +5,7 @@
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/from-now/from-now.html">
 <link rel="import" href="../../header.html">
+<link rel="import" href="../../components/user-chat.html">
 <dom-module id="user-page">
 <template>
   <style include="app-styles">
@@ -63,15 +64,15 @@
       <iron-icon icon="check" on-tap="updatePic"></iron-icon>
     </div>
 
-    <div hidden$="[[amOwner]]" class="align-center">
+    <div hidden$="[[amOwner]]" class="layout horizontal center end-justified">
+      <div hidden$="[[!sendingMsg]]" class="layout horizontal center ">
+        <paper-input id="msgInput" value="[[msg]]" no-label-float></paper-input>
+        <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon>
+      </div>
       <a href="javascript:"
         class="font-default"
         on-tap="toggleSendingMsg"
       >[[toggleString(sendingMsg, 'done', 'Send message')]]</a>
-      <div hidden$="[[!sendingMsg]]">
-        <paper-input id="msgInput" value="[[msg]]"></paper-input>
-        <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon>
-      </div>
     </div>
 
   </paper-material>
@@ -180,7 +181,10 @@ Polymer({
       var user = this.auth.uid;
       var otherUser = this.routeData.user;
       var chat = this.auth.user.messages && this.auth.user.messages[otherUser];
-      db.users.sendMessage(user, [otherUser], chat, msg, showSuccessToast, showServerErrorToast);
+      db.users.sendMessage(user, [otherUser], chat, msg, function() {
+        showSuccessToast('Message sent');
+        this.$.msgInput.value = '';
+      }.bind(this), showServerErrorToast);
     }
   },
 
