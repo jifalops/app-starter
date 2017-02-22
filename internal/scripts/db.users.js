@@ -87,4 +87,11 @@ db.users = {
 
     db.update(updates, onSuccess, onFailure);
   },
+
+  addProvider: function(user, provider, onSuccess, onFailure) {
+    var updates = db.userActionUpdate(user);
+    var key = db.newKey('/users/' + user + '/providers');
+    updates['/users/' + user + '/providers/' + key] = provider;
+    db.update(updates, onSuccess, onFailure);
+  }
 };

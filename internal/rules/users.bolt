@@ -17,7 +17,7 @@ path /users {
 }
 
 type User {
-  provider: Provider
+  providers: Provider[]
   created: FinalNow
   lastActivity: CurrentTimestamp
   role: UserRole

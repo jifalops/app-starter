@@ -18,6 +18,17 @@
     iron-icon {
       color: green;
     }
+    .add-provider {
+      background-color: var(--success-bg-color);
+      padding: 8px;
+    }
+    .add-provider > div {
+      margin: 0 6px;
+    }
+    .warning {
+      padding: 4px;
+      margin: 4px;
+    }
   </style>
 
   <app-route
@@ -79,8 +90,40 @@
 
   <paper-material hidden$="[[!amOwner]]" class="layout vertical">
     <span class="font-title self-center">Private Info</span>
-    <div class="font-subhead">Login method</div>
-    <div>[[auth.user.provider]]</div>
+    <div class="font-subhead">Login methods</div>
+    <div class="layout horizontal center justified wrap">
+      <span>[[join(_providers, '\, ')]]</span>
+      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="warning font-small">
+        Add a second login method to access your account if you forget the password.
+      </span>
+      <div class="add-provider font-small layout horizontal center">
+        <span class="font-default2">+</span>
+        <div class="layout vertical center"
+          hidden$="[[includes(_providers, 'Google')]]"
+          on-tap="_linkGoogle">
+          <iron-image src="/images/google-icon.svg"></iron-image>
+          Google
+        </div>
+        <div class="layout vertical center"
+          hidden$="[[includes(_providers, 'Facebook')]]"
+          on-tap="_linkFacebook">
+          <iron-image src="/images/facebook-icon.svg"></iron-image>
+          Facebook
+        </div>
+        <div class="layout vertical center"
+          hidden$="[[includes(_providers, 'Twitter')]]"
+          on-tap="_linkTwitter">
+          <iron-image src="/images/twitter-icon.svg"></iron-image>
+          Twitter
+        </div>
+        <div class="layout vertical center"
+          hidden$="[[includes(_providers, 'Github')]]"
+          on-tap="_linkGithub">
+          <iron-image src="/images/github-icon.svg"></iron-image>
+          Github
+        </div>
+      </div>
+    </div>
     <div class="font-subhead">Created</div>
     <from-now time="[[auth.user.created]]"></from-now>
     <div class="font-subhead">Last Activity</div>
@@ -120,7 +163,8 @@ Polymer({
     },
   },
   observers: [
-    '_loadProfile(auth, routeData.user)'
+    '_loadProfile(auth, routeData.user)',
+    '_processProviders(auth.user.providers)'
   ],
 
   _loadProfile: function(auth, user) {
@@ -191,6 +235,40 @@ Polymer({
   // TODO behavior
   toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
+  },
+
+  _processProviders: function(providers) {
+    var array = [];
+    for (var key in providers) {
+      array.push(providers[key]);
+    }
+    this._providers = array;
+  },
+
+  // TODO behavior
+  join: function(array, separator) {
+    return array.join(separator);
+  },
+
+  // TODO behavior
+  includes: function(array, value) {
+    return array.includes(value);
+  },
+
+  _linkGoogle:   function() { this._linkProvider('google') },
+  _linkFacebook: function() { this._linkProvider('facebook') },
+  _linkTwitter:  function() { this._linkProvider('twitter') },
+  _linkGithub:   function() { this._linkProvider('github') },
+  _linkProvider: function(name) {
+    document.getElementById('app').$['auth'].linkProvider(name, function() {
+      db.users.addProvider(this.auth.uid, ucFirst(name), function() {
+        //success
+      }, showServerErrorToast);
+    }.bind(this), showServerErrorToast, showServerErrorToast);
+  },
+
+  _hasUsernameProviderOnly: function(providers) {
+    return providers && providers.length == 1 && providers[0] == 'Username';
   }
 });
 </script>

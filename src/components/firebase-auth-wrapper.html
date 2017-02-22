@@ -25,8 +25,8 @@
         notify: true
       },
       /**
-       * To have usernames instead of email logins, add an email suffix
-       * here. Include the '@' symbol.
+       * To have usernames instead of email logins, add an email suffix,
+       * including the `@` symbol.
        */
       emailSuffix: {
         type: String,
@@ -59,15 +59,29 @@
 
     /** Currently supported providers are 'google', 'facebook', 'github', 'twitter' */
     providerLogin: function(providerName, onSuccess, onFailure, onException) {
-      var provider = this.$.auth._providerFromName(providerName);
-      // Twitter simple login doesn't have scopes.
-      if (this.addEmailScope && providerName != 'twitter') {
-        provider.addScope('email');
-      }
+      var provider = this._providerFromName(providerName);
       console.log("Signing in with " + providerName);
       this.$.auth.signInWithPopup(provider)
           .then(onSuccess, onFailure)
           .catch(onException);
+    },
+
+    linkProvider: function(providerName, onSuccess, onFailure, onException) {
+      var provider = this._providerFromName(providerName);
+      console.log("Linking provider to account: " + providerName, provider);
+      this.user.linkWithPopup(provider)
+          .then(onSuccess, onFailure)
+          .catch(onException);
+    },
+
+    _providerFromName: function(name) {
+      var provider = this.$.auth._providerFromName(name);
+      // Twitter simple login doesn't have scopes.
+      if (this.addEmailScope && providerName != 'twitter') {
+        AUTH && log.v('Adding email scope for', name);
+        provider.addScope('email');
+      }
+      return provider;
     },
 
     logout: function(onSuccess, onFailure, onException) {

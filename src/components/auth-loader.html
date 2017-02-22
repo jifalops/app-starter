@@ -53,7 +53,7 @@
         //      which is passed in as the desired username with capitalization.
         //   b. Provider login: Prompt for a username and then create
         //      user data using that username.
-        AUTH && log.v('Authenticated. Loading user data from database...');
+        AUTH && log.v('Authenticated:', authRaw);
         db.watch('/uids/' + authRaw.uid, function(username) {
           LOG && log.v(authRaw.uid, 'is', username);
           if (username) {
@@ -119,8 +119,7 @@
       var user = {};
       var profile = {};
       var data = authRaw.providerData[0];
-
-      user.provider = this._getProvider(data.providerId);
+      user.providers = { 0: this._getProvider(data.providerId) };
       user.created = db.timestamp();
       user.lastActivity = db.timestamp();
       user.role = 'User';
