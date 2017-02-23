@@ -5,4 +5,6 @@
 # Tested with polymer-cli 0.17.0 and polymer 1.7.1.
 polymer build
 cp src/app-shell.html build/bundled/src/    # copy app shell
+# cp manifest.json build/bundled/             # copy manifest
+# cp firebase-messaging-sw.js build/bundled/  # copy FCM service worker
 cp -rn bower_components build/bundled/      # copy only missing bower components

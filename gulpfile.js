@@ -21,6 +21,11 @@ const polymer = require('polymer-build');
 const polymerProject = new polymer.PolymerProject(polymerJSON);
 const buildDirectory = 'build/bundled';
 
+const gulpif = require('gulp-if');
+const htmlMinifier = require('gulp-html-minifier');
+const cssSlam = require('css-slam').gulp;
+const uglify = require('gulp-uglify');
+
 /**
  * Waits for the given ReadableStream
  */
@@ -42,17 +47,17 @@ function build() {
           // Oh, well do you want to minify stuff? Go for it!
           // Here's how splitHtml & gulpif work
           .pipe(polymerProject.splitHtml())
-          // .pipe(gulpif(/\.js$/, uglify()))
-          // .pipe(gulpif(/\.css$/, cssSlam()))
-          // .pipe(gulpif(/\.html$/, htmlMinifier()))
+          .pipe(gulpif(/\.js$/, uglify()))
+          .pipe(gulpif(/\.css$/, cssSlam()))
+          .pipe(gulpif(/\.html$/, htmlMinifier()))
           .pipe(polymerProject.rejoinHtml());
 
         // Okay now lets do the same to your dependencies
         let depsStream = polymerProject.dependencies()
           .pipe(polymerProject.splitHtml())
-          // .pipe(gulpif(/\.js$/, uglify()))
-          // .pipe(gulpif(/\.css$/, cssSlam()))
-          // .pipe(gulpif(/\.html$/, htmlMinifier()))
+          .pipe(gulpif(/\.js$/, uglify()))
+          .pipe(gulpif(/\.css$/, cssSlam()))
+          .pipe(gulpif(/\.html$/, htmlMinifier()))
           .pipe(polymerProject.rejoinHtml());
 
         // Okay, now lets merge them into a single build stream.
