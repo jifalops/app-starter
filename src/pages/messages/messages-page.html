@@ -21,13 +21,26 @@
       margin: 6px 12px;
       border-radius: 6px;
     }
+    .no-messages {
+      margin-left: 16px;
+    }
   </style>
 
   <paper-material>
     <div class="font-headline align-center">Messages</div>
   </paper-material>
 
-    <iron-list
+  <div hidden$="[[hasMessages]]" class="no-messages">
+    <div hidden$="[[auth]]">
+      Sign-in to see your messages.
+    </div>
+    <div hidden$="[[!auth]]">
+      Start a conversation by visiting a user's profile page.
+    </div>
+  </div>
+
+
+  <iron-list
     id="list"
     scroll-target="document"
     items="[[_objectToArray(auth.user.messages)]]"
@@ -35,7 +48,7 @@
     <template>
       <div>
         <paper-material class="list-item">
-          <chat-summary-toggle            
+          <chat-summary-toggle
             auth="[[auth]]"
             user="[[user.key]]"
             last-msg="[[_lastMessage(auth, user.val)]]"
@@ -50,7 +63,12 @@
 Polymer({
   is: 'messages-page',
   properties: {
-
+    auth: Object,
+    hasMessages: {
+      type: Boolean,
+      value: false,
+      computed: '_computeHasMessages(auth.user.messages)'
+    }
   },
 
   // TODO behavior
@@ -64,6 +82,10 @@ Polymer({
   notifyResize: function() {
     this.$.list.notifyResize();
   },
+
+  _computeHasMessages: function(msgs) {
+    return !isEmpty(msgs);
+  }
 });
 </script>
 </dom-module>

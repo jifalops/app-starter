@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../header.html">
 
 <dom-module id="feedback-page">
@@ -11,6 +12,11 @@
       }
       #input {
         margin: 24px 0;
+      }
+      iron-icon {
+        --iron-icon-height: 16px;
+        --iron-icon-width: 16px;
+        vertical-align: super;
       }
     </style>
     <paper-material>
@@ -26,6 +32,18 @@
         maxlength="500">
       </paper-textarea>
       <paper-button class="primary-button" raised on-tap="sendFeedback">Send</paper-button>
+    </paper-material>
+    <paper-material>
+      <div class="font-subhead">
+        Find a bug?
+      </div>
+      <div>
+        Please report the bug on our
+        <a href="https://github.com/jifalops/app-starter/issues"
+          target="_blank">issue tracker
+        <iron-icon icon="launch"></iron-icon></a>
+
+      </div>
     </paper-material>
   </template>
 

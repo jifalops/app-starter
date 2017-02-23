@@ -2,6 +2,7 @@
   "name": "app-starter",
   "description": "A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.",
   "main": "index.html",
+  "license": "MIT",
   "dependencies": {
     "polymer": "^1.8.0",
     "firebase": "^3.6.8",

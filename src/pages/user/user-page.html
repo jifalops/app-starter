@@ -28,6 +28,7 @@
     .warning {
       padding: 4px;
       margin: 4px;
+      max-width: 150px;
     }
   </style>
 
@@ -264,7 +265,26 @@ Polymer({
       db.users.addProvider(this.auth.uid, ucFirst(name), function() {
         //success
       }, showServerErrorToast);
-    }.bind(this), showServerErrorToast, showServerErrorToast);
+    }.bind(this), function(error) {
+      // LOG && log.w('Error linking provider', error);
+      switch (error.code) {
+        case 'auth/credential-already-in-use':
+          showErrorToast('That account is already linked to another user.');
+          break;
+        case 'auth/email-already-in-use':
+          showErrorToast('A user with that email already exists.');
+          break;
+        case 'auth/popup-blocked':
+          showWarningToast('Login popup was blocked.');
+          break;
+        case 'auth/cancelled-popup-request':
+          // blank
+          break;
+        case 'auth/popup-closed-by-user':
+          // blank
+          break;
+      }
+    }.bind(this), showServerErrorToast);
   },
 
   _hasUsernameProviderOnly: function(providers) {

@@ -68,7 +68,7 @@
 
     linkProvider: function(providerName, onSuccess, onFailure, onException) {
       var provider = this._providerFromName(providerName);
-      console.log("Linking provider to account: " + providerName, provider);
+      // console.log("Linking provider to account: " + providerName, provider);
       this.user.linkWithPopup(provider)
           .then(onSuccess, onFailure)
           .catch(onException);
