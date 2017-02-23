@@ -91,7 +91,7 @@
     },
 
     _onAuthError: function(e, detail) {
-      console.error('Exception using firebase-auth:', detail, e);
+      console.warn('Exception using firebase-auth:\n', detail.code, '\n', detail.message);
     }
   });
   </script>

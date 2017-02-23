@@ -36,6 +36,7 @@
         auto-validate
         label="Username"
         allowed-pattern="[a-zA-Z0-9_\\-]"
+        on-keydown="_checkForEnter"
         minlength="3"
         maxlength="16">
       </paper-input>
@@ -45,6 +46,7 @@
         required
         auto-validate
         label="Password"
+        on-keydown="_checkForEnter"
         minlength="6"
         maxlength="32">
       </paper-input>
@@ -55,11 +57,12 @@
         required
         auto-validate
         label="Confirm password"
+        on-keydown="_checkForEnter"
         minlength="6"
         maxlength="32">
       </paper-input>
 
-      <div class="layout horizontal center-justified">
+      <div class="align-center">
         <paper-button
           raised
           class="primary-button"
@@ -111,7 +114,7 @@ Polymer({
       reflectToAttribute: true
     }
   },
-  
+
   _usernameLogin: function() { this._loginRegister('username'); },
   _googleLogin:   function() { this._loginRegister('google'); },
   _facebookLogin: function() { this._loginRegister('facebook'); },
@@ -121,12 +124,7 @@ Polymer({
     var data = {};
     data.provider = provider;
 
-    if (!data.provider) {
-      LOG && log.w('No provider given');
-      return;
-    }
-
-    if (data.provider == 'username') {
+    if (provider == 'username') {
       if (this._validateInput()) {
         data.isRegistering = this.register;
         data.username = this.$.username.value;
@@ -170,6 +168,12 @@ Polymer({
   // TODO behavior
   toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
+  },
+
+  _checkForEnter: function (e) {
+    if (e.keyCode === 13) {
+      this._usernameLogin();
+    }
   }
 });
 </script>

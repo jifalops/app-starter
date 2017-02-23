@@ -273,18 +273,18 @@
             this.$.registerPage.$.password.value = '';
             this.$.registerPage.$.passwordRepeat.value = '';
             goBack();
-          }.bind(this), showServerErrorToast, showServerErrorToast);
+          }.bind(this), this._handleLoginRegisterError.bind(this));
         } else {
           this.$.auth.usernameLogin(data.username, data.password, function() {
             this.$.loginPage.$.username.value = '';
             this.$.loginPage.$.password.value = '';
             goBack();
-          }.bind(this), showServerErrorToast, showServerErrorToast);
+          }.bind(this), this._handleLoginRegisterError.bind(this));
         }
       } else {
         this.$.auth.providerLogin(data.provider, function() {
           goBack();
-        }.bind(this), showServerErrorToast, showServerErrorToast);
+        }.bind(this), this._handleLoginRegisterError.bind(this));
       }
     },
 
@@ -294,8 +294,46 @@
       }, showServerErrorToast, showServerErrorToast);
     },
 
+    // TODO finish implementing Firebase Cloud Messaging
     _handleMessage: function() {
       LOG && log.v('Message received', arguments);
+    },
+
+    _handleLoginRegisterError: function(error) {
+      switch (error.code) {
+        case 'auth/invalid-email':
+          var input = this.$.registerPage.$.username;
+          input.focus();
+          input.$.input.select();
+          input.errorMessage = 'Only letters, numbers, - and _';
+          input.invalid = true;
+          showErrorToast('Invalid username');
+          break;
+        case 'auth/user-not-found':
+          var input = this.$.loginPage.$.username;
+          input.focus();
+          input.$.input.select();
+          input.errorMessage = 'That user does not exist.';
+          input.invalid = true;
+          showErrorToast('That user does not exist.');
+          break;
+        case 'auth/wrong-password':
+          var input = this.$.loginPage.$.password;
+          input.focus();
+          input.$.input.select();
+          input.errorMessage = 'Incorrect password.';
+          input.invalid = true;
+          showErrorToast('Incorrect password.');
+          break;
+        case 'auth/email-already-in-use':
+          var input = this.$.registerPage.$.username;
+          input.focus();
+          input.$.input.select();
+          input.errorMessage = 'That user already exists.';
+          input.invalid = true;
+          showErrorToast('That user already exists.');
+          break;
+      }
     }
   });
   </script>
