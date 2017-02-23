@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/chat-window/chat-window.html">
 <link rel="import" href="../header.html">
-
 <dom-module id="user-chat">
   <template>
     <style include="app-styles">
@@ -11,7 +10,6 @@
       chat-window {
         @apply --font-small;
         --chat-messages-height: 12em;
-
         --chat-messages-scroller: {
           border: 1px inset #eee;
         }
@@ -58,7 +56,7 @@
         '_messagesChanged(messages)'
       ],
 
-      _messagesChanged(msgs) {
+      _messagesChanged: function(msgs) {
         // LOG && log.v('messages', msgs, msgs ? msgs.length : '', this.chat);
       },
 
