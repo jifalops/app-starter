@@ -1,5 +1,5 @@
 # app-starter
-A starting point for using Polymer, Firebase with username/provider login, and Geofire.
+A starting point for using Polymer, Firebase, Geofire, and username/provider logins.
 
 Try it at https://app-starter-8f1a5.firebaseapp.com
 

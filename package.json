@@ -1,0 +1,20 @@
+{
+  "name": "app-starter",
+  "version": "0.1.0",
+  "description": "A starting point for using Polymer, Firebase, Geofire, and username/provider logins.",
+  "scripts": {
+    "build": "gulp"
+  },
+  "license": "LICENSE.txt",
+  "engines": {
+    "node": ">=4.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "del": "^2.2.1",
+    "gulp": "gulpjs/gulp#4.0",
+    "merge-stream": "^1.0.0",
+    "plylog": "^0.4.0",
+    "polymer-build": "^0.6.0-alpha.3"
+  }
+}

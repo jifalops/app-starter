@@ -12,12 +12,12 @@
     "/src/pages/users/user-list.html",
     "/src/pages/users/user-map.html"
   ],
-  "sourceGlobs": [
+  "sources": [
     "src/**/*",
     "images/**/*",
     "bower.json"
   ],
-  "includeDependencies": [
+  "extraDependencies": [
     "manifest.json",
     "firebase-messaging-sw.js",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"

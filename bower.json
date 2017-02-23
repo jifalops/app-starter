@@ -1,6 +1,6 @@
 {
   "name": "app-starter",
-  "description": "A starting point for using Polymer, Firebase with email/username/provider login, and Geofire.",
+  "description": "A starting point for using Polymer, Firebase, Geofire, and username/provider logins.",
   "main": "index.html",
   "license": "Apache",
   "dependencies": {
@@ -49,5 +49,5 @@
     "web-component-tester": "^4.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
-  
+
 }
