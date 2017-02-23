@@ -2,11 +2,10 @@
 A starting point for using Polymer, Firebase with username/provider login, and Geofire.
 
 ####TODO
-* Setup login providers (only google is currently available)
-* Add login/register toasts for wrong user/pass etc.
-* Add forgot password flow for login/register (complex).
 * ~~Cloud messaging / notifications~~
-* User to user communication
+* Test on other browsers (not Chrome)
+* Possibly show a toast or notification when a message is received (not push messages).
+* Figure out non-push notifications on mobile.
 
 ## Polymer 2.0-preview bugs
 * app-location: calling `redirect` does not change the url (but has the other desired effects).
