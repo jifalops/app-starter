@@ -10,7 +10,7 @@ to the map. A user can add themselves at either a location given by a search res
 or their current location which will be moved a bit to hide exact location.
 
 
-#### Key features
+## Key features
 * Firebase login using usernames or providers. Email can also be used but the username
 input field does not currently allow the @ character.
 * Users can link multiple providers to their account, which works around the inability
@@ -40,7 +40,7 @@ tracker here.
 * Bolt rules for Firebase.
 * More stuff. Try to break it and file issues :)
 
-#### TODO
+### TODO
 * ~~Cloud messaging / notifications~~
 * Test on other browsers (not Chrome)
 * Possibly show a toast or notification when a message is received (not push messages).
