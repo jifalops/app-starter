@@ -36,14 +36,14 @@ function goBack() {
       }
     }
   }
-  redirect('/users/map');
+  redirect('/users/list');
 }
 
 /*
  * Notifications
  */
 function showNotification(title, options, autoClose, onClose) {
-  document.getElementById('app').$['notifications'].show(title, options, autoClose, onClose);  
+  document.getElementById('app').$['notifications'].show(title, options, autoClose, onClose);
 }
 
 /*

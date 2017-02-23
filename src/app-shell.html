@@ -115,7 +115,7 @@
         </app-toolbar>
         <paper-listbox selected="[[routeData.page]]" attr-for-selected="name" role="navigation">
           <paper-item name="users">
-            <a plain class="flex" href="/users/map">Users</a>
+            <a plain class="flex" href="/users/list">Users</a>
           </paper-item>
           <div class="divider"></div>
           <paper-item name="messages">
@@ -241,7 +241,7 @@
 
       var file = this._fileForPage(page);
       if (!page || !file) {
-        redirect('/users/map');
+        redirect('/users/list');
         return;
       }
 
