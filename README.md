@@ -26,35 +26,28 @@ A typical way to accomplish that is
   git clone https://github.com/jifalops/app-starter.git my-project
   ```
 
-2. Setup the git remotes to be able to pull from this project and push/pull from your project.
+2. Setup the git remotes to be able to pull from this project and pull/push to your project.
 
   ```
   cd my-project
-  git branch -m app-starter                           # Rename master branch
   git remote rename origin app-starter
   git remote set-url --push app-starter no-pushing    # Set push url to dead end
   git remote add origin [YOUR-REPO-URL]
   ```
 
-3. Checkout a new branch to serve as your master branch.
-
-  ```
-  git checkout -b master
-  ```
-
-4. Change the branding to fit your project.
+3. Change the branding to fit your project.
   * Replace the necessary information inside `src/app-firebase.html` to use your own Firebase info and replace the existing messaging sender ID in `firebase-messaging-sw.js`. Also set your default deploy location in `.firebaserc`.
   * Search the entire project and change `App Starter` to `My Project` and `app-starter` to `my-project` using your preferred editor or some other method. Also update the description of your project, which occurs in `index.html`, `bower.json`, `package.json`, `manifest.json`, and `README.md`.
 
-5. Commit and push your changes.
+4. Commit and push your changes.
+
   ```
   git add --all
-  git commit -m 'Initial rebranding'
+  git commit -m 'Initial changes'
   git push -u origin master
-  git push origin app-starter   # Creates the remote branch.
   ```
 
-6. Finish the initial setup, test, and deploy your project.
+5. Finish the initial setup, test, and deploy your project.
   1. Install dependencies
 
     ```
@@ -81,14 +74,18 @@ A typical way to accomplish that is
     **Note:** The build script is a work around for the gulp build not working correctly. It requires html-minifier (`npm i -g html-minifier`).
 
 ### Pulling in new changes
-To pull in changes to app-starter into your existing project, use git rebase.
+To update your existing project to use the newest version of app-starter
 
 ```
-git checkout app-starter
-git pull
-git checkout master
-git rebase app-starter
+# Only do this if nobody else is using origin/master
+git pull --rebase app-starter master
 git push -f origin master
+```
+
+```
+# If others are working from origin/master
+git merge app-starter master
+git push origin master
 ```
 
 ## Key features
