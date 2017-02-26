@@ -16,61 +16,53 @@ The purpose of this repo is to be used as a starting point for a new app.
 A typical way to accomplish that is
 
 1. Clone this repo into your own `my-project` directory using SSH or HTTPS.
-```
-# SSH
-git clone -b master git@github.com:jifalops/app-starter.git my-project
-```
-```
-# HTTPS
-git clone -b master https://github.com/jifalops/app-starter.git my-project
-```
-
+  ```
+  # SSH
+  git clone -b master git@github.com:jifalops/app-starter.git my-project
+  ```
+  ```
+  # HTTPS
+  git clone -b master https://github.com/jifalops/app-starter.git my-project
+  ```
 2. Setup the git remotes to be able to pull from this project and push/pull from your project.
-```
+  ```
   cd my-project
   git branch -m app-starter                           # Rename master branch
   git remote rename origin app-starter
   git remote set-url --push app-starter no-pushing    # Set push url to dead end
   git remote add origin [YOUR-REPO-URL]
-```
-
+  ```
 3. Checkout a new branch to serve as your master branch.
-```
-git checkout -b master
-```
-
+  ```
+  git checkout -b master
+  ```
 4. Change the branding to fit your project.
   * Replace the necessary information inside `src/app-firebase.html` to use your own Firebase info and replace the existing messaging sender ID in `firebase-messaging-sw.js`. Also set your default deploy location in `.firebaserc`.
   * Search the entire project and change `App Starter` to `My Project` and `app-starter` to `my-project` using your preferred editor or some other method. Also update the description of your project, which occurs in `index.html`, `bower.json`, `package.json`, `manifest.json`, and `README.md`.
 
 5. Commit and push your changes.
-```
-git push -u origin master
-git push origin app-starter   # Creates the remote branch.
-```
-
+  ```
+  git push -u origin master
+  git push origin app-starter   # Creates the remote branch.
+  ```
 6. Finish the initial setup, test, and deploy your project.
   1. Install dependencies
     ```
     bower install --save
     ```
-
   2. Create the database rules.
     ```
     cd internal
     ./make-rules.sh
     cd ..
     ```
-
     **Note:** If you want to test locally before deploying, you will need to copy and paste `internal/rules.json` to the rules section in the Firebase console.
 
   3. Deploy
-
     ```
     ./polymer-build.sh
     firebase deploy
     ```
-
     **Note:** The build script is a work around for the gulp build not working correctly. It requires html-minifier (`npm i -g html-minifier`).
 
 ### Pulling in new changes
