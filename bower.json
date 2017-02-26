@@ -38,10 +38,9 @@
     "paper-dropdown-menu": "^1.5.0",
     "paper-tabs": "^1.8.0",
     "iron-list": "^1.4.1",
-    "from-now": "from-to-now#^0.1.2",
+    "from-now": "from-to-now#^0.3.0",
     "paper-toggle-button": "^1.3.0",
-    "chat-window": "^0.4.4",
-    "toggle-area": "^0.2.0"
+    "chat-window": "^0.4.4"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
