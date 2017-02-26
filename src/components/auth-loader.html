@@ -5,7 +5,7 @@
   It will be loaded into the variable `auth` with at least these children:
   * `auth.user` the user's private information
   * `auth.profile` the user's public profile
-  * `auth.uid` the user's unique username. For the Firebase uid, use authRaw.uid
+  * `auth.uid` the user's unique username. For the Firebase uid, use firebaseUser.uid
 -->
 <dom-module id="auth-loader">
   <script>
@@ -19,7 +19,7 @@
       /**
        * The &lt;firebase-auth&gt; user object.
        */
-      authRaw: Object,
+      firebaseUser: Object,
       /**
        * When authenticated this contains all of the loaded user data.
        */
@@ -36,12 +36,12 @@
     },
 
     observers: [
-      '_userAuthenticated(app, authRaw)',
-      '_userDataLoaded(app, authRaw, username, user, profile)',
+      '_userAuthenticated(app, firebaseUser)',
+      '_userDataLoaded(app, firebaseUser, username, user, profile)',
     ],
 
-    _userAuthenticated: function(app, authRaw) {
-      if (app && authRaw) {
+    _userAuthenticated: function(app, firebaseUser) {
+      if (app && firebaseUser) {
         // If we are here the user has authenticated with either
         // a provider or the email/username login.
         // They may or may not have user data in the database.
@@ -53,36 +53,36 @@
         //      which is passed in as the desired username with capitalization.
         //   b. Provider login: Prompt for a username and then create
         //      user data using that username.
-        AUTH && log.v('Authenticated:', authRaw);
-        db.watch('/uids/' + authRaw.uid, function(username) {
-          LOG && log.v(authRaw.uid, 'is', username);
+        AUTH && log.v('Authenticated:', firebaseUser);
+        db.watch('/uids/' + firebaseUser.uid, function(username) {
+          LOG && log.v(firebaseUser.uid, 'is', username);
           if (username) {
             // User exists!
             this.username = username;
             this._watchUserData(username);
           } else {
             // No user data in the database.
-            if (authRaw.providerData[0].providerId == 'password') {
+            if (firebaseUser.providerData[0].providerId == 'password') {
               // Authenticated using email/username.
 
               if (!this.username) {
                 // If authenticated but no username was passed,
                 // parse the username from the email, which results in the
                 // user being created with all lowercase letters.
-                var email = authRaw.email || authRaw.providerData[0].email;
+                var email = firebaseUser.email || firebaseUser.providerData[0].email;
                 this.username = email.split('@', 1)[0];
               }
 
-              this.createUser(authRaw, this.username);
+              this.createUser(firebaseUser, this.username);
 
             } else {
               // Authenticated using a provider.
               LOG && log.d('Showing set-username dialog...');
-              showSetUsernameDialog(authRaw.uid,
-                this._getProvider(authRaw.providerData[0].providerId),
+              showSetUsernameDialog(firebaseUser.uid,
+                this._getProvider(firebaseUser.providerData[0].providerId),
                 function(username) {
                   this.username = username;
-                  this.createUser(authRaw, username);
+                  this.createUser(firebaseUser, username);
                 }.bind(this));
             }
           }
@@ -100,8 +100,8 @@
       }
     },
 
-    _userDataLoaded: function(app, authRaw, username, user, profile) {
-      if (app && authRaw && username && !isEmpty(user) && !isEmpty(profile)) {
+    _userDataLoaded: function(app, firebaseUser, username, user, profile) {
+      if (app && firebaseUser && username && !isEmpty(user) && !isEmpty(profile)) {
         var tmp = {};
         tmp.uid = username;
         tmp.user = user;
@@ -114,21 +114,21 @@
       }
     },
 
-    createUser: function(authRaw, username) {
-      AUTH && log.v(authRaw, username);
+    createUser: function(firebaseUser, username) {
+      AUTH && log.v(firebaseUser, username);
       var user = {};
       var profile = {};
-      var data = authRaw.providerData[0];
+      var data = firebaseUser.providerData[0];
       user.providers = { 0: this._getProvider(data.providerId) };
       user.created = db.timestamp();
       user.lastActivity = db.timestamp();
       user.role = 'User';
       user.isElevated = false;
-      //  user.email = authRaw.email || data.email;
-      //  user.emailVerified = authRaw.emailVerified || (user.email && user.provider != 'Email');
+      //  user.email = firebaseUser.email || data.email;
+      //  user.emailVerified = firebaseUser.emailVerified || (user.email && user.provider != 'Email');
 
-      profile.pic = authRaw.photoURL || data.photoURL || '/images/unknown-user.jpg';
-      profile.name = authRaw.displayName || data.displayName || username;
+      profile.pic = firebaseUser.photoURL || data.photoURL || '/images/unknown-user.jpg';
+      profile.name = firebaseUser.displayName || data.displayName || username;
 
       if (profile.pic.length > 250) {
         profile.pic = '/images/unknown-user.jpg';
@@ -137,7 +137,7 @@
         profile.name = username;
       }
 
-      db.users.createUser(authRaw.uid, username, user, profile, function() {
+      db.users.createUser(firebaseUser.uid, username, user, profile, function() {
         showInfoToast('Welcome!');
         goBack();
       }, showServerErrorToast);

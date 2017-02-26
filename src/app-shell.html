@@ -1,4 +1,5 @@
-<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -15,10 +16,8 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="header.html">
-<link rel="import" href="components/firebase-auth-wrapper.html">
+<link rel="import" href="app-firebase.html">
 <link rel="import" href="components/auth-loader.html">
 <link rel="import" href="components/value-history.html">
 <link rel="import" href="components/app-logo.html">
@@ -26,8 +25,6 @@
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
 <link rel="import" href="components/app-notifications.html">
-
-<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
 <dom-module id="app-shell">
   <template>
@@ -53,19 +50,24 @@
       }
     </style>
 
-    <firebase-app
+    <!-- Project specific settings -->
+    <app-firebase
+      id="firebase"
       app="{{app}}"
-      auth-domain="app-starter-8f1a5.firebaseapp.com"
-      database-url="https://app-starter-8f1a5.firebaseio.com"
-      api-key="AIzaSyA_8AApyhoQ2QUImoCdULeq7MLQoBTB0ZI"
-      storage-bucket="app-starter-8f1a5.appspot.com"
-      messaging-sender-id="435083496955">
-    </firebase-app>
+      firebase-user="{{firebaseUser}}">
+    </app-firebase>
+
+    <!-- Firebase user -> user in database, "auth" -->
+    <auth-loader
+      app="[[app]]"
+      firebase-user="[[firebaseUser]]"
+      username="[[username]]"
+      auth="{{auth}}">
+    </auth-loader>
 
     <firebase-messaging
-      id="messaging"
       token="{{messagingToken}}"
-      on-message="_handleMessage">
+      on-message="_handleCloudMessage">
     </firebase-messaging>
     <firebase-document
       path="/users/[[auth.uid]]/messagingToken"
@@ -73,19 +75,6 @@
     </firebase-document>
 
     <app-notifications id="notifications"></app-notifications>
-
-    <firebase-auth-wrapper
-      id="auth"
-      user="{{authRaw}}"
-      email-suffix="@users.app-starter-8f1a5.firebaseapp.com">
-    </firebase-auth-wrapper>
-
-    <auth-loader
-      app="[[app]]"
-      auth-raw="[[authRaw]]"
-      username="[[username]]"
-      auth="{{auth}}">
-    </auth-loader>
 
     <app-location
       id="appLocation"
@@ -271,34 +260,34 @@
       if (data.provider == 'username') {
         if (data.isRegistering) {
           this.username = data.username;
-          this.$.auth.registerUser(data.username, data.password, function() {
+          this.$.firebase.$.auth.registerUser(data.username, data.password, function() {
             this.$.registerPage.$.username.value = '';
             this.$.registerPage.$.password.value = '';
             this.$.registerPage.$.passwordRepeat.value = '';
             goBack();
           }.bind(this), this._handleLoginRegisterError.bind(this));
         } else {
-          this.$.auth.usernameLogin(data.username, data.password, function() {
+          this.$.firebase.$.auth.usernameLogin(data.username, data.password, function() {
             this.$.loginPage.$.username.value = '';
             this.$.loginPage.$.password.value = '';
             goBack();
           }.bind(this), this._handleLoginRegisterError.bind(this));
         }
       } else {
-        this.$.auth.providerLogin(data.provider, function() {
+        this.$.firebase.$.auth.providerLogin(data.provider, function() {
           goBack();
         }.bind(this), this._handleLoginRegisterError.bind(this));
       }
     },
 
     logout: function() {
-      this.$.auth.logout(function() {
+      this.$.firebase.$.auth.logout(function() {
         // goBack();
       }, showServerErrorToast, showServerErrorToast);
     },
 
     // TODO finish implementing Firebase Cloud Messaging
-    _handleMessage: function() {
+    _handleCloudMessage: function() {
       LOG && log.v('Message received', arguments);
     },
 

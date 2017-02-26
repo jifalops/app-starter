@@ -8,6 +8,7 @@ importScripts('/bower_components/firebase/firebase-messaging.js');
 // Initialize the Firebase app in the service worker by passing in the
 // messagingSenderId.
 firebase.initializeApp({
+  // TODO set this to your messaging sender ID
   'messagingSenderId': '435083496955'
 });
 

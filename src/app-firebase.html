@@ -1,0 +1,35 @@
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="components/firebase-auth-wrapper.html">
+<dom-module id="app-firebase">
+  <template>
+    <firebase-app
+      app="{{app}}"
+      auth-domain="app-starter-8f1a5.firebaseapp.com"
+      database-url="https://app-starter-8f1a5.firebaseio.com"
+      api-key="AIzaSyA_8AApyhoQ2QUImoCdULeq7MLQoBTB0ZI"
+      storage-bucket="app-starter-8f1a5.appspot.com"
+      messaging-sender-id="435083496955">
+    </firebase-app>
+
+    <firebase-auth-wrapper
+      id="auth"
+      user="{{firebaseUser}}"
+      email-suffix="@users.app-starter-8f1a5.firebaseapp.com">
+    </firebase-auth-wrapper>
+  </template>
+  <script>
+    Polymer({
+      is: 'app-firebase',
+      properties: {
+        app: {
+          type: Object,
+          notify: true
+        },
+        firebaseUser: {
+          type: Object,
+          notify: true
+        }
+      }
+    });
+  </script>
+</dom-module>
