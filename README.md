@@ -82,11 +82,13 @@ A typical way to accomplish that is
 
 ### Pulling in new changes
 To pull in changes to app-starter into your existing project, use git rebase.
+
 ```
 git checkout app-starter
 git pull
 git checkout master
 git rebase app-starter
+git push -f origin master
 ```
 
 ## Key features
