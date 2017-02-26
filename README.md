@@ -19,11 +19,11 @@ A typical way to accomplish that is
 
   ```
   # SSH
-  git clone -b master git@github.com:jifalops/app-starter.git my-project
+  git clone git@github.com:jifalops/app-starter.git my-project
   ```
   ```
   # HTTPS
-  git clone -b master https://github.com/jifalops/app-starter.git my-project
+  git clone https://github.com/jifalops/app-starter.git my-project
   ```
 
 2. Setup the git remotes to be able to pull from this project and push/pull from your project.
