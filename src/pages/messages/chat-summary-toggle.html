@@ -66,7 +66,15 @@
       },
       _toggleOpened: function() {
         this.opened = !this.opened;
+      },
+      _openedChanged: function(opened) {
+        fire(this, 'open-changed', opened);
       }
+      /**
+       * When the opened state of this toggle changes
+       * @event open-changed
+       * @param {opened} boolean Whether the toggle is true.       
+       */
     });
   </script>
 </dom-module>

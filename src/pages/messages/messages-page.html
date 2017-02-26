@@ -39,8 +39,8 @@
     </div>
   </div>
 
-
-  <iron-list
+  <!-- FIXME iron-list just overlaps items when their height changes. -->
+  <!-- <iron-list
     id="list"
     scroll-target="document"
     items="[[_objectToArray(auth.user.messages)]]"
@@ -52,12 +52,28 @@
             auth="[[auth]]"
             user="[[user.key]]"
             last-msg="[[_lastMessage(auth, user.val)]]"
+            on-open-changed="notifyResize"
             chat="[[user.val]]">
           </chat-summary-toggle>
         </paper-material>
       </div>
     </template>
-  </iron-list>
+  </iron-list> -->
+  <template
+    is="dom-repeat"
+    items="[[_objectToArray(auth.user.messages)]]"
+    as="user">
+    <div>
+      <paper-material class="list-item">
+        <chat-summary-toggle
+          auth="[[auth]]"
+          user="[[user.key]]"
+          last-msg="[[_lastMessage(auth, user.val)]]"
+          chat="[[user.val]]">
+        </chat-summary-toggle>
+      </paper-material>
+    </div>
+  </template>
 </template>
 <script>
 Polymer({

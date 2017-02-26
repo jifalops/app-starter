@@ -4,6 +4,7 @@
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/from-now/from-now.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../header.html">
 <link rel="import" href="../../components/user-chat.html">
 <dom-module id="user-page">
@@ -50,12 +51,13 @@
         href="javascript:"
         class="font-tiny"
         on-tap="toggleEditName"
-      >[[toggleString(editName, 'done', 'change')]]</a>
+      >[[toggleString(editName, 'cancel', 'change')]]</a>
     </div>
     <div hidden$="[[editName]]">[[profile.name]]</div>
-    <div hidden$="[[!editName]]">
-      <paper-input id="nameInput" value="[[profile.name]]"></paper-input>
-      <iron-icon icon="check" on-tap="updateName"></iron-icon>
+    <div hidden$="[[!editName]]" class="layout horizontal center">
+      <paper-input id="nameInput" value="[[profile.name]]" no-label-float></paper-input>
+      <!-- <iron-icon icon="check" on-tap="updateName"></iron-icon> -->
+      <paper-button class="secondary-button small" on-tap="updateName">Change</paper-button>
     </div>
 
 
@@ -66,25 +68,29 @@
         href="javascript:"
         class="font-tiny"
         on-tap="toggleEditPic"
-      >[[toggleString(editPic, 'done', 'change')]]</a>
+      >[[toggleString(editPic, 'cancel', 'change')]]</a>
     </div>
     <div hidden$="[[editPic]]">
       <iron-image class="avatar" src="[[profile.pic]]"></iron-image>
     </div>
-    <div hidden$="[[!editPic]]">
-      <paper-input id="picInput" value="[[profile.pic]]"></paper-input>
-      <iron-icon icon="check" on-tap="updatePic"></iron-icon>
+    <div hidden$="[[!editPic]]" class="layout horizontal center">
+      <paper-input id="picInput" value="[[profile.pic]]" no-label-float></paper-input>
+      <!-- <iron-icon icon="check" on-tap="updatePic"></iron-icon> -->
+      <paper-button class="secondary-button small" on-tap="updatePic">Change</paper-button>
     </div>
 
-    <div hidden$="[[amOwner]]" class="layout horizontal center end-justified">
-      <div hidden$="[[!sendingMsg]]" class="layout horizontal center ">
-        <paper-input id="msgInput" value="[[msg]]" no-label-float></paper-input>
-        <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon>
+    <div hidden$="[[!auth]]">
+      <div hidden$="[[amOwner]]" class="layout horizontal center end-justified">
+        <div hidden$="[[!sendingMsg]]" class="layout horizontal center">
+          <paper-input id="msgInput" value="[[msg]]" no-label-float></paper-input>
+          <!-- <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon> -->
+          <paper-button class="secondary-button small" on-tap="sendMsg">Send</paper-button>
+        </div>
+        <a href="javascript:"
+          class="font-default"
+          on-tap="toggleSendingMsg"
+        >[[toggleString(sendingMsg, 'cancel', 'Send message')]]</a>
       </div>
-      <a href="javascript:"
-        class="font-default"
-        on-tap="toggleSendingMsg"
-      >[[toggleString(sendingMsg, 'done', 'Send message')]]</a>
     </div>
 
   </paper-material>
@@ -190,9 +196,17 @@ Polymer({
 
   toggleEditName: function() {
     this.editName = !this.editName;
+    if (this.editName) {
+      this.$.nameInput.focus();
+      this.$.nameInput.$.input.select();
+    }
   },
   toggleEditPic: function() {
     this.editPic = !this.editPic;
+    if (this.editPic) {
+      this.$.picInput.focus();
+      this.$.picInput.$.input.select();
+    }
   },
   toggleElevated: function() {
     db.users.setElevated(this.auth.uid, !this.auth.user.isElevated, null, showServerErrorToast);
@@ -218,6 +232,9 @@ Polymer({
 
   toggleSendingMsg: function() {
     this.sendingMsg = !this.sendingMsg;
+    if (this.sendingMsg) {
+      this.$.msgInput.focus();
+    }
   },
 
   sendMsg: function() {
@@ -229,6 +246,7 @@ Polymer({
       db.users.sendMessage(user, [otherUser], chat, msg, function() {
         showSuccessToast('Message sent');
         this.$.msgInput.value = '';
+        this.sendingMsg = false;
       }.bind(this), showServerErrorToast);
     }
   },

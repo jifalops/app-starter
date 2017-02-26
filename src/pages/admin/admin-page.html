@@ -93,24 +93,30 @@
         <!-- Heading -->
         <div class="font-headline align-center">Admin</div>
         <div class="align-center">Logged in as [[auth.uid]] ([[auth.user.role]])</div>
+      </paper-material>
 
-        <!-- Offline status -->
-        <firebase-document
-          path="/status/offline"
-          data="{{offline}}">
-        </firebase-document>
-        <div class="layout horizontal center justified">
-          <div>
-            <span class="font-subhead">Site is currently</span>
-            <span hidden$="[[!_isEmpty(offline)]]" class="success font-code">online</span>
-            <span hidden$="[[_isEmpty(offline)]]" class="error font-code">offline</span>
+      <paper-material>
+        <iron-collapse-button opened>
+          <div slot="collapse-trigger" class="flex font-title">Settings</div>
+          <div slot="collapse-content">
+            <!-- Offline status -->
+            <firebase-document
+              path="/status/offline"
+              data="{{offline}}">
+            </firebase-document>
+            <div class="layout horizontal center justified">
+              <div>
+                <span class="font-subhead">Site is currently</span>
+                <span hidden$="[[!_isEmpty(offline)]]" class="success font-code">online</span>
+                <span hidden$="[[_isEmpty(offline)]]" class="error font-code">offline</span>
+              </div>
+              <template is="dom-if" if="[[_hasPrivilage('Super Admin', auth.user.role)]]">
+                <paper-toggle-button checked$="[[!_isEmpty(offline)]]" on-change="_offlineToggled">
+                  <span class="font-code">Offline</span>
+                </paper-toggle-button>
+              </template>
+            </div>
           </div>
-          <template is="dom-if" if="[[_hasPrivilage('Super Admin', auth.user.role)]]">
-            <paper-toggle-button checked$="[[!_isEmpty(offline)]]" on-change="_offlineToggled">
-              <span class="font-code">Offline</span>
-            </paper-toggle-button>
-          </template>
-        </div>
       </paper-material>
 
       <!-- User list -->
@@ -124,39 +130,35 @@
           <iron-collapse-button opened>
             <div slot="collapse-trigger" class="flex font-title">Users</div>
             <div slot="collapse-content">
-              <iron-list
-                id="userList"
-                selection-enabled
+              <template is="dom-repeat"
                 items="[[users]]"
                 as="user">
-                <template>
-                  <div>
-                    <div class="list-item layout horizontal center">
-                      <a class="flex" href="/user/[[user.$key]]">[[user.$key]]</a>
-                      <from-now class="flex align-center" time="[[user.created]]"></from-now>
-                      <div hidden$="[[_isRoleGreaterThan(auth.user.role, user.role)]]" class="flex align-right">
-                        [[user.role]]
-                      </div>
-                      <div class="flex align-right" hidden$="[[!_isRoleGreaterThan(auth.user.role, user.role)]]">
-                        <paper-dropdown-menu
-                          no-animations
-                          noink
-                          no-label-float>
-                          <paper-listbox
-                            class="dropdown-content"
-                            attr-for-selected="value"
-                            on-iron-activate="_onRoleSelected"
-                            selected="[[user.role]]">
-                            <template is="dom-repeat" items="[[_rolesLessThan(auth.user.role)]]" as="role">
-                              <paper-item value="[[role]]">[[role]]</paper-item>
-                            </template>
-                          </paper-listbox>
-                        </paper-dropdown-menu>
-                      </div>
+                <div>
+                  <div class="list-item layout horizontal center">
+                    <a class="flex" href="/user/[[user.$key]]">[[user.$key]]</a>
+                    <from-now class="flex align-center" time="[[user.created]]"></from-now>
+                    <div hidden$="[[_isRoleGreaterThan(auth.user.role, user.role)]]" class="flex align-right">
+                      [[user.role]]
+                    </div>
+                    <div class="flex align-right" hidden$="[[!_isRoleGreaterThan(auth.user.role, user.role)]]">
+                      <paper-dropdown-menu
+                        no-animations
+                        noink
+                        no-label-float>
+                        <paper-listbox
+                          class="dropdown-content"
+                          attr-for-selected="value"
+                          on-iron-activate="_onRoleSelected"
+                          selected="[[user.role]]">
+                          <template is="dom-repeat" items="[[_rolesLessThan(auth.user.role)]]" as="role">
+                            <paper-item value="[[role]]">[[role]]</paper-item>
+                          </template>
+                        </paper-listbox>
+                      </paper-dropdown-menu>
                     </div>
                   </div>
-                </template>
-              </iron-list>
+                </div>
+              </template>
             </div>
           </iron-collapse-button>
         </paper-material>
@@ -173,23 +175,20 @@
           <iron-collapse-button opened>
             <div slot="collapse-trigger" class="flex font-title">Feedback</div>
             <div slot="collapse-content">
-              <iron-list
-                id="feedbackList"
-                selection-enabled
+              <template
+                is="dom-repeat"
                 items="[[feedbacks]]"
                 as="feedback">
-                <template>
-                  <div>
-                    <div class="list-item">
-                      <div class="layout horizontal center justified">
-                        <a class="font-subhead" href="/user/[[feedback.user]]">[[feedback.user]]</a>
-                        <from-now time="[[feedback.created]]"></from-now>
-                      </div>
-                      <div>[[feedback.text]]</div>
+                <div>
+                  <div class="list-item">
+                    <div class="layout horizontal center justified">
+                      <a class="font-subhead" href="/user/[[feedback.user]]">[[feedback.user]]</a>
+                      <from-now time="[[feedback.created]]"></from-now>
                     </div>
+                    <div>[[feedback.text]]</div>
                   </div>
-                </template>
-              </iron-list>
+                </div>
+              </template>
             </div>
           </iron-collapse-button>
         </paper-material>
@@ -294,7 +293,7 @@
       var offline = !isEmpty(this.offline);
       showConfirmDialog(
           'Go ' + (offline ? 'online' : 'offline'),
-          'Take the site ' + (offline ? 'online' : 'offline') + '?',
+          'Are you sure you want to take the site ' + (offline ? 'online' : 'offline') + '?',
           'Confirm', 'Cancel', function(result) {
         if (result === true) {
           db.admin.setOffline(this.auth.uid, !offline, null, showServerErrorToast);

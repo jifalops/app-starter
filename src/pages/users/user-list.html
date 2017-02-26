@@ -58,6 +58,7 @@
       auth: Object,
       users: {
         type: Array,
+        observer: 'notifyResize'
       }
     },
     notifyResize: function() {
