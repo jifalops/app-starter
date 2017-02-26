@@ -79,7 +79,7 @@ function showSetUsernameDialog(uid, provider, onUsernameChosen) {
 }
 
 /*
- *  Privilage checking
+ *  Privilege checking
  */
 function isModerator(role) {
   return role && role.match(/^(Moderator|Maintainer|Admin|Super Admin|Root)$/);

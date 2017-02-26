@@ -40,13 +40,12 @@ function ucFirst(string) {
 function objectToArray(object, deep) {
   deep = deep || false;
   var array = [];
-  var map;
   for (var key in object) {
     if (deep || object.hasOwnProperty(key)) {
-      map = {};
-      map.key = key;
-      map.val = object[key];
-      array.push(map);
+      array.push({
+        key: key,
+        val: object[key]
+      });
     }
   }
   return array;

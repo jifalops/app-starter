@@ -110,7 +110,7 @@
                 <span hidden$="[[!_isEmpty(offline)]]" class="success font-code">online</span>
                 <span hidden$="[[_isEmpty(offline)]]" class="error font-code">offline</span>
               </div>
-              <template is="dom-if" if="[[_hasPrivilage('Super Admin', auth.user.role)]]">
+              <template is="dom-if" if="[[_hasPrivilege('Super Admin', auth.user.role)]]">
                 <paper-toggle-button checked$="[[!_isEmpty(offline)]]" on-change="_offlineToggled">
                   <span class="font-code">Offline</span>
                 </paper-toggle-button>
@@ -120,7 +120,7 @@
       </paper-material>
 
       <!-- User list -->
-      <template is="dom-if" if="[[_hasPrivilage('Maintainer', auth.user.role)]]">
+      <template is="dom-if" if="[[_hasPrivilege('Maintainer', auth.user.role)]]">
         <firebase-query
           path="/users"
           order-by-child="role"
@@ -165,7 +165,7 @@
       </template>
 
       <!-- Feedback list -->
-      <template is="dom-if" if="[[_hasPrivilage('Moderator', auth.user.role)]]">
+      <template is="dom-if" if="[[_hasPrivilege('Moderator', auth.user.role)]]">
         <firebase-query
           path="/feedback"
           data="{{feedbacks}}"
@@ -227,8 +227,8 @@
     },
 
     // TODO behavior (divided)
-    _hasPrivilage: function(privilage, role) {
-      switch (privilage) {
+    _hasPrivilege: function(privilege, role) {
+      switch (privilege) {
         case 'Moderator': return isModerator(role);
         case 'Maintainer': return isMaintainer(role);
         case 'Admin': return isAdmin(role);
