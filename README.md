@@ -48,6 +48,8 @@ A typical way to accomplish that is
 
 5. Commit and push your changes.
   ```
+  git add --all
+  git commit -m 'Initial rebranding'
   git push -u origin master
   git push origin app-starter   # Creates the remote branch.
   ```
@@ -136,7 +138,8 @@ tracker here.
 * paper-input: using `--paper-input-container-input` causes errors.
 
 #### Polymer 1.8 bugs
-* dom-repeat does not show.
+* `<dom-repeat>` does not show. Workaround is to use `<template is="dom-repeat"`
 * paper-dropdown-menu does not overlay other items in iron-list.
   https://github.com/PolymerElements/paper-menu-button/issues/9
+  Workaround is to use `<template is="dom-repeat"`
 * paper-dropdown-menu --paper-input-container-input does not change with `@media` styles
