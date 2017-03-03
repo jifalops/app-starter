@@ -61,15 +61,15 @@
   </iron-list> -->
   <template
     is="dom-repeat"
-    items="[[_objectToArray(auth.user.messages)]]"
-    as="user">
+    items="[[_userChats(auth.user.messages)]]"
+    as="msg">
     <div>
       <paper-material class="list-item">
         <chat-summary-toggle
           auth="[[auth]]"
-          user="[[user.key]]"
-          last-msg="[[_lastMessage(auth, user.val)]]"
-          chat="[[user.val]]">
+          user="[[msg.user]]"
+          last-msg="[[_lastMessage(auth, msg.chat)]]"
+          chat="[[msg.chat]]">
         </chat-summary-toggle>
       </paper-material>
     </div>
@@ -101,6 +101,20 @@ Polymer({
 
   _computeHasMessages: function(msgs) {
     return !isEmpty(msgs);
+  },
+  _userChats: function(messages) {
+    var chats = [];
+    for (var user in messages) {
+      chats.push({ user: user, chat: messages[user] });
+    }
+    chats.sort(function(a, b) {
+      a = this._lastMessage(this.auth, a.chat);
+      b = this._lastMessage(this.auth, b.chat);
+      if (a && b && a.created < b.created) return 1;
+      if (a && b && a.created > b.created) return -1;
+      return 0;
+    }.bind(this));
+    return chats;
   }
 });
 </script>

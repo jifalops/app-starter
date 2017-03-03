@@ -16,7 +16,7 @@
     "paper-item": "^1.2.1",
     "paper-toast": "^1.3.0",
     "paper-dialog": "^1.1.0",
-    "iron-collapse-button": "^0.3.0",
+    "iron-collapse-button": "^0.3.1",
     "paper-dialog-scrollable": "^1.1.5",
     "paper-material": "^1.0.6",
     "app-layout": "^0.10.6",
@@ -29,18 +29,20 @@
     "iron-overlay-behavior": "^1.10.2",
     "iron-fit-behavior": "^1.2.5",
     "paper-checkbox": "^1.4.2",
-    "geo-query-input": "^0.1.1",
+    "geo-query-input": "^0.3.1",
     "geofire-elements": "^0.2.0",
     "geo-location": "^1.0.6",
-    "geo-codec": "^0.3.2",
+    "geo-codec": "^1.0.1",
     "google-map": "^1.2.0",
     "geofire": "^4.1.2",
     "paper-dropdown-menu": "^1.5.0",
     "paper-tabs": "^1.8.0",
     "iron-list": "^1.4.1",
-    "from-now": "from-to-now#^0.3.0",
+    "from-now": "from-to-now#^0.3.1",
     "paper-toggle-button": "^1.3.0",
-    "chat-window": "^0.4.4"
+    "chat-window": "^0.4.9",
+    "geo-query": "^0.3.1",
+    "value-history": "^0.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
@@ -48,5 +50,4 @@
     "web-component-tester": "^4.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
-
 }

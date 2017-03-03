@@ -1,9 +1,8 @@
 # App Starter
 A starting point for using Polymer, Firebase, Geofire, and username/provider logins.
 
-Try it at https://app-starter-8f1a5.firebaseapp.com
 
-**Note:** currently only tested on Chrome and Chrome for Android.
+Try it at https://app-starter-8f1a5.firebaseapp.com
 
 In order to demonstrate some content, users may click a button to add themselves
 to the map. A user can add themselves at either a location given by a search result,
@@ -15,15 +14,10 @@ or their current location which will be moved a bit to hide exact location.
 The purpose of this repo is to be used as a starting point for a new app.
 A typical way to accomplish that is
 
-1. Clone this repo into your own `my-project` directory using SSH or HTTPS.
+1. Clone this repo into your own `my-project` directory.
 
   ```
-  # SSH
-  git clone -b master git@github.com:jifalops/app-starter.git my-project
-  ```
-  ```
-  # HTTPS
-  git clone -b master https://github.com/jifalops/app-starter.git my-project
+  git clone https://github.com/jifalops/app-starter.git my-project
   ```
 
 2. Setup the git remotes to be able to pull from this project and push/pull from your project.
@@ -145,3 +139,15 @@ tracker here.
   https://github.com/PolymerElements/paper-menu-button/issues/9
   Workaround is to use `<template is="dom-repeat"`
 * paper-dropdown-menu --paper-input-container-input does not change with `@media` styles
+
+## Contributing
+
+1. Fork it on Github.
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request
+
+## License
+
+[Apache](https://opensource.org/licenses/Apache)
