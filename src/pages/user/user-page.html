@@ -279,7 +279,7 @@ Polymer({
   _linkTwitter:  function() { this._linkProvider('twitter') },
   _linkGithub:   function() { this._linkProvider('github') },
   _linkProvider: function(name) {
-    document.getElementById('app').$['auth'].linkProvider(name, function() {
+    document.getElementById('app').$['firebase'].$['auth'].linkProvider(name, function() {
       db.users.addProvider(this.auth.uid, ucFirst(name), function() {
         //success
       }, showServerErrorToast);
