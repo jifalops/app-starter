@@ -32,16 +32,16 @@
       <div class="bgcolor-accent-light">accent-light</div>
     </div>
     <div class="colors layout horizontal justified">
-      <div class="success">Success</div>
-      <div class="info">Info</div>
-      <div class="warning">Warning</div>
-      <div class="error">Error</div>
+      <div class="color-success bgcolor-success">Success</div>
+      <div class="color-info bgcolor-info">Info</div>
+      <div class="color-warning bgcolor-warning">Warning</div>
+      <div class="color-error bgcolor-error">Error</div>
     </div>
     <div class="colors toast layout horizontal justified">
-      <div class="success">Success</div>
-      <div class="info">Info</div>
-      <div class="warning">Warning</div>
-      <div class="error">Error</div>
+      <div class="color-success bgcolor-success">Success</div>
+      <div class="color-info bgcolor-info">Info</div>
+      <div class="color-warning bgcolor-warning">Warning</div>
+      <div class="color-error bgcolor-error">Error</div>
     </div>
     <div class="colors layout horizontal justified">
       <div class="text-primary">text-primary</div>
@@ -69,6 +69,7 @@
       <paper-button raised class="primary-button small" on-tap="_showNotification">Show Notification</paper-button>
       <paper-button raised class="primary-button small" on-tap="_showNotificationDelayed">
         Show Notification Delayed 5s</paper-button>
+      <paper-button raised class="primary-button small" on-tap="_showNotificationError">Notification Error</paper-button>
     </div>
   </paper-material>
 </template>
@@ -103,16 +104,33 @@ Polymer({
   },
 
   _showNotification: function() {
-    showNotification(this.notification.title, JSON.parse(this.notification.options),
-      this.notification.autoClose, function() {
+    var n = showNotification(this.notification.title, JSON.parse(this.notification.options),
+      this.notification.autoClose, function(e, n) {
+        showInfoToast('Notification clicked');
+        console.log(e, n);
+      }, function(e, n) {
         showInfoToast('Notification closed');
+        console.log(e, n);
+      }, function(e, n) {
+        showErrorToast('Notification error');
+        console.log(e, n);
+        alert('Notification error');
       }
     );
+    if (n && this._autoFail) {
+      n.dispatchEvent(new Event('error'));
+      n.close();
+      this._autoFail = false;
+    }
   },
   _showNotificationDelayed: function() {
     setTimeout(function() {
       this._showNotification();
     }.bind(this), 5000);
+  },
+  _showNotificationError: function() {
+    this._autoFail = true;
+    this._showNotification();
   }
 });
 </script>

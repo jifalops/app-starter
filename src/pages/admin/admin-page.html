@@ -107,8 +107,8 @@
             <div class="layout horizontal center justified">
               <div>
                 <span class="font-subhead">Site is currently</span>
-                <span hidden$="[[!_isEmpty(offline)]]" class="success font-code">online</span>
-                <span hidden$="[[_isEmpty(offline)]]" class="error font-code">offline</span>
+                <span hidden$="[[!_isEmpty(offline)]]" class="bgcolor-success font-code">online</span>
+                <span hidden$="[[_isEmpty(offline)]]" class="bgcolor-error font-code">offline</span>
               </div>
               <template is="dom-if" if="[[_hasPrivilege('Super Admin', auth.user.role)]]">
                 <paper-toggle-button checked$="[[!_isEmpty(offline)]]" on-change="_offlineToggled">

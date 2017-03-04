@@ -1,15 +1,6 @@
 <link rel="import" href="../header.html">
 
 <dom-module id="app-notifications">
-  <template>
-    <style include="app-styles">
-      :host {
-        display: block;
-      }
-    </style>
-
-  </template>
-
   <script>
     Polymer({
       is: 'app-notifications',
@@ -53,22 +44,41 @@
         }
       },
 
-      show: function(title, options, autoClose, onClose) {
+      show: function(title, options, autoClose, onClick, onClose, onError) {
         if (this.hasPermission) {
-          this._showNotification(title, options, autoClose, onClose);
+          return this._showNotification(title, options, autoClose, onClick, onClose, onError);
         } else {
           this.requestPermission(function() {
             if (this.hasPermission) {
-              this._showNotification(title, options, autoClose, onClose);
+              this._showNotification(title, options, autoClose, onClick, onClose, onError);
             }
           }.bind(this));
         }
       },
 
-      _showNotification: function(title, options, autoClose, onClose) {
+      _showNotification: function(title, options, autoClose, onClick, onClose, onError) {
         var n = new Notification(title, options);
 
-        // Only show one notification per tag at a time.
+        n.addEventListener('error', function(e) {
+          onError && onError(e, n);
+          this.fire('error', n);
+        }.bind(this));
+
+        n.addEventListener('close', function(e) {
+          if (options && options.tag && this._tagged[options.tag]) {
+            this._tagged[options.tag] = null;
+          }
+          onClose && onClose(e, n);
+          this.fire('close', n);
+        }.bind(this));
+
+        n.addEventListener('click', function(e) {
+          onClick && onClick(e, n);
+          this.fire('click', n);
+        }.bind(this));
+
+
+        // Show one notification per tag at one time.
         this._tagged = this._tagged || {};
         if (options && options.tag) {
           if (this._tagged[options.tag]) {
@@ -78,18 +88,11 @@
           this._tagged[options.tag] = n;
         }
 
-        // TODO onclose is deprecated
-        n.onclose = function() {
-          if (options && options.tag && this._tagged[options.tag]) {
-            this._tagged[options.tag] = null;
-          }
-          if (onClose) onClose();
-        }.bind(this);
-
-
         if (autoClose) {
           setTimeout(n.close.bind(n), autoClose);
         }
+
+        return n;
       },
 
       _setPermission: function(permission) {

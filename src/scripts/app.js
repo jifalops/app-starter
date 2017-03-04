@@ -42,8 +42,8 @@ function goBack() {
 /*
  * Notifications
  */
-function showNotification(title, options, autoClose, onClose) {
-  document.getElementById('app').$['notifications'].show(title, options, autoClose, onClose);
+function showNotification(title, options, autoClose, onClick, onClose, onError) {
+  return document.getElementById('app').$['notifications'].show(title, options, autoClose, onClick, onClose, onError);
 }
 
 /*
