@@ -8,7 +8,7 @@ path /status is Status;
 type Status {
   hasRoot: HasRoot
   offline: Offline | Null
-
+  demoMode: DemoMode | Null
   read() { amAdmin() }
 }
 
@@ -18,6 +18,11 @@ type HasRoot extends Boolean {
 }
 
 type Offline extends Boolean {
+  read() { true }
+  write() { amSuperAdmin() }
+}
+
+type DemoMode extends Boolean {
   read() { true }
   write() { amSuperAdmin() }
 }

@@ -17,15 +17,17 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/value-history/value-history.html">
+<link rel="import" href="../bower_components/app-notifications/app-notifications.html">
+<link rel="import" href="../bower_components/app-toasts/app-toasts.html">
 <link rel="import" href="header.html">
 <link rel="import" href="app-firebase.html">
 <link rel="import" href="components/auth-loader.html">
 <!-- <link rel="import" href="components/value-history.html"> -->
 <link rel="import" href="components/app-logo.html">
-<link rel="import" href="components/basic-toasts.html">
+<!--<link rel="import" href="components/basic-toasts.html">-->
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
-<link rel="import" href="components/app-notifications.html">
+<!--<link rel="import" href="components/app-notifications.html">-->
 
 <dom-module id="app-shell">
   <template>
@@ -187,7 +189,7 @@
         </div>
       </app-header-layout>
     </app-drawer-layout>
-    <basic-toasts id="toast"></basic-toasts>
+    <app-toasts id="toast"></app-toasts>
     <confirm-dialog id="confirmDialog"></confirm-dialog>
     <set-username-dialog id="setUsernameDialog"></set-username-dialog>
   </template>

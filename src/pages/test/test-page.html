@@ -106,6 +106,9 @@ Polymer({
   _showNotification: function() {
     var n = showNotification(this.notification.title, JSON.parse(this.notification.options),
       this.notification.autoClose, function(e, n) {
+        showInfoToast('Notification shown');
+        console.log(e, n);
+      },function(e, n) {
         showInfoToast('Notification clicked');
         console.log(e, n);
       }, function(e, n) {
@@ -114,7 +117,7 @@ Polymer({
       }, function(e, n) {
         showErrorToast('Notification error');
         console.log(e, n);
-        alert('Notification error');
+        // alert('Notification error');
       }
     );
     if (n && this._autoFail) {
