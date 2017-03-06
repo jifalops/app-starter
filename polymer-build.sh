@@ -9,4 +9,4 @@ cp src/app-shell.html build/bundled/src/    # copy app shell
 # cp firebase-messaging-sw.js build/bundled/  # copy FCM service worker
 cp -rn bower_components build/bundled/      # copy only missing bower components
 # Minify html (npm i -g html-minifier)
-html-minifier --html5 --input-dir build/bundled/ --output-dir build/bundled --file-ext html --minify-css --minify-js --minify-ur-ls
+# html-minifier --html5 --input-dir build/bundled/ --output-dir build/bundled --file-ext html --minify-css --minify-js --minify-ur-ls
