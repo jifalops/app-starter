@@ -25,21 +25,15 @@
       }
       iron-collapse-button {
         margin-top: 24px;
+        @apply --font-small;
       }
 
       paper-dropdown-menu {
         width: 7em;
-        --paper-dropdown-menu-input: {
-          /*FIXME if this line is removed, setting the font size has no effect*/
-          --paper-input-container: {
-            /*FIXME if this line is removed, changing the icon size has no effect*/
-            --iron-icon: {};
-            --iron-icon-width: 16px;
-            --iron-icon-height: 16px;
-          };
-          --paper-input-container-input: {
-            @apply --font-small;
-          };
+        --iron-icon-width: 16px;
+        --iron-icon-height: 16px;
+        --paper-input-container-input: {
+          @apply --font-small;
         };
       }
 
