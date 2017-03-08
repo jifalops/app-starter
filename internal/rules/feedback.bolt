@@ -3,7 +3,7 @@
 //
 
 path /feedback {
-  read() { amModerator() }
+  read() { amModerator() || (amAuthed() && demoModeEnabled()) }
   /{feedback} is Feedback;
 }
 

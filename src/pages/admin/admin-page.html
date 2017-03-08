@@ -112,12 +112,30 @@
                 </paper-toggle-button>
               </template>
             </div>
+
+            <!-- Demo mode -->
+            <firebase-document
+              path="/status/demoMode"
+              data="{{demoMode}}">
+            </firebase-document>
+            <div class="layout horizontal center justified">
+              <div>
+                <span class="font-subhead">Demo mode is</span>
+                <span hidden$="[[!_isEmpty(demoMode)]]" class="bgcolor-success font-code">disabled</span>
+                <span hidden$="[[_isEmpty(demoMode)]]" class="bgcolor-error font-code">enabled</span>
+              </div>
+              <template is="dom-if" if="[[_hasPrivilege('Super Admin', auth.user.role)]]">
+                <paper-toggle-button checked$="[[!_isEmpty(demoMode)]]" on-change="_demoModeToggled">
+                  <span class="font-code">Demo Mode</span>
+                </paper-toggle-button>
+              </template>
+            </div>
           </div>
         </iron-collapse-button>
       </paper-material>
 
       <!-- User list -->
-      <template is="dom-if" if="[[_canSeeUserList(auth.user.role)]]">
+      <template is="dom-if" if="[[_canSeeUserList(auth.user.role, demoMode)]]">
         <firebase-query
           path="/users"
           order-by-child="role"
@@ -162,7 +180,7 @@
       </template>
 
       <!-- Feedback list -->
-      <template is="dom-if" if="[[_canSeeFeedback(auth.user.role)]]">
+      <template is="dom-if" if="[[_canSeeFeedback(auth.user.role, demoMode)]]">
         <firebase-query
           path="/feedback"
           data="{{feedbacks}}"
@@ -210,9 +228,13 @@
       hasAccess: {
         type: Boolean,
         value: false,
-        computed: '_hasAccess(auth, hasRoot)'
+        computed: '_hasAccess(auth, hasRoot, demoMode)'
       },
       offline: {
+        type: Boolean,
+        value: false
+      },
+      demoMode: {
         type: Boolean,
         value: false
       }
@@ -251,8 +273,8 @@
       }
     },
 
-    _hasAccess: function(auth, hasRoot) {
-      return auth && (!hasRoot || (auth.user && auth.user.isElevated));
+    _hasAccess: function(auth, hasRoot, demoMode) {
+      return auth && (!hasRoot || (auth.user && auth.user.isElevated) || demoMode);
     },
 
     becomeRoot: function() {
@@ -300,13 +322,28 @@
       }.bind(this));
     },
 
-
-    _canSeeUserList: function(role) {
-      return this._hasPrivilege('Maintainer', role);
+    _demoModeToggled: function(e) {
+      LOG && log.d('Demo mode is being toggled');
+      var el = e.target || e.srcElement;
+      var demoMode = !isEmpty(this.demoMode);
+      showConfirmDialog(
+          (demoMode ? 'Disable' : 'Enable') + ' demo mode',
+          'Are you sure you want to ' + (demoMode ? 'disable' : 'enable') + ' demo mode?',
+          'Confirm', 'Cancel', function(result) {
+        if (result === true) {
+          db.admin.setDemoMode(this.auth.uid, !demoMode, null, showServerErrorToast);
+        } else {
+          el.checked = demoMode;
+        }
+      }.bind(this));
     },
 
-    _canSeeFeedback: function(role) {
-      return this._hasPrivilege('Moderator', role);
+    _canSeeUserList: function(role, demoMode) {
+      return demoMode || this._hasPrivilege('Maintainer', role);
+    },
+
+    _canSeeFeedback: function(role, demoMode) {
+      return demoMode || this._hasPrivilege('Moderator', role);
     }
   });
   </script>
