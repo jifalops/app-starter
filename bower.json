@@ -30,7 +30,6 @@
     "iron-fit-behavior": "^1.2.5",
     "paper-checkbox": "^1.4.2",
     "geo-query-input": "^0.3.1",
-    "geofire-elements": "^0.2.0",
     "geo-location": "^1.0.6",
     "geo-codec": "^1.0.1",
     "google-map": "^1.2.0",

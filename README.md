@@ -63,9 +63,7 @@ A typical way to accomplish that is
     ```
     ./polymer-build.sh
     firebase deploy
-    ```
-
-    **Note:** The build script is a work around for the gulp build not working correctly. It requires html-minifier (`npm i -g html-minifier`).
+    ```  
 
 ### Pulling in new changes
 To update your existing project to use the newest version of app-starter
