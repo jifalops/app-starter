@@ -8,7 +8,6 @@ path /status is Status;
 type Status {
   hasRoot: HasRoot
   offline: Offline | Null
-  demoMode: DemoMode | Null
   read() { amAdmin() }
 }
 
@@ -31,5 +30,3 @@ hasRoot() { root.status['hasRoot'] }
 
 // TODO no rules currently use this, so the site is only offline from the UI perspective.
 isOffline() { root.status['offline'] }
-
-demoModeEnabled() { root.status['demoMode'] }

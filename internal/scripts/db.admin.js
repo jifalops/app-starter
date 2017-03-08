@@ -23,12 +23,5 @@ db.admin = {
     var updates = db.userActionUpdate(user);
     updates['/status/offline'] = offline;
     db.update(updates, onSuccess, onFailure);
-  },
-  
-  setDemoMode: function(user, demoMode, onSuccess, onFailure) {
-    DB && console.log('Setting demo mode to', demoMode);
-    var updates = db.userActionUpdate(user);
-    updates['/status/demoMode'] = demoMode;
-    db.update(updates, onSuccess, onFailure);
-  }
+  }  
 };

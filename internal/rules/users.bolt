@@ -3,7 +3,7 @@
 //
 
 path /users {
-  read() { amMaintainer() || (amAuthed() && demoModeEnabled()) }
+  read() { amMaintainer() }
   /{user} is User {
     // NOTE chats allow many to many messaging,
     // but only 1 to 1 messaging is used in app-starter.
