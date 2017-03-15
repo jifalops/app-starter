@@ -109,3 +109,13 @@ function rolesLessThan(role) {
 function isRoleGreaterThan(r1, r2) {
   return rolesLessThan(r1).includes(r2);
 }
+function hasPrivilege(privilege, role) {
+  switch (privilege) {
+    case 'Moderator': return isModerator(role);
+    case 'Maintainer': return isMaintainer(role);
+    case 'Admin': return isAdmin(role);
+    case 'Super Admin': return isSuperAdmin(role);
+    case 'Root': return isRoot(role);
+    default: return false;
+  }
+}
