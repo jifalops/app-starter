@@ -98,7 +98,7 @@
   <paper-material hidden$="[[!amOwner]]" class="layout vertical">
     <span class="font-title self-center">Private Info</span>
     <div class="font-subhead">Login methods</div>
-    <div class="layout horizontal center justified wrap">
+    <div class="layout horizontal center justified wrap" hidden$="[[!_canAddProvider(_providers)]]">
       <span>[[join(_providers, '\, ')]]</span>
       <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="color-warning bgcolor-warning font-small">
         Add a second login method to access your account if you forget the password.
@@ -307,6 +307,12 @@ Polymer({
 
   _hasUsernameProviderOnly: function(providers) {
     return providers && providers.length == 1 && providers[0] == 'Username';
+  },
+  _canAddProvider: function(providers) {
+    if (!providers) return true;
+    var hasUsername = providers[0] == 'Username';
+    return (hasUsername && providers.length < 5)
+        || (!hasUsername && providers.length < 4);
   }
 });
 </script>

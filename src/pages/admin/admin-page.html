@@ -225,14 +225,7 @@
 
     // TODO behavior (divided)
     _hasPrivilege: function(privilege, role) {
-      switch (privilege) {
-        case 'Moderator': return isModerator(role);
-        case 'Maintainer': return isMaintainer(role);
-        case 'Admin': return isAdmin(role);
-        case 'Super Admin': return isSuperAdmin(role);
-        case 'Root': return isRoot(role);
-        default: return false;
-      }
+      return hasPrivilege(privilege, role);
     },
     // TODO behavior
     _rolesLessThan: function(role) {
