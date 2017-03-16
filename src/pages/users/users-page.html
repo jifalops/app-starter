@@ -99,7 +99,7 @@ Polymer({
 
     var url = this.resolveUrl(file);
     this.importHref(url, function() {
-      ROUTE && log.v('imported', url);
+      LOG && ROUTE && log.v('imported', url);
       this._fixListOverlap(page);
     }.bind(this), function() {
       LOG && log.e('failed to import', url);

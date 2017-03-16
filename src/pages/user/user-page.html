@@ -176,12 +176,12 @@ Polymer({
 
   _loadProfile: function(auth, user) {
     if (auth && auth.uid == user) {
-      AUTH && log.v('Using auth.profile');
+      LOG && AUTH && log.v('Using auth.profile');
       this.profile = auth.profile;
       this.amOwner = true;
     } else {
       db.watch('/profiles/' + user, function(profile) {
-        AUTH && log.v("Using " + user + "'s profile'");
+        LOG && AUTH && log.v("Using " + user + "'s profile'");
         this.amOwner = false;
         this.profile = profile;
       }.bind(this));

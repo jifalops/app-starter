@@ -18,8 +18,10 @@
     "bower.json"
   ],
   "includeDependencies": [
+    "src/app-shell.html",
     "manifest.json",
     "firebase-messaging-sw.js",
+    "sw-precache-config.js",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }

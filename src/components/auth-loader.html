@@ -53,7 +53,7 @@
         //      which is passed in as the desired username with capitalization.
         //   b. Provider login: Prompt for a username and then create
         //      user data using that username.
-        AUTH && log.v('Authenticated:', firebaseUser);
+        LOG && AUTH && log.v('Authenticated:', firebaseUser);
         db.watch('/uids/' + firebaseUser.uid, function(username) {
           LOG && log.v(firebaseUser.uid, 'is', username);
           if (username) {
@@ -115,7 +115,7 @@
     },
 
     createUser: function(firebaseUser, username) {
-      AUTH && log.v(firebaseUser, username);
+      LOG && AUTH && log.v(firebaseUser, username);
       var user = {};
       var profile = {};
       var data = firebaseUser.providerData[0];

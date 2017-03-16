@@ -224,7 +224,7 @@
     },
 
     _routePageChanged: function(page, offline, auth) {
-      ROUTE && log.v('page changed:', page);
+      LOG && ROUTE && log.v('page changed:', page);
 
       if (offline && (page != 'login'
           && !(hasChild(auth, 'user', 'role') && isAdmin(auth.user.role)))) {
@@ -241,7 +241,7 @@
       // load page import on demand.
       var url = this.resolveUrl(file);
       this.importHref(url, function() {
-        ROUTE && log.v('imported', url);
+        LOG && ROUTE && log.v('imported', url);
       }.bind(this), function() {
         LOG && log.e('failed to import', url);
       }, true);
