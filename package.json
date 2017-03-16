@@ -11,14 +11,15 @@
   },
   "private": true,
   "devDependencies": {
+    "css-slam": "^1.2.1",
     "del": "^2.2.1",
     "gulp": "gulpjs/gulp#4.0",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-if": "^2.0.2",
+    "gulp-uglify": "^2.0.1",
     "merge-stream": "^1.0.0",
     "plylog": "^0.4.0",
     "polymer-build": "^0.6.0-alpha.3",
-    "gulp-if": "^2.0.2",
-    "gulp-html-minifier": "^0.1.8",
-    "css-slam": "^1.2.1",
-    "gulp-uglify": "^2.0.1"
+    "sw-precache": "^5.1.0"
   }
 }
