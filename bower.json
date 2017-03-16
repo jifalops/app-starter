@@ -43,7 +43,7 @@
     "geo-query": "^0.3.1",
     "value-history": "^0.1.0",
     "app-notifications": "^0.1.2",
-    "app-toasts": "^0.1.1"
+    "app-toasts": "^0.3.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
