@@ -48,12 +48,22 @@
   </template>
 
   <script>
-  Polymer({
-    is: 'feedback-page',
-    properties: {
-      auth: Object
-    },
-    sendFeedback: function() {
+  class FeedbackPage extends Polymer.Element {
+
+    static get is() { return 'feedback-page'; }
+
+    static get properties() {
+      return {
+        auth: Object
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
+    sendFeedback() {
       if (!this.auth) {
         showInfoToast('Please login to leave feedback.');
         return;
@@ -68,6 +78,8 @@
         this.$.input.invalid = true;
       }
     }
-  });
+  }
+
+  window.customElements.define(FeedbackPage.is, FeedbackPage);
   </script>
 </dom-module>

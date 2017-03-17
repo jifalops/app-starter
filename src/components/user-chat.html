@@ -44,27 +44,34 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'user-chat',
-      properties: {
+  class UserChat extends Polymer.Element {
+
+    static get is() { return 'user-chat'; }
+
+    static get properties() {
+      return {
         auth: Object,
         user: String,
         chat: String
-      },
+      };
+    }
 
-      observers: [
+    static get observers() {
+      return [
         '_messagesChanged(messages)'
-      ],
+      ];
+    }
+    _messagesChanged(msgs) {
+      // LOG && log.v('messages', msgs, msgs ? msgs.length : '', this.chat);
+    }
 
-      _messagesChanged: function(msgs) {
-        // LOG && log.v('messages', msgs, msgs ? msgs.length : '', this.chat);
-      },
+    _sendMsg(e, msg) {
+      db.users.sendMessage(this.auth.uid, [this.user], this.chat, msg, function() {
+        this.text = '';
+      }.bind(this), showServerErrorToast);
+    }
+  }
 
-      _sendMsg: function(e, msg) {
-        db.users.sendMessage(this.auth.uid, [this.user], this.chat, msg, function() {
-          this.text = '';
-        }.bind(this), showServerErrorToast);
-      }
-    });
+  window.customElements.define(UserChat.is, UserChat);
   </script>
 </dom-module>

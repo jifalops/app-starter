@@ -51,9 +51,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'chat-summary-toggle',
-      properties: {
+  class ChatSummaryToggle extends Polymer.Element {
+
+    static get is() { return 'chat-summary-toggle'; }
+
+    static get properties() {
+      return {
         auth: Object,
         user: String,
         lastMsg: Object,
@@ -63,18 +66,27 @@
           value: false,
           reflectToAttribute: true
         }
-      },
-      _toggleOpened: function() {
-        this.opened = !this.opened;
-      },
-      _openedChanged: function(opened) {
-        fire(this, 'open-changed', opened);
-      }
-      /**
-       * When the opened state of this toggle changes
-       * @event open-changed
-       * @param {opened} boolean Whether the toggle is true.       
-       */
-    });
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
+    _toggleOpened() {
+      this.opened = !this.opened;
+    }
+    _openedChanged(opened) {
+      fire(this, 'open-changed', opened);
+    }
+    /**
+     * When the opened state of this toggle changes
+     * @event open-changed
+     * @param {opened} boolean Whether the toggle is true.
+     */
+  }
+
+  window.customElements.define(ChatSummaryToggle.is, ChatSummaryToggle);
   </script>
 </dom-module>

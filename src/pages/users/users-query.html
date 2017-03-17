@@ -39,7 +39,7 @@
     persisted-data="{{profiles}}">
   </app-indexeddb-mirror>
 
-  <geo-query 
+  <geo-query
     id="query"
     geofire="[[geofire]]"
     lat="[[lat]]"
@@ -61,67 +61,73 @@
     </div>
 </template>
 <script>
-Polymer({
-  is: 'users-query',
-  properties: {
-    app: {
-      type: Object,
-      value: null,
-      observer: '_appChanged'
-    },
-    auth: Object,
-    geofire: {
-      type: Object,
-      value: null
-    },
+class UsersQuery extends Polymer.Element {
 
-    lat: {
-      type: Number,
-      notify: true
-    },
-    lng: {
-      type: Number,
-      notify: true
-    },
-    radiusKm: {
-      type: Number,
-      notify: true
-    },
-    radiusOptions: {
-      type: Array,
-      value: function() { return [100, 1000, 2000, 5000, 10000]; }
-    },
-    geoUsers: {
-      type: Array,
-      notify: true,
-      observer: '_geoUsersChanged'
-    },
-    profiles: {
-      type: Array,
-      notify: true
-    },
-    useCurrentLocation: {
-      type: Boolean,
-      value: false
-    },
-    cache: {
-      type: Object,
-      value: function() { return {}; }
-    }
-  },
-  observers: [
-    '_userLocationChanged(useCurrentLocation, userLat, userLng)',
-    '_loadedProfilesChanged(_loadedProfiles.*)'
-  ],
+  static get is() { return 'users-query'; }
 
-  _appChanged: function(app, old) {
+  static get properties() {
+    return {
+      app: {
+        type: Object,
+        value: null,
+        observer: '_appChanged'
+      },
+      auth: Object,
+      geofire: {
+        type: Object,
+        value: null
+      },
+
+      lat: {
+        type: Number,
+        notify: true
+      },
+      lng: {
+        type: Number,
+        notify: true
+      },
+      radiusKm: {
+        type: Number,
+        notify: true
+      },
+      radiusOptions: {
+        type: Array,
+        value() { return [100, 1000, 2000, 5000, 10000]; }
+      },
+      geoUsers: {
+        type: Array,
+        notify: true,
+        observer: '_geoUsersChanged'
+      },
+      profiles: {
+        type: Array,
+        notify: true
+      },
+      useCurrentLocation: {
+        type: Boolean,
+        value: false
+      },
+      cache: {
+        type: Object,
+        value() { return {}; }
+      }
+    };
+  }
+
+  static get observers() {
+    return [
+      '_userLocationChanged(useCurrentLocation, userLat, userLng)',
+      '_loadedProfilesChanged(_loadedProfiles.*)'
+    ];
+  }
+  _appChanged(app, old) {
     if (app && !old) {
         LOG && log.d('Initializing geofire');
         this.geofire = new GeoFire(db.ref('geoUsers'));
     }
-  },
+  }
 
-  _geoUsersChanged: function(geoUsers, old) {
+  _geoUsersChanged(geoUsers, old) {
     LOG && GEOFIRE && log.v('geoUsers changed', geoUsers);
     this._loadedProfiles = [];
 
@@ -130,9 +136,9 @@ Polymer({
     for (var i = 0; i < geoUsers.length; i++) {
       this._loadProfile(geoUsers[i]);
     }
-  },
+  }
 
-  _loadProfile: function(geoUser) {
+  _loadProfile(geoUser) {
     db.watch('/profiles/' + geoUser.key, function(profile) {
       profile.$key = geoUser.key;
       profile.lat = geoUser.lat;
@@ -141,9 +147,9 @@ Polymer({
       profile.distance = this.unit == 'km' ? geoUser.distance : kmToMiles(geoUser.distance);
       this.push('_loadedProfiles', profile);
     }.bind(this));
-  },
+  }
 
-  _loadedProfilesChanged: function(changeData) {
+  _loadedProfilesChanged(changeData) {
     this.debounce('loaded-profiles-changed', function() {
       // LOG && log.v('loaded profiles', changeData.base, this.geoUsers);
       this.liveProfiles = changeData.base;
@@ -157,9 +163,9 @@ Polymer({
         return 0;
       });
     }.bind(this), 250);
-  },
+  }
 
-  _queryChanged: function(e, data) {
+  _queryChanged(e, data) {
     LOG && GEOFIRE && log.v('Query changed', data);
     this.hasInitialResults = false;
     this.useCurrentLocation = data.useCurrentLocation;
@@ -196,30 +202,30 @@ Polymer({
     }
   },
 
-  _userLocationChanged: function(useCurrentLocation, userLat, userLng) {
+  _userLocationChanged(useCurrentLocation, userLat, userLng) {
     if (useCurrentLocation && userLat && userLng) {
       LOG && GEOFIRE && log.v('Using user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
       if (this.addingUser) this._doAddUser(userLat, userLng);
     }
-  },
+  }
 
-  _summary: function(geoUsers, len) {
+  _summary(geoUsers, len) {
     if (!geoUsers) len = "~";
     return len + (len == 1 ? ' result.' : ' results.');
-  },
+  }
 
-  _addUser: function() {
+  _addUser() {
     this.addingUser = true;
     if (this.useCurrentLocation && this.userLat && this.userLng) {
       this._doAddUser(this.userLat, this.userLng);
     } else if (!this.useCurrentLocation && this.lat && this.lng) {
       this._doAddUser(this.lat, this.lng);
     }
-  },
+  }
 
-  _doAddUser: function(lat, lng) {
+  _doAddUser(lat, lng) {
     if (!this.auth) {
       showInfoToast('Login to set your position.');
       return;
@@ -234,9 +240,9 @@ Polymer({
     // }
     db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
     this.addingUser = false;
-  },
+  }
 
-  _onResultsReady: function(e) {
+  _onResultsReady(e) {
     // LOG && log.v('results ready');
     // Avoid propagating changes until after the first time ready is called.
     if (e.type == 'ready') {
@@ -247,6 +253,8 @@ Polymer({
       this.geoUsers = this.$.query.resultsArray;
     }
   }
-});
+}
+
+window.customElements.define(UsersQuery.is, UsersQuery);
 </script>
 </dom-module>

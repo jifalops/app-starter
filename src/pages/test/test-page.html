@@ -74,36 +74,45 @@
   </paper-material>
 </template>
 <script>
-Polymer({
-  is: 'test-page',
-  properties: {
-    notification: {
-      type: Object,
-      value: {
-        title: 'title',
-        options: '{ "tag": "app", "body": "body", "icon": "/images/app-icon-32.png" }',
-        autoClose: 0
+class TestPage extends Polymer.Element {
+
+  static get is() { return 'test-page'; }
+
+  static get properties() {
+    return {
+      notification: {
+        type: Object,
+        value: {
+          title: 'title',
+          options: '{ "tag": "app", "body": "body", "icon": "/images/app-icon-32.png" }',
+          autoClose: 0
+        }
       }
-    }
-  },
+    };
+  }
 
-  _showSuccessToast: function() {
+  static get observers() {
+    return [
+
+    ];
+  }
+  _showSuccessToast() {
     showSuccessToast();
-  },
-  _showInfoToast: function() {
+  }
+  _showInfoToast() {
     showInfoToast();
-  },
-  _showWarningToast: function() {
+  }
+  _showWarningToast() {
     showWarningToast();
-  },
-  _showErrorToast: function() {
+  }
+  _showErrorToast() {
     showErrorToast();
-  },
-  _showDefaultToast: function() {
+  }
+  _showDefaultToast() {
     showDefaultToast();
-  },
+  }
 
-  _showNotification: function() {
+  _showNotification() {
     var n = showNotification(this.notification.title, JSON.parse(this.notification.options),
       this.notification.autoClose, function(e, n) {
         showInfoToast('Notification shown');
@@ -125,16 +134,18 @@ Polymer({
       n.close();
       this._autoFail = false;
     }
-  },
-  _showNotificationDelayed: function() {
+  }
+  _showNotificationDelayed() {
     setTimeout(function() {
       this._showNotification();
     }.bind(this), 5000);
-  },
-  _showNotificationError: function() {
+  }
+  _showNotificationError() {
     this._autoFail = true;
     this._showNotification();
   }
-});
+}
+
+window.customElements.define(TestPage.is, TestPage);
 </script>
 </dom-module>

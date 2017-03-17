@@ -2,24 +2,46 @@
   "entrypoint": "index.html",
   "shell": "src/app-shell.html",
   "fragments": [
-    "pages/users/users-page.html",
-    "pages/user/user-page.html",
-    "pages/login-register/login-register-page.html",
-    "pages/feedback/feedback-page.html",
-    "pages/admin/admin-page.html",
-    "pages/test/test-page.html",
+    "src/pages/users/users-page.html",
+    "src/pages/user/user-page.html",
+    "src/pages/login-register/login-register-page.html",
+    "src/pages/feedback/feedback-page.html",
+    "src/pages/admin/admin-page.html",
+    "src/pages/test/test-page.html",
 
-    "pages/users/user-list.html",
-    "pages/users/user-map.html"
+    "src/pages/users/user-list.html",
+    "src/pages/users/user-map.html"
   ],
-  "sourceGlobs": [
+  "sources": [
     "src/**/*",
     "images/**/*",
     "bower.json"
   ],
-  "includeDependencies": [
+  "extraDependencies": [
     "manifest.json",
     "firebase-messaging-sw.js",
-    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
-  ]
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": ["polymer-2"]
+  },
+  "builds": [{
+    "name": "bundled-es6",
+    "bundle": true,
+    "insertPrefetchLinks": true,
+    "addServiceWorker": true,
+    "swPrecacheConfig": "sw-precache-config.js",
+    "js": {"minify": true},
+    "css": {"minify": true},
+    "html": {"minify": true}
+  },{
+    "name": "bundled-es5",
+    "bundle": true,
+    "insertPrefetchLinks": true,
+    "addServiceWorker": true,
+    "swPrecacheConfig": "sw-precache-config.js",
+    "js": {"minify": true, "compile": true},
+    "css": {"minify": true},
+    "html": {"minify": true}
+  }]
 }

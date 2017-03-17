@@ -9,38 +9,43 @@
 -->
 <dom-module id="auth-loader">
   <script>
-  Polymer({
-    is: 'auth-loader',
-    properties: {
-      /**
-       * The Firebase app.
-       */
-      app: Object,
-      /**
-       * The &lt;firebase-auth&gt; user object.
-       */
-      firebaseUser: Object,
-      /**
-       * When authenticated this contains all of the loaded user data.
-       */
-      auth: {
-        type: Object,
-        value: null,
-        notify: true
-      },
-      /**
-       * For specifying a username with capitalization when a user
-       * is first created using the email/username login method.
-       */
-      username: String
-    },
+  class AuthLoader extends Polymer.Element {
 
-    observers: [
-      '_userAuthenticated(app, firebaseUser)',
-      '_userDataLoaded(app, firebaseUser, username, user, profile)',
-    ],
+    static get is() { return 'auth-loader'; }
 
-    _userAuthenticated: function(app, firebaseUser) {
+    static get properties() {
+      return {
+        /**
+         * The Firebase app.
+         */
+        app: Object,
+        /**
+         * The &lt;firebase-auth&gt; user object.
+         */
+        firebaseUser: Object,
+        /**
+         * When authenticated this contains all of the loaded user data.
+         */
+        auth: {
+          type: Object,
+          value: null,
+          notify: true
+        },
+        /**
+         * For specifying a username with capitalization when a user
+         * is first created using the email/username login method.
+         */
+        username: String
+      };
+    }
+
+    static get observers() {
+      return [
+        '_userAuthenticated(app, firebaseUser)',
+        '_userDataLoaded(app, firebaseUser, username, user, profile)'
+      ];
+    }
+    _userAuthenticated(app, firebaseUser) {
       if (app && firebaseUser) {
         // If we are here the user has authenticated with either
         // a provider or the email/username login.
@@ -98,9 +103,9 @@
           this.auth = null;
         }
       }
-    },
+    }
 
-    _userDataLoaded: function(app, firebaseUser, username, user, profile) {
+    _userDataLoaded(app, firebaseUser, username, user, profile) {
       if (app && firebaseUser && username && !isEmpty(user) && !isEmpty(profile)) {
         var tmp = {};
         tmp.uid = username;
@@ -112,9 +117,9 @@
         // This purpose of this element has been fulfilled.
         this.auth = tmp;
       }
-    },
+    }
 
-    createUser: function(firebaseUser, username) {
+    createUser(firebaseUser, username) {
       LOG && AUTH && log.v(firebaseUser, username);
       var user = {};
       var profile = {};
@@ -141,9 +146,9 @@
         showInfoToast('Welcome!');
         goBack();
       }, showServerErrorToast);
-    },
+    }
 
-    _getProvider: function(provider) {
+    _getProvider(provider) {
       switch (provider) {
         case 'password':
           return 'Username';
@@ -158,21 +163,23 @@
         default:
           return provider || '';
       }
-    },
+    }
 
-    _watchUserData: function(username) {
+    _watchUserData(username) {
       db.watch('/users/' + username, function(user) {
         this.user = user;
       }.bind(this));
       db.watch('/profiles/' + username, function(profile) {
         this.profile = profile;
       }.bind(this));
-    },
+    }
 
-    _unwatchUserData: function(username) {
+    _unwatchUserData(username) {
       db.unwatch('/users/' + username);
       db.unwatch('/profiles/' + username);
     }
-  });
+  }
+
+  window.customElements.define(AuthLoader.is, AuthLoader);
   </script>
 </dom-module>

@@ -76,33 +76,42 @@
   </template>
 </template>
 <script>
-Polymer({
-  is: 'messages-page',
-  properties: {
-    auth: Object,
-    hasMessages: {
-      type: Boolean,
-      value: false,
-      computed: '_computeHasMessages(auth.user.messages)'
-    }
-  },
+class MessagesPage extends Polymer.Element {
 
+  static get is() { return 'messages-page'; }
+
+  static get properties() {
+    return {
+      auth: Object,
+      hasMessages: {
+        type: Boolean,
+        value: false,
+        computed: '_computeHasMessages(auth.user.messages)'
+      }
+    };
+  }
+
+  static get observers() {
+    return [
+
+    ];
+  }
   // TODO behavior
-  _objectToArray: function(obj) {
+  _objectToArray(obj) {
     return objectToArray(obj);
-  },
+  }
 
-  _lastMessage: function(auth, chat) {
+  _lastMessage(auth, chat) {
     return auth && auth.user.chats[chat];
-  },
-  notifyResize: function() {
+  }
+  notifyResize() {
     this.$.list.notifyResize();
-  },
+  }
 
-  _computeHasMessages: function(msgs) {
+  _computeHasMessages(msgs) {
     return !isEmpty(msgs);
-  },
-  _userChats: function(messages) {
+  }
+  _userChats(messages) {
     var chats = [];
     for (var user in messages) {
       chats.push({ user: user, chat: messages[user] });
@@ -116,6 +125,8 @@ Polymer({
     }.bind(this));
     return chats;
   }
-});
+}
+
+window.customElements.define(MessagesPage.is, MessagesPage);
 </script>
 </dom-module>

@@ -1,6 +1,6 @@
 <link rel="import" href="header.html">
 
-<dom-module id="">
+<dom-module id="X">
   <template>
     <style include="app-styles">
       :host {
@@ -11,11 +11,24 @@
   </template>
 
   <script>
-    Polymer({
-      is: '',
-      properties: {
+  class X extends Polymer.Element {
 
-      }
-    });
+    static get is() { return 'X'; }
+
+    static get properties() {
+      return {
+
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
+
+  }
+
+  window.customElements.define(X.is, X);
   </script>
 </dom-module>

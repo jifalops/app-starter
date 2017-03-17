@@ -19,9 +19,12 @@
     </firebase-auth-wrapper>
   </template>
   <script>
-    Polymer({
-      is: 'app-firebase',
-      properties: {
+  class AppFirebase extends Polymer.Element {
+
+    static get is() { return 'app-firebase'; }
+
+    static get properties() {
+      return {
         app: {
           type: Object,
           notify: true
@@ -30,7 +33,16 @@
           type: Object,
           notify: true
         }
-      }
-    });
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
+  }
+
+  window.customElements.define(AppFirebase.is, AppFirebase);
   </script>
 </dom-module>

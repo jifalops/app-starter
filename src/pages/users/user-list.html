@@ -52,23 +52,35 @@
   </template>
 
   <script>
-  Polymer({
-    is: 'user-list',
-    properties: {
-      auth: Object,
-      users: {
-        type: Array,
-        observer: 'notifyResize'
-      }
-    },
-    notifyResize: function() {
+  class UserList extends Polymer.Element {
+
+    static get is() { return 'user-list'; }
+
+    static get properties() {
+      return {
+        auth: Object,
+        users: {
+          type: Array,
+          observer: 'notifyResize'
+        }
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
+    notifyResize() {
       this.$.list.notifyResize();
-    },
+    }
     // TODO behavior
-    _round: function(dist) {
+    _round(dist) {
       return round(dist, 1)
     }
-  });
+  }
+
+  window.customElements.define(UserList.is, UserList);
   </script>
 
 </dom-module>

@@ -195,35 +195,40 @@
   </template>
 
   <script>
-  Polymer({
-    is: 'app-shell',
-    properties: {
-      app: {
-        type: Object,
-        observer: '_onFirebaseAppChanged'
-      },
-    },
+  class AppShell extends Polymer.Element {
 
-    observers: [
-      '_routePageChanged(routeData.page, offline, auth)'
-    ],
+    static get is() { return 'app-shell'; }
 
-    _onFirebaseAppChanged: function(app, old) {
+    static get properties() {
+      return {
+        app: {
+          type: Object,
+          observer: '_onFirebaseAppChanged'
+        }
+      };
+    }
+
+    static get observers() {
+      return [
+        '_routePageChanged(routeData.page, offline, auth)'
+      ];
+    }
+    _onFirebaseAppChanged(app, old) {
       if (app) {
         LOG && !old && log.d('Firebase app ready');
         db.watch('/status/offline', function(offline){
           this.offline = offline;
         }.bind(this));
       }
-    },
+    }
 
-    _authChanged: function(auth) {
+    _authChanged(auth) {
       if (auth) {
         this._requestMessagingPermission();
       }
-    },
+    }
 
-    _routePageChanged: function(page, offline, auth) {
+    _routePageChanged(page, offline, auth) {
       LOG && ROUTE && log.v('page changed:', page);
 
       if (offline && (page != 'login'
@@ -245,9 +250,9 @@
       }.bind(this), function() {
         LOG && log.e('failed to import', url);
       }, true);
-    },
+    }
 
-    _fileForPage: function(page) {
+    _fileForPage(page) {
       switch (page) {
         case 'users':      return '/src/pages/users/users-page.html';
         case 'user':       return '/src/pages/user/user-page.html';
@@ -258,9 +263,9 @@
         case 'test':       return '/src/pages/test/test-page.html';
         case 'messages':   return '/src/pages/messages/messages-page.html';
       }
-    },
+    }
 
-    loginRegister: function(e, data) {
+    loginRegister(e, data) {
       if (data.provider == 'username') {
         if (data.isRegistering) {
           this.username = data.username;
@@ -282,20 +287,20 @@
           goBack();
         }.bind(this), this._handleLoginRegisterError.bind(this));
       }
-    },
+    }
 
-    logout: function() {
+    logout() {
       this.$.firebase.$.auth.logout(function() {
         // goBack();
       }, showServerErrorToast, showServerErrorToast);
-    },
+    }
 
     // TODO finish implementing Firebase Cloud Messaging
-    _handleCloudMessage: function() {
+    _handleCloudMessage() {
       LOG && log.v('Message received', arguments);
-    },
+    }
 
-    _handleLoginRegisterError: function(error) {
+    _handleLoginRegisterError(error) {
       switch (error.code) {
         case 'auth/invalid-email':
           var input = this.$.registerPage.$.username;
@@ -331,6 +336,8 @@
           break;
       }
     }
-  });
+  }
+
+  window.customElements.define(AppShell.is, AppShell);
   </script>
 </dom-module>

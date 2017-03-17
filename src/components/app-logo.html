@@ -27,11 +27,24 @@
     </a>
   </template>
   <script>
-    Polymer({
-      is: 'app-logo',
-      properties: {
+  class AppLogo extends Polymer.Element {
 
-      }
-    });
+    static get is() { return 'app-logo'; }
+
+    static get properties() {
+      return {
+
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
+
+  }
+
+  window.customElements.define(AppLogo.is, AppLogo);
   </script>
 </dom-module>

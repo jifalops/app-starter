@@ -195,68 +195,77 @@
 </template>
 
   <script>
-  Polymer({
-    is: 'admin-page',
-    properties: {
-      auth: {
-        type: Object,
-        observer: '_authChanged'
-      },
-      hasRoot: {
-        type: Boolean,
-        value: true,
-        readOnly: true
-      },
-      hasAccess: {
-        type: Boolean,
-        value: false,
-        computed: '_hasAccess(auth, hasRoot)'
-      },
-      offline: {
-        type: Boolean,
-        value: false
-      }
-    },
+  class AdminPage extends Polymer.Element {
 
+    static get is() { return 'admin-page'; }
+
+    static get properties() {
+      return {
+        auth: {
+          type: Object,
+          observer: '_authChanged'
+        },
+        hasRoot: {
+          type: Boolean,
+          value: true,
+          readOnly: true
+        },
+        hasAccess: {
+          type: Boolean,
+          value: false,
+          computed: '_hasAccess(auth, hasRoot)'
+        },
+        offline: {
+          type: Boolean,
+          value: false
+        }
+      };
+    }
+
+    static get observers() {
+      return [
+
+      ];
+    }
     // TODO behavior
-    _isEmpty: function(val) {
+    _isEmpty(val) {
       return isEmpty(val);
-    },
+    }
 
     // TODO behavior (divided)
-    _hasPrivilege: function(privilege, role) {
+    _hasPrivilege(privilege, role) {
       return hasPrivilege(privilege, role);
-    },
+    }
     // TODO behavior
-    _rolesLessThan: function(role) {
+    _rolesLessThan(role) {
       return rolesLessThan(role);
-    },
+    }
     // TODO behavior
-    _isRoleGreaterThan: function(r1, r2) {
+    _isRoleGreaterThan(r1, r2) {
       return isRoleGreaterThan(r1, r2);
-    },
+    }
 
-    _authChanged: function(auth, prev) {
+    _authChanged(auth, prev) {
       if (auth && !prev) {
         db.watch('/status/hasRoot', function(hasRoot) {
           this._setHasRoot(!isEmpty(hasRoot));
         }.bind(this));
       }
-    },
+    }
 
-    _hasAccess: function(auth, hasRoot) {
+    _hasAccess(auth, hasRoot) {
       return auth && (!hasRoot || (auth.user && auth.user.isElevated));
-    },
+    }
 
-    becomeRoot: function() {
+    becomeRoot() {
       db.admin.becomeRoot(this.auth.uid, function () {
         showSuccessToast('You are now root.');
       }, function () {
         showErrorToast('Failed to become root.');
       });
-    },
+    }
 
-    _onRoleSelected: function(e, data) {
+    _onRoleSelected(e, data) {
       // LOG && log.v('Role selected', e, data);
       var el = e.target || e.srcElement;
       var user = e.model.user.$key;
@@ -275,9 +284,9 @@
           }
         }.bind(this));
       }
-    },
+    }
 
-    _offlineToggled: function(e) {
+    _offlineToggled(e) {
       LOG && log.d('Site offline status is being toggled');
       var el = e.target || e.srcElement;
       var offline = !isEmpty(this.offline);
@@ -291,16 +300,18 @@
           el.checked = offline;
         }
       }.bind(this));
-    },
+    }
 
 
-    _canSeeUserList: function(role) {
+    _canSeeUserList(role) {
       return this._hasPrivilege('Maintainer', role);
-    },
+    }
 
-    _canSeeFeedback: function(role) {
+    _canSeeFeedback(role) {
       return this._hasPrivilege('Moderator', role);
     }
-  });
+  }
+
+  window.customElements.define(AdminPage.is, AdminPage);
   </script>
 </dom-module>

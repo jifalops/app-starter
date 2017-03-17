@@ -54,41 +54,51 @@
     </google-map>
 </template>
 <script>
-Polymer({
-  is: 'user-map',
-  properties: {
-    auth: Object,
-    users: Array,
-    lat: {
-      type: Number,
-      value: 41.651
-    },
-    lng: {
-      type: Number,
-      value: -83.542
-    },
-    radiusKm: {
-      type: Number,
-      value: 0
-    }
-  },
-  _filterLat: function(lat) {
+class UserMap extends Polymer.Element {
+
+  static get is() { return 'user-map'; }
+
+  static get properties() {
+    return {
+      auth: Object,
+      users: Array,
+      lat: {
+        type: Number,
+        value: 41.651
+      },
+      lng: {
+        type: Number,
+        value: -83.542
+      },
+      radiusKm: {
+        type: Number,
+        value: 0
+      }
+    };
+  }
+
+  static get observers() {
+    return [
+
+    ];
+  }
+  _filterLat(lat) {
     return lat ? lat : 41.651;
-  },
-  _filterLng: function(lng) {
+  }
+  _filterLng(lng) {
     return lng ? lng : -83.542;
-  },
+  }
   /**
    * Convert miles to a google map's zoom, based on a zoom of 14 ~= 1 mile.
    */
-  _radiusToZoom: function(radius, metric) {
+  _radiusToZoom(radius, metric) {
     if (radius == 0) return 1;
     if (metric) radius = kmToMiles(radius);
     var zoom = Math.round(14 - Math.log(radius) / Math.LN2);
     // console.log('zoom', zoom);
     return zoom < 1 ? 1 : zoom;
-  },
-  _toggleInfoWindow: function(e) {
+  }
+  _toggleInfoWindow(e) {
     var marker = e.target.marker;
     var user = e.model.user;
     this.infoWindows = this.infoWindows || {};
@@ -107,17 +117,19 @@ Polymer({
       info.open(this.map, marker);
       this.infoWindows[user.$key] = info;
     }
-  },
-  _infoWindowClosed: function(e) {
+  }
+  _infoWindowClosed(e) {
     console.log('closed info window');
     var user = e.model.user;
     if (!user) return;
     this.infoWindows = this.infoWindows || {};
     this.infoWindows[user.$key] = null;
-  },
-  _mapLoaded: function() {
+  }
+  _mapLoaded() {
     LOG && log.d('Google maps api has loaded');
   }
-});
+}
+
+window.customElements.define(UserMap.is, UserMap);
 </script>
 </dom-module>
