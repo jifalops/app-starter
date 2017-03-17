@@ -20,6 +20,14 @@ function fire(context, name, data, options) {
   context.dispatchEvent(new CustomEvent(name, options));
 }
 
+function debounce(debouncer, delay, callback) {
+  return Polymer.Debouncer.debounce(
+    debouncer,
+    delay > 0 ? Polymer.Async.timeOut.after(delay) : Polymer.Async.microTask,
+    callback
+  );
+}
+
 function redirect(path) {
   document.getElementById('app').$['appLocation'].path = path;
 }

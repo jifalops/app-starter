@@ -150,7 +150,7 @@ class UsersQuery extends Polymer.Element {
   }
 
   _loadedProfilesChanged(changeData) {
-    this.debounce('loaded-profiles-changed', function() {
+    this._debouncer = debounce(this._debouncer, 250, function() {
       // LOG && log.v('loaded profiles', changeData.base, this.geoUsers);
       this.liveProfiles = changeData.base;
       this.liveProfiles.sort(function(a, b) {
@@ -162,7 +162,7 @@ class UsersQuery extends Polymer.Element {
         }
         return 0;
       });
-    }.bind(this), 250);
+    }.bind(this));
   }
 
   _queryChanged(e, data) {
