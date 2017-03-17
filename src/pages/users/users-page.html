@@ -105,7 +105,7 @@ class UsersPage extends Polymer.Element {
     }
 
     var url = this.resolveUrl(file);
-    this.importHref(url, function() {
+    Polymer.importHref(url, function() {
       LOG && ROUTE && log.v('imported', url);
       this._fixListOverlap(page);
     }.bind(this), function() {

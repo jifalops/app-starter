@@ -245,7 +245,7 @@
 
       // load page import on demand.
       var url = this.resolveUrl(file);
-      this.importHref(url, function() {
+      Polymer.importHref(url, function() {
         LOG && ROUTE && log.v('imported', url);
       }.bind(this), function() {
         LOG && log.e('failed to import', url);
