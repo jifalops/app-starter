@@ -44,6 +44,9 @@
         <iron-icon icon="launch"></iron-icon> on our issue tracker</a>
 
       </div>
+      <p></p>
+      <p></p>
+      <p class="font-small">Powered by <a href="[[_makeUrl()]]">App<span> </span>Starter</a></p>
     </paper-material>
   </template>
 
@@ -78,8 +81,11 @@
         this.$.input.invalid = true;
       }
     }
+    _makeUrl() {
+      return 'https://github.com/jifalops/app' + '-starter';
+    }
   }
-
+    
   window.customElements.define(FeedbackPage.is, FeedbackPage);
   </script>
 </dom-module>
