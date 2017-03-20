@@ -29,18 +29,18 @@
     "name": "bundled-es6",
     "bundle": true,
     "insertPrefetchLinks": false,
-    "addServiceWorker": true,
+    "addServiceWorker": false,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": true},
+    "js": {"minify": false},
     "css": {"minify": false},
     "html": {"minify": false}
   },{
     "name": "bundled-es5",
     "bundle": true,
     "insertPrefetchLinks": false,
-    "addServiceWorker": true,
+    "addServiceWorker": false,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": true, "compile": true},
+    "js": {"minify": false, "compile": true},
     "css": {"minify": false},
     "html": {"minify": false}
   }]
