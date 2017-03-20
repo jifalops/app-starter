@@ -32,8 +32,8 @@
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
     "js": {"minify": true},
-    "css": {"minify": true},
-    "html": {"minify": true}
+    "css": {"minify": false},
+    "html": {"minify": false}
   },{
     "name": "bundled-es5",
     "bundle": true,
@@ -41,7 +41,7 @@
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
     "js": {"minify": true, "compile": true},
-    "css": {"minify": true},
-    "html": {"minify": true}
+    "css": {"minify": false},
+    "html": {"minify": false}
   }]
 }
