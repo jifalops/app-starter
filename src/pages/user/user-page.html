@@ -98,9 +98,9 @@
   <paper-material hidden$="[[!amOwner]]" class="layout vertical">
     <span class="font-title self-center">Private Info</span>
     <div class="font-subhead">Login methods</div>
-    <div class="layout horizontal center justified wrap">
+    <div class="layout horizontal center justified wrap" hidden$="[[!_canAddProvider(_providers)]]">
       <span>[[join(_providers, '\, ')]]</span>
-      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="warning font-small">
+      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="color-warning bgcolor-warning font-small">
         Add a second login method to access your account if you forget the password.
       </span>
       <div class="add-provider font-small layout horizontal center">
@@ -176,12 +176,12 @@ Polymer({
 
   _loadProfile: function(auth, user) {
     if (auth && auth.uid == user) {
-      AUTH && log.v('Using auth.profile');
+      LOG && AUTH && log.v('Using auth.profile');
       this.profile = auth.profile;
       this.amOwner = true;
     } else {
       db.watch('/profiles/' + user, function(profile) {
-        AUTH && log.v("Using " + user + "'s profile'");
+        LOG && AUTH && log.v("Using " + user + "'s profile'");
         this.amOwner = false;
         this.profile = profile;
       }.bind(this));
@@ -307,6 +307,12 @@ Polymer({
 
   _hasUsernameProviderOnly: function(providers) {
     return providers && providers.length == 1 && providers[0] == 'Username';
+  },
+  _canAddProvider: function(providers) {
+    if (!providers) return true;
+    var hasUsername = providers[0] == 'Username';
+    return (hasUsername && providers.length < 5)
+        || (!hasUsername && providers.length < 4);
   }
 });
 </script>

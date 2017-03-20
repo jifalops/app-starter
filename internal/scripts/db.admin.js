@@ -11,7 +11,7 @@ db.admin = {
   },
 
   setRole: function(user, targetUser, role, onSuccess, onFailure) {
-    DB && console.log('Setting role for', targetUser, 'to', role);
+    LOG && DB && console.log('Setting role for', targetUser, 'to', role);
     var updates = db.userActionUpdate(user);
     updates['/roles/' + targetUser] = role == 'User' ? null : role;
     updates['/users/' + targetUser + '/role'] = role;
@@ -19,7 +19,7 @@ db.admin = {
   },
 
   setOffline: function(user, offline, onSuccess, onFailure) {
-    DB && console.log('Setting offline status to', offline);
+    LOG && DB && console.log('Setting offline status to', offline);
     var updates = db.userActionUpdate(user);
     updates['/status/offline'] = offline;
     db.update(updates, onSuccess, onFailure);

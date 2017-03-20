@@ -22,12 +22,9 @@
 <link rel="import" href="header.html">
 <link rel="import" href="app-firebase.html">
 <link rel="import" href="components/auth-loader.html">
-<!-- <link rel="import" href="components/value-history.html"> -->
 <link rel="import" href="components/app-logo.html">
-<!--<link rel="import" href="components/basic-toasts.html">-->
 <link rel="import" href="components/dialogs/confirm-dialog.html">
 <link rel="import" href="components/dialogs/set-username-dialog.html">
-<!--<link rel="import" href="components/app-notifications.html">-->
 
 <dom-module id="app-shell">
   <template>
@@ -47,9 +44,20 @@
         color: #fff;
         /*height: inherit;*/
       }
-      #content {
+      .content-wrapper {
         margin: 0 auto;
         max-width: 800px;
+        @apply --layout-vertical;
+      }
+      #content {
+        @apply --layout-flex;
+      }
+      neon-animatable.iron-selected {
+        min-height: calc(100vh - 96px);
+      }
+      footer {
+        @apply --font-tiny;
+        @apply --layout-self-end;
       }
     </style>
 
@@ -132,7 +140,7 @@
       </app-drawer>
 
       <!-- Main toolbar -->
-      <app-header-layout has-scrolling-region>
+      <app-header-layout>
         <app-header condenses reveals effects="waterfall" class="main-header">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
@@ -152,40 +160,42 @@
         </app-header>
 
         <!-- Content -->
-        <div id="content" class="layout vertical">
-          <!-- <div class="success-banner">Success banner</div> -->
-          <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
-            <neon-animatable name="users">
-              <users-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></users-page>
-            </neon-animatable>
-            <neon-animatable name="login">
-              <login-register-page id="loginPage" auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
-            </neon-animatable>
-            <neon-animatable name="register">
-              <login-register-page id="registerPage" auth="[[auth]]" register on-login-register="loginRegister"></login-register-page>
-            </neon-animatable>
-            <neon-animatable name="user">
-              <user-page auth="[[auth]]" route="[[subroute]]"></user-page>
-            </neon-animatable>
-            <neon-animatable name="feedback">
-              <feedback-page auth="[[auth]]"></feedback-page>
-            </neon-animatable>
-            <neon-animatable name="admin">
-              <admin-page auth="[[auth]]"></admin-page>
-            </neon-animatable>
-            <neon-animatable name="test">
-              <test-page auth="[[auth]]"></test-page>
-            </neon-animatable>
-            <neon-animatable name="messages">
-              <messages-page auth="[[auth]]"></messages-page>
-            </neon-animatable>
-            <neon-animatable name="offline">
-              <paper-material>
-                <div class="font-headline">Offline</div>
-                <div>We are currently down for maintenance. Please try again later.</div>
-              </paper-material>
-            </neon-animatable>
-          </neon-animated-pages>
+        <div class="content-wrapper">
+          <div id="content">
+            <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
+              <neon-animatable name="users">
+                <users-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></users-page>
+              </neon-animatable>
+              <neon-animatable name="login">
+                <login-register-page id="loginPage" auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
+              </neon-animatable>
+              <neon-animatable name="register">
+                <login-register-page id="registerPage" auth="[[auth]]" register on-login-register="loginRegister"></login-register-page>
+              </neon-animatable>
+              <neon-animatable name="user">
+                <user-page auth="[[auth]]" route="[[subroute]]"></user-page>
+              </neon-animatable>
+              <neon-animatable name="feedback">
+                <feedback-page auth="[[auth]]"></feedback-page>
+              </neon-animatable>
+              <neon-animatable name="admin">
+                <admin-page auth="[[auth]]"></admin-page>
+              </neon-animatable>
+              <neon-animatable name="test">
+                <test-page auth="[[auth]]"></test-page>
+              </neon-animatable>
+              <neon-animatable name="messages">
+                <messages-page auth="[[auth]]"></messages-page>
+              </neon-animatable>
+              <neon-animatable name="offline">
+                <paper-material>
+                  <div class="font-headline">Offline</div>
+                  <div>We are currently down for maintenance. Please try again later.</div>
+                </paper-material>
+              </neon-animatable>
+            </neon-animated-pages>
+          </div>
+          <footer>Powered by <a href="[[_makeUrl()]]">App<span> </span>Starter</a></footer>
         </div>
       </app-header-layout>
     </app-drawer-layout>
@@ -208,6 +218,12 @@
       '_routePageChanged(routeData.page, offline, auth)'
     ],
 
+    ready: function() {
+      this.$.content.addEventListener('iron-resize', function() {
+        console.log(arguments);
+      });
+    },
+
     _onFirebaseAppChanged: function(app, old) {
       if (app) {
         LOG && !old && log.d('Firebase app ready');
@@ -224,7 +240,7 @@
     },
 
     _routePageChanged: function(page, offline, auth) {
-      ROUTE && log.v('page changed:', page);
+      LOG && ROUTE && log.v('page changed:', page);
 
       if (offline && (page != 'login'
           && !(hasChild(auth, 'user', 'role') && isAdmin(auth.user.role)))) {
@@ -241,7 +257,7 @@
       // load page import on demand.
       var url = this.resolveUrl(file);
       this.importHref(url, function() {
-        ROUTE && log.v('imported', url);
+        LOG && ROUTE && log.v('imported', url);
       }.bind(this), function() {
         LOG && log.e('failed to import', url);
       }, true);
@@ -330,6 +346,9 @@
           showErrorToast('That user already exists.');
           break;
       }
+    },
+    _makeUrl: function() {
+      return 'https://github.com/jifalops/app' + '-starter';
     }
   });
   </script>

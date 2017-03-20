@@ -14,8 +14,8 @@
         margin: 24px 0;
       }
       iron-icon {
-        --iron-icon-height: 16px;
-        --iron-icon-width: 16px;
+        --iron-icon-height: 12px;
+        --iron-icon-width: 12px;
         vertical-align: super;
       }
     </style>
@@ -38,11 +38,9 @@
         Find a bug?
       </div>
       <div>
-        Please report the bug on our
-        <a href="https://github.com/jifalops/app-starter/issues"
-          target="_blank">issue tracker
-        <iron-icon icon="launch"></iron-icon></a>
-
+        Please report it on our
+        <a href="https://github.com/jifalops/app-starter/issues/new"
+          target="_blank">issue tracker<iron-icon icon="launch"></iron-icon></a>
       </div>
     </paper-material>
   </template>
@@ -67,7 +65,7 @@
       } else {
         this.$.input.invalid = true;
       }
-    }
+    }    
   });
   </script>
 </dom-module>

@@ -56,30 +56,29 @@ A typical way to accomplish that is
     cd ..
     ```
 
-    **Note:** If you want to test locally before deploying, you will need to copy and paste `internal/rules.json` to the rules section in the Firebase console.
+    **Note:** If you want to test locally before deploying, you will need to copy and paste `internal/rules.json` to the rules section your project's Firebase console.
 
   3. Deploy
 
     ```
     ./polymer-build.sh
     firebase deploy
-    ```
-
-    **Note:** The build script is a work around for the gulp build not working correctly. It requires html-minifier (`npm i -g html-minifier`).
+    ```  
 
 ### Pulling in new changes
-To update your existing project to use the newest version of app-starter
-
-```
-# Only do this if nobody else is using origin/master
-git pull --rebase app-starter master
-git push -f origin master
-```
+To update your existing project to use the newest version of app-starter,
+merge in new changes or rebase your project on top of app-starter.
 
 ```
 # If others are working from origin/master
 git merge app-starter master
 git push origin master
+```
+
+```
+# Only do this if nobody else is using origin/master
+git pull --rebase app-starter master
+git push -f origin master
 ```
 
 ## Key features
@@ -116,7 +115,8 @@ tracker here.
 * ~~Cloud messaging / notifications~~
 * Test on other browsers (not Chrome)
 * Possibly show a toast or notification when a message is received (not push messages).
-* Figure out non-push notifications on mobile.
+* ~~Figure out non-push notifications on mobile.~~
+* Validate CSS custom properties.
 
 ### Known bugs and workarounds
 
@@ -127,11 +127,9 @@ tracker here.
   which still use the old style Polymer 1.x paradigm
   https://www.polymer-project.org/2.0/docs/about_20#behaviors
 * google-map: Has styles outside of template and fills the paper-material
-* geofire-query: Works only if you copy the file locally  :(
 * paper-input: using `--paper-input-container-input` causes errors.
 
 #### Polymer 1.8 bugs
-* `<dom-repeat>` does not show. Workaround is to use `<template is="dom-repeat"`
 * paper-dropdown-menu does not overlay other items in iron-list.
   https://github.com/PolymerElements/paper-menu-button/issues/9
   Workaround is to use `<template is="dom-repeat"`

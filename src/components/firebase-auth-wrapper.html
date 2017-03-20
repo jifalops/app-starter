@@ -78,7 +78,7 @@
       var provider = this.$.auth._providerFromName(name);
       // Twitter simple login doesn't have scopes.
       if (this.addEmailScope && providerName != 'twitter') {
-        AUTH && log.v('Adding email scope for', name);
+        LOG && AUTH && log.v('Adding email scope for', name);
         provider.addScope('email');
       }
       return provider;

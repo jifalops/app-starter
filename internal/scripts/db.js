@@ -23,7 +23,7 @@ db.ref = function(path) {
  * Perform multiple database updates as a single transaction.
  */
 db.update = function(updates, onSuccess, onFailure) {
-  DB && log.v('Performing update:', updates);
+  LOG && DB && log.v('Performing update:', updates);
   db.ref().update(updates, db.callback(onSuccess, onFailure));
 };
 
@@ -31,7 +31,7 @@ db.update = function(updates, onSuccess, onFailure) {
  * Set the value at a single location in the DB.
  */
 db.set = function(path, value, onSuccess, onFailure) {
-  DB && log.v('Performing set:', path, value);
+  LOG && DB && log.v('Performing set:', path, value);
   return db.ref(path).set(value, db.callback(onSuccess, onFailure));
 };
 
@@ -39,7 +39,7 @@ db.set = function(path, value, onSuccess, onFailure) {
  * Append to an array in the DB.
  */
 db.push = function(path, value, onSuccess, onFailure) {
-  DB && log.v('Performing push:', path, value);
+  LOG && DB && log.v('Performing push:', path, value);
   return db.ref(path).push(value, db.callback(onSuccess, onFailure));
 };
 
@@ -66,10 +66,10 @@ db.newKey = function(path) {
 db.callback = function(onSuccess, onFailure) {
   return function(error) {
     if (error) {
-      DB && log.v('Operation failed: ', error);
+      LOG && DB && log.v('Operation failed: ', error);
       if (onFailure) onFailure();
     } else {
-      DB && log.v('Operation succeeded.');
+      LOG && DB && log.v('Operation succeeded.');
       if (onSuccess) onSuccess();
     }
   };
