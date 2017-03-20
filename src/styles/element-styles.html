@@ -125,6 +125,14 @@
       paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
         pointer-events: none;
       }
+
+      /* Fix to allow footer */
+      neon-animated-pages .iron-selected:not(.neon-animating) { position: relative; }
+      neon-animatable.iron-selected {
+        min-height: calc(100vh - 100px);
+        /*position: relative;*/
+        /*padding-bottom: 100px;*/
+      }
     </style>
   </template>
 </dom-module>

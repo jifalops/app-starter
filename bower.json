@@ -1,7 +1,9 @@
 {
   "name": "app-starter",
   "description": "A starting point for using Polymer, Firebase, Geofire, and username/provider logins.",
-  "authors": [ "Jacob Phillips <jifalops@gmail.com> (https://github.com/jifalops)" ],
+  "authors": [
+    "Jacob Phillips <jifalops@gmail.com> (https://github.com/jifalops)"
+  ],
   "main": "index.html",
   "license": "Apache",
   "private": true,
@@ -45,7 +47,8 @@
     "geo-query": "^0.3.1",
     "value-history": "^0.1.0",
     "app-notifications": "^0.1.2",
-    "app-toasts": "^0.3.1"
+    "app-toasts": "^0.3.1",
+    "webcomponentsjs": "^0.7.24"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
@@ -93,6 +96,6 @@
     "mocha": "^2.3.0",
     "test-fixture": "^1.0.0",
     "polymer": "^1.8.1",
-    "webcomponentsjs": "^0.7.24"
+    "iron-media-query": "^1.0.0"
   }
 }

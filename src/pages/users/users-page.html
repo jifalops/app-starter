@@ -54,16 +54,14 @@
 
 
   <neon-animated-pages selected="[[routeData.page]]" attr-for-selected="name">
-    <neon-animatable name="list">
+    <neon-animatable name="list" entry-animation="slide-from-left-animation" exit-animation="slide-left-animation">
       <user-list
         id="list"
         auth="[[auth]]"
         users="[[profiles]]">
       </user-list>
     </neon-animatable>
-    <neon-animatable name="map">
-      <!-- FIXME If paper-material is part of user-map in 2.0-preview, the map has a small height. -->
-      <!-- <paper-material> -->
+    <neon-animatable name="map" entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
         <user-map
           auth="[[auth]]"
           users="[[profiles]]"
@@ -71,7 +69,6 @@
           lng="[[lng]]"
           radius-km="[[radiusKm]]">
         </user-map>
-      <!-- </paper-material> -->
     </neon-animatable>
   </neon-animated-pages>
 </template>
