@@ -32,8 +32,8 @@
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
     "js": {"minify": false},
-    "css": {"minify": false},
-    "html": {"minify": false}
+    "css": {"minify": true},
+    "html": {"minify": true}
   },{
     "name": "bundled-es5",
     "bundle": true,
@@ -41,8 +41,8 @@
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
     "js": {"minify": false, "compile": true},
-    "css": {"minify": false},
-    "html": {"minify": false}
+    "css": {"minify": true},
+    "html": {"minify": true}
   },{
     "name": "unbundled-es6",
     "bundle": false,
@@ -50,8 +50,8 @@
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
     "js": {"minify": false},
-    "css": {"minify": false},
-    "html": {"minify": false}
+    "css": {"minify": true},
+    "html": {"minify": true}
   },{
     "name": "unbundled-es5",
     "bundle": false,
@@ -59,7 +59,7 @@
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
     "js": {"minify": false, "compile": true},
-    "css": {"minify": false},
-    "html": {"minify": false}
+    "css": {"minify": true},
+    "html": {"minify": true}
   }]
 }
