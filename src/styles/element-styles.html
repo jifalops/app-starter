@@ -126,8 +126,9 @@
         pointer-events: none;
       }
 
-      /* Fix to allow footer */
-      neon-animatable.iron-selected:not(.neon-animating) { position: relative; }    
+      /* Fix to allow footer
+      https://github.com/PolymerElements/neon-animation/issues/101 */
+      neon-animatable.iron-selected:not(.neon-animating) { position: relative; }
     </style>
   </template>
 </dom-module>
