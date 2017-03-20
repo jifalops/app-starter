@@ -3,7 +3,7 @@
     "rules": "internal/rules.json"
   },
   "hosting": {
-    "public": "build/bundled",
+    "public": "build/bundled-es5",
     "rewrites": [
       {
         "source": "**",

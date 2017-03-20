@@ -8,5 +8,6 @@ firebase-debug.log
 # Uncomment the next line in production applications
 #internal
 
-# Notification test that includes server private data
-notification.txt
+# Notification test data
+notification-key.txt
+notification-user.txt

@@ -115,7 +115,8 @@ tracker here.
 * ~~Cloud messaging / notifications~~
 * Test on other browsers (not Chrome)
 * Possibly show a toast or notification when a message is received (not push messages).
-* Figure out non-push notifications on mobile.
+* ~~Figure out non-push notifications on mobile.~~
+* Validate CSS custom properties.
 
 ### Known bugs and workarounds
 
@@ -126,11 +127,9 @@ tracker here.
   which still use the old style Polymer 1.x paradigm
   https://www.polymer-project.org/2.0/docs/about_20#behaviors
 * google-map: Has styles outside of template and fills the paper-material
-* geofire-query: Works only if you copy the file locally  :(
 * paper-input: using `--paper-input-container-input` causes errors.
 
 #### Polymer 1.8 bugs
-* `<dom-repeat>` does not show. Workaround is to use `<template is="dom-repeat"`
 * paper-dropdown-menu does not overlay other items in iron-list.
   https://github.com/PolymerElements/paper-menu-button/issues/9
   Workaround is to use `<template is="dom-repeat"`
