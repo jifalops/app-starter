@@ -20,7 +20,7 @@
   "extraDependencies": [
     "manifest.json",
     "firebase-messaging-sw.js",
-    "bower_components/webcomponentsjs/*.js"
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ],
   "lint": {
     "rules": ["polymer-1"]
@@ -28,20 +28,20 @@
   "builds": [{
     "name": "bundled-es6",
     "bundle": true,
-    "insertPrefetchLinks": true,
+    "insertPrefetchLinks": false,
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": true},
+    "js": {"minify": false},
     "css": {"minify": true},
-    "html": {"minify": true}
+    "html": {"minify": false}
   },{
     "name": "bundled-es5",
     "bundle": true,
-    "insertPrefetchLinks": true,
+    "insertPrefetchLinks": false,
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": true, "compile": true},
+    "js": {"minify": false, "compile": true},
     "css": {"minify": true},
-    "html": {"minify": true}
+    "html": {"minify": false}
   }]
 }
