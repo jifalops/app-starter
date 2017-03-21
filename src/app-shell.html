@@ -57,7 +57,9 @@
       }
       footer {
         @apply --font-tiny;
+        color: var(--disabled-text-color);
         @apply --layout-self-end;
+        margin: 2px;
       }
     </style>
 
@@ -195,7 +197,7 @@
               </neon-animatable>
             </neon-animated-pages>
           </div>
-          <footer>Powered by <a href="[[_makeUrl()]]">App<span> </span>Starter</a></footer>
+          <footer>Powered by <a plain hover href="[[_makeUrl()]]">App<span> </span>Starter</a></footer>
         </div>
       </app-header-layout>
     </app-drawer-layout>
