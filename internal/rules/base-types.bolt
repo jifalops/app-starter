@@ -27,9 +27,6 @@ type FinalAuth {
 type FinalUser {
   validate() { isUnchanged(this) && userExists(this) }
 }
-type FinalPay extends Pay {
-  validate() { isUnchanged(this) }
-}
 
 // Timestamp types
 type CurrentTimestamp {
