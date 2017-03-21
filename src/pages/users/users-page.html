@@ -54,14 +54,14 @@
   </div>
 
   <neon-animated-pages selected="[[routeData.page]]" attr-for-selected="name">
-    <neon-animatable name="list" entry-animation="slide-from-left-animation" exit-animation="slide-left-animation">
+    <neon-animatable name="list">
       <user-list
         id="list"
         auth="[[auth]]"
         users="[[profiles]]">
       </user-list>
     </neon-animatable>
-    <neon-animatable name="map" entry-animation="slide-from-right-animation" exit-animation="slide-right-animation">
+    <neon-animatable name="map">
         <user-map
           auth="[[auth]]"
           users="[[profiles]]"
