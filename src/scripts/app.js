@@ -49,23 +49,29 @@ function showNotification(title, options, autoClose, onClick, onClose, onError) 
 /*
  * Toasts
  */
-function showSuccessToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].showSuccessToast(text, duration, properties);
+function showSuccessToast(text, properties) {
+  document.getElementById('app').$['toast'].showSuccessToast(text, properties);
 }
-function showErrorToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].showErrorToast(text, duration, properties);
+function showErrorToast(text, properties) {
+  document.getElementById('app').$['toast'].showErrorToast(text, properties);
 }
-function showInfoToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].showInfoToast(text, duration, properties);
+function showInfoToast(text, properties) {
+  document.getElementById('app').$['toast'].showInfoToast(text, properties);
 }
-function showWarningToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].showWarningToast(text, duration, properties);
+function showWarningToast(text, properties) {
+  document.getElementById('app').$['toast'].showWarningToast(text, properties);
 }
-function showDefaultToast(text, duration, properties) {
-  document.getElementById('app').$['toast'].showDefaultToast(text, duration, properties);
+function showDefaultToast(text, properties) {
+  document.getElementById('app').$['toast'].showDefaultToast(text, properties);
 }
 function showServerErrorToast() {
   showErrorToast('Server error, try again.');
+}
+function closeToasts() {
+  document.getElementById('app').$['toast'].close();
+}
+function resetToasts() {
+  document.getElementById('app').$['toast'].reset();
 }
 
 /*

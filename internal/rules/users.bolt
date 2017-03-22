@@ -23,6 +23,7 @@ type User {
   role: UserRole
   isElevated: Boolean
   messagingToken: MessagingToken | Null
+  messageNotifications: Boolean | Null
   read() { key() == me() }
   write() { key() == me() && this != null }
 }

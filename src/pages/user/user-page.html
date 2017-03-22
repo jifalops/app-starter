@@ -5,6 +5,9 @@
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/from-now/from-now.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../../bower_components/app-notifications/app-notifications.html">
 <link rel="import" href="../../header.html">
 <link rel="import" href="../../components/user-chat.html">
 <dom-module id="user-page">
@@ -35,6 +38,12 @@
       @apply --font-small;
     }
   </style>
+
+  <app-notifications
+    id="notifications"
+    available="{{notificationsAvailable}}"
+    has-permission="{{hasNotificationsPermission}}">
+  </app-notifications>
 
   <app-route
     route="[[route]]"
@@ -134,10 +143,25 @@
         </div>
       </div>
     </div>
-    <div class="font-subhead">Created</div>
-    <from-now time="[[auth.user.created]]"></from-now>
-    <div class="font-subhead">Last Activity</div>
-    <from-now time="[[auth.user.lastActivity]]"></from-now>
+
+    <div class="divider"></div>
+    <div class="layout horizontal center justified">
+      <div class="font-default2">Created</div>
+      <div class="font-default2">Last Activity</div>
+    </div>
+    <div class="layout horizontal center justified">
+      <from-now time="[[auth.user.created]]"></from-now>
+      <from-now time="[[auth.user.lastActivity]]"></from-now>
+    </div>
+
+    <div class="font-subhead">Settings</div>
+    <div class="layout horizontal center justified">
+      <div>Message notifications</div>
+      <paper-toggle-button checked="{{messageNotifications}}"></paper-toggle-button>
+    </div>
+    <firebase-document path="/users/[[auth.uid]]/messageNotifications" data="{{messageNotifications}}"><firebase-document>
+    <div class="divider"></div>
+
 
     <div hidden$="[[!_hasPrivileges(auth.user.role)]]">
       <div class="font-subhead">Role</div>
@@ -174,7 +198,8 @@ Polymer({
   },
   observers: [
     '_loadProfile(auth, routeData.user)',
-    '_processProviders(auth.user.providers)'
+    '_processProviders(auth.user.providers)',
+    '_notificationsInfoChanged(notificationsAvailable, hasNotificationsPermission, messageNotifications)'
   ],
 
   _loadProfile: function(auth, user) {
@@ -311,6 +336,14 @@ Polymer({
     var hasUsername = providers[0] == 'Username';
     return (hasUsername && providers.length < 5)
         || (!hasUsername && providers.length < 4);
+  },
+  _notificationsInfoChanged: function(available, hasPermission, userWants) {
+    // LOG && log.v('notification permission', available, hasPermission);
+    if (available) {
+      if (hasPermission === null && userWants) {
+        this.$.notifications.requestPermission();
+      }
+    }
   }
 });
 </script>

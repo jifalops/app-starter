@@ -53,7 +53,7 @@
         @apply --layout-flex;
       }
       neon-animatable.iron-selected {
-        min-height: calc(100vh - 96px);
+        min-height: calc(100vh - 104px);
       }
       footer {
         @apply --font-tiny;
@@ -309,8 +309,10 @@
     },
 
     // TODO finish implementing Firebase Cloud Messaging
-    _handleCloudMessage: function() {
+    _handleCloudMessage: function(e, data) {
       LOG && log.v('Message received', arguments);
+      var n = data.message.notification;
+      showInfoToast('Title: ' + n.title + ' Body:' + n.body);
     },
 
     _handleLoginRegisterError: function(error) {
