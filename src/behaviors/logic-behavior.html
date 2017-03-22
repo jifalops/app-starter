@@ -1,0 +1,14 @@
+<script>
+var AppStarterBehaviors = AppStarterBehaviors || {};
+
+/**
+ * @polymerBehavior
+ */
+AppStarterBehaviors.LogicBehavior = {
+  _isEmpty: function (any) { return isEmpty(any); },
+  _allEmpty: function () { return allEmpty.apply(this, arguments); },
+  _anyEmpty: function () { return anyEmpty.apply(this, arguments); },
+  _allEqual: function () { return allEqual.apply(this, arguments); },
+  _anyEqual: function () { return anyEqual.apply(this, arguments); }
+};
+</script>

@@ -1,0 +1,14 @@
+<link rel="import" href="logic-behavior.html">
+<link rel="import" href="util-behavior.html">
+<link rel="import" href="roles-behavior.html">
+<script>
+  var AppStarterBehaviors = AppStarterBehaviors || {};
+  /**
+  * @polymerBehavior
+  */
+  AppStarterBehaviors.MainBehavior = [
+    AppStarterBehaviors.UtilBehavior,
+    AppStarterBehaviors.LogicBehavior,
+    AppStarterBehaviors.RolesBehavior
+  ];
+</script>

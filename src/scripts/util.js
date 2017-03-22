@@ -3,7 +3,7 @@
  */
 'use strict';
 
-function escapeHTML(unsafe) {
+function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

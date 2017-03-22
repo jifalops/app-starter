@@ -1,0 +1,23 @@
+<script>
+var AppStarterBehaviors = AppStarterBehaviors || {};
+
+/**
+* @polymerBehavior
+*/
+AppStarterBehaviors.UtilBehavior = {
+  _log: function() { log.v.apply(this, arguments); },
+  _hasChild: function() { return hasChild.apply(this, arguments); },
+  _objectToArray: function(obj) { return objectToArray(obj); },
+  _length: function(any) { return length(any); },
+  _toggleString: function(condition, ifTrue, ifFalse) { return toggleString(condition, ifTrue, ifFalse); },
+  _includes: function(haystack, needle) { return haystack.includes(needle); },
+  _join: function(array, separator) { return array.join(separator); },
+  _round: function(num, places) { return round(num, places); },
+  _ucFirst: function(str) { return ucFirst(str); },
+  _repeat: function(string, count) { return repeat(string, count); },
+  _padLeft: function(string, char, length) { return padLeft(string, char, length); },
+  _nl2br: function(string) { return nl2br(string); },
+  _br2nl: function(string) { return br2nl(string); },
+  _escapeHtml: function(string) { return escapeHtml(string); }
+};
+</script>

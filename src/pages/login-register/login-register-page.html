@@ -68,7 +68,7 @@
           class="primary-button"
           id="loginRegisterButton"
           on-tap="_usernameLogin">
-          [[toggleString(register, 'Register', 'Sign In')]]
+          [[_toggleString(register, 'Register', 'Sign In')]]
         </paper-button>
       </div>
 
@@ -164,9 +164,8 @@ Polymer({
     }
     return true;
   },
-
-  // TODO behavior
-  toggleString: function(condition, ifTrue, ifFalse) {
+  
+  _toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
   },
 

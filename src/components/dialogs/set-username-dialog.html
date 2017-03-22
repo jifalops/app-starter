@@ -29,7 +29,7 @@
 
       <div class="layout self-center">[[availableResult]]</div>
       <paper-button class="small primary-button self-center" on-tap="_buttonTapped">
-        [[toggleString(usernameAvailable, 'Set Username', 'Check Availability')]]
+        [[_toggleString(usernameAvailable, 'Set Username', 'Check Availability')]]
       </paper-button>
     </paper-dialog>
   </template>
@@ -49,8 +49,7 @@
         }
       },
 
-      // TODO behavior
-      toggleString: function(condition, ifTrue, ifFalse) {
+      _toggleString: function(condition, ifTrue, ifFalse) {
         return condition ? ifTrue : ifFalse;
       },
 
