@@ -1,35 +1,32 @@
-<!-- Instructions: https://github.com/PolymerElements/polymer-starter-kit/CONTRIBUTING.md#filing-issues -->
-<!--
- Fill out what you can below.
--->
+<!-- Fill out what you can below. -->
 ### Description
 
 
-  <!-- Example: The `paper-foo` element causes the page to turn pink when clicked. -->
+    <!-- Example: The `paper-foo` element causes the page to turn pink when clicked. -->
 
 ### Expected outcome
 
 
-  <!-- Example: The page stays the same color. -->
+    <!-- Example: The page stays the same color. -->
 
 ### Actual outcome
 
 
-  <!-- Example: The page turns pink. -->
+    <!-- Example: The page turns pink. -->
 
 ### Live Demo
 
 
-  <!-- Example: https://jsbin.com/cagaye/edit?html,output -->
+    <!-- Example: https://jsbin.com/cagaye/edit?html,output -->
 
 ### Steps to reproduce
 
 
-  <!-- Example
-  1. Put a `paper-foo` element in the page.
-  2. Open the page in a web browser.
-  3. Click the `paper-foo` element.
-  -->
+    <!-- Example
+    1. Put a `paper-foo` element in the page.
+    2. Open the page in a web browser.
+    3. Click the `paper-foo` element.
+    -->
 
 ### Browsers Affected
 <!-- Check all that apply -->

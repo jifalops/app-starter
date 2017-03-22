@@ -1,0 +1,17 @@
+<script>
+var AppStarterBehaviors = AppStarterBehaviors || {};
+
+/**
+ * @polymerBehavior
+ */
+AppStarterBehaviors.RolesBehavior = {
+  _isModerator: function(role) { return isModerator(role); },
+  _isMaintainer: function(role) { return isMaintainer(role); },
+  _isAdmin: function(role) { return isAdmin(role); },
+  _isSuperAdmin: function(role) { return isSuperAdmin(role); },
+  _isRoot: function(role) { return isRoot(role); },
+  _rolesLessThan: function(role) { return rolesLessThan(role); },
+  _isRoleGreaterThan: function(r1, r2) { return isRoleGreaterThan(r1, r2); },
+  _hasPrivilege: function(privilege, role) { return hasPrivilege(privilege, role); }
+};
+</script>

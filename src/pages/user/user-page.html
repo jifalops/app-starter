@@ -51,7 +51,7 @@
         href="javascript:"
         class="font-tiny"
         on-tap="toggleEditName"
-      >[[toggleString(editName, 'cancel', 'change')]]</a>
+      >[[_toggleString(editName, 'cancel', 'change')]]</a>
     </div>
     <div hidden$="[[editName]]">[[profile.name]]</div>
     <div hidden$="[[!editName]]" class="layout horizontal center">
@@ -68,7 +68,7 @@
         href="javascript:"
         class="font-tiny"
         on-tap="toggleEditPic"
-      >[[toggleString(editPic, 'cancel', 'change')]]</a>
+      >[[_toggleString(editPic, 'cancel', 'change')]]</a>
     </div>
     <div hidden$="[[editPic]]">
       <iron-image class="avatar" src="[[profile.pic]]"></iron-image>
@@ -89,7 +89,7 @@
         <a href="javascript:"
           class="font-default"
           on-tap="toggleSendingMsg"
-        >[[toggleString(sendingMsg, 'cancel', 'Send message')]]</a>
+        >[[_toggleString(sendingMsg, 'cancel', 'Send message')]]</a>
       </div>
     </div>
 
@@ -99,32 +99,32 @@
     <span class="font-title self-center">Private Info</span>
     <div class="font-subhead">Login methods</div>
     <div class="layout horizontal center justified wrap" hidden$="[[!_canAddProvider(_providers)]]">
-      <span>[[join(_providers, '\, ')]]</span>
+      <span>[[_join(_providers, '\, ')]]</span>
       <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="color-warning bgcolor-warning font-small">
         Add a second login method to access your account if you forget the password.
       </span>
       <div class="add-provider font-small layout horizontal center">
         <span class="font-default2">+</span>
         <div class="layout vertical center"
-          hidden$="[[includes(_providers, 'Google')]]"
+          hidden$="[[_includes(_providers, 'Google')]]"
           on-tap="_linkGoogle">
           <iron-image src="/images/google-icon.svg"></iron-image>
           Google
         </div>
         <div class="layout vertical center"
-          hidden$="[[includes(_providers, 'Facebook')]]"
+          hidden$="[[_includes(_providers, 'Facebook')]]"
           on-tap="_linkFacebook">
           <iron-image src="/images/facebook-icon.svg"></iron-image>
           Facebook
         </div>
         <div class="layout vertical center"
-          hidden$="[[includes(_providers, 'Twitter')]]"
+          hidden$="[[_includes(_providers, 'Twitter')]]"
           on-tap="_linkTwitter">
           <iron-image src="/images/twitter-icon.svg"></iron-image>
           Twitter
         </div>
         <div class="layout vertical center"
-          hidden$="[[includes(_providers, 'Github')]]"
+          hidden$="[[_includes(_providers, 'Github')]]"
           on-tap="_linkGithub">
           <iron-image src="/images/github-icon.svg"></iron-image>
           Github
@@ -142,7 +142,7 @@
 
       <div class="font-subhead">Elevate Privileges</div>
       <a href="javascript:" on-tap="toggleElevated"
-        >[[toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
+        >[[_toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
     </div>
   </paper-material>
 </template>
@@ -188,9 +188,7 @@ Polymer({
     }
   },
 
-  // TODO behavior
   _hasPrivileges: function(role) {
-    if (this.auth && this.auth.user) this.auth.user.isElevated = Boolean(this.auth.user.isElevated);
     return isModerator(role);
   },
 
@@ -251,8 +249,7 @@ Polymer({
     }
   },
 
-  // TODO behavior
-  toggleString: function(condition, ifTrue, ifFalse) {
+  _toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
   },
 
@@ -264,13 +261,11 @@ Polymer({
     this._providers = array;
   },
 
-  // TODO behavior
-  join: function(array, separator) {
+  _join: function(array, separator) {
     return array.join(separator);
   },
 
-  // TODO behavior
-  includes: function(array, value) {
+  _includes: function(array, value) {
     return array.includes(value);
   },
 

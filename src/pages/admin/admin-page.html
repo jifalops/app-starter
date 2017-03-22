@@ -11,6 +11,7 @@
 <link rel="import" href="../../../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../header.html">
+<link rel="import" href="../../behaviors/roles-behavior.html">
 
 <dom-module id="admin-page">
   <template>
@@ -71,7 +72,7 @@
       The root user is not defined yet.
       <paper-button
         class="primary-button"
-        on-tap="becomeRoot">
+        on-tap="_becomeRoot">
         Become Root
       </paper-button>
     </paper-material>
@@ -240,23 +241,11 @@
       }
     },
 
-    // TODO behavior
-    _isEmpty: function(val) {
-      return isEmpty(val);
-    },
+    behaviors: [
+      'AppStarterBehaviors.RolesBehavior'
+    ],
 
-    // TODO behavior (divided)
-    _hasPrivilege: function(privilege, role) {
-      return hasPrivilege(privilege, role);
-    },
-    // TODO behavior
-    _rolesLessThan: function(role) {
-      return rolesLessThan(role);
-    },
-    // TODO behavior
-    _isRoleGreaterThan: function(r1, r2) {
-      return isRoleGreaterThan(r1, r2);
-    },
+    _isEmpty: function (any) { return isEmpty(any); },
 
     _authChanged: function(auth, prev) {
       if (auth && !prev) {
@@ -270,7 +259,7 @@
       return auth && (!hasRoot || (auth.user && auth.user.isElevated) || demoMode);
     },
 
-    becomeRoot: function() {
+    _becomeRoot: function() {
       db.admin.becomeRoot(this.auth.uid, function () {
         showSuccessToast('You are now root.');
       }, function () {
