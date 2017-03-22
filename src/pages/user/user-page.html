@@ -26,10 +26,13 @@
     .add-provider > div {
       margin: 0 6px;
     }
-    .warning {
+    .provider-warning {
       padding: 4px;
       margin: 4px;
       max-width: 150px;
+      color: var(--warning-color);
+      background-color: var(--warning-bg-color);
+      @apply --font-small;
     }
   </style>
 
@@ -100,7 +103,7 @@
     <div class="font-subhead">Login methods</div>
     <div class="layout horizontal center justified wrap" hidden$="[[!_canAddProvider(_providers)]]">
       <span>[[_join(_providers, '\, ')]]</span>
-      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="color-warning bgcolor-warning font-small">
+      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="provider-warning">
         Add a second login method to access your account if you forget the password.
       </span>
       <div class="add-provider font-small layout horizontal center">
