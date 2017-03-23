@@ -5,8 +5,9 @@ build
 .idea
 firebase-debug.log
 
-# Uncomment the next line in production applications
+# Uncomment the next two lines in production applications
 #internal
+#functions
 
 # Notification test data
 notification-key.txt
