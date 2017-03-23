@@ -83,7 +83,7 @@
       token="{{messagingToken}}"
       on-message="_handleCloudMessage">
     </firebase-messaging>
-    <firebase-document log
+    <firebase-document
       disabled="[[!messagingToken]]"
       path="/users/[[auth.uid]]/messagingTokens/[[messagingToken]]"
       data="true">
@@ -319,7 +319,8 @@
     _handleCloudMessage: function(e, data) {
       LOG && log.v('Message received', arguments);
       var n = data.message.notification;
-      if (this.routeData.page != 'messages') {
+      // Only show if the currently auth'd user is the recipient.
+      if (this.routeData.page != 'messages' && this.auth && this.auth.uid == n.title) {
         showDefaultToast(n.title + ': ' + n.body);
       }
     },
