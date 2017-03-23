@@ -22,7 +22,7 @@ type User {
   lastActivity: CurrentTimestamp
   role: UserRole
   isElevated: Boolean
-  messagingToken: MessagingToken | Null
+  messagingTokens: Map<MessagingToken, Boolean> | Null
   messageNotifications: Boolean | Null
   read() { key() == me() }
   write() { key() == me() && this != null }
@@ -38,7 +38,7 @@ type UserRole extends String {
 }
 
 type MessagingToken extends String {
-  validate() { this.length >= 1 && this.length <= 256 }
+  validate() { this.length >= 1 && this.length <= 512 }
 }
 
 type ChatLastMessage {

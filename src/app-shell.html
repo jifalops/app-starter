@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -79,13 +78,10 @@
     </auth-loader>
 
     <firebase-messaging
+      id="messaging"
       token="{{messagingToken}}"
       on-message="_handleCloudMessage">
     </firebase-messaging>
-    <firebase-document
-      path="/users/[[auth.uid]]/messagingToken"
-      data="[[messagingToken]]">
-    </firebase-document>
 
     <app-notifications id="notifications"></app-notifications>
 
@@ -217,14 +213,10 @@
     },
 
     observers: [
-      '_routePageChanged(routeData.page, offline, auth)'
+      '_routePageChanged(routeData.page, offline, auth)',
+      '_messagingTokenChanged(auth.uid, messagingToken)',
+      '_messagingEnabledChanged(auth.user.messageNotifications)'
     ],
-
-    ready: function() {
-      this.$.content.addEventListener('iron-resize', function() {
-        console.log(arguments);
-      });
-    },
 
     _onFirebaseAppChanged: function(app, old) {
       if (app) {
@@ -306,6 +298,16 @@
       this.$.firebase.$.auth.logout(function() {
         // goBack();
       }, showServerErrorToast, showServerErrorToast);
+    },
+
+    _messagingEnabledChanged: function(enabled) {
+      LOG && log.v('messaging enabled', enabled);
+      if (enabled) this.$.messaging.requestPermission();
+    },
+
+    _messagingTokenChanged: function(uid, token) {
+      LOG && log.v('token changed', token);
+      if (uid && token) db.users.addMessagingToken(uid, token);
     },
 
     // TODO finish implementing Firebase Cloud Messaging

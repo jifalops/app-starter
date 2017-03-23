@@ -93,5 +93,9 @@ db.users = {
     var key = db.newKey('/users/' + user + '/providers');
     updates['/users/' + user + '/providers/' + key] = provider;
     db.update(updates, onSuccess, onFailure);
+  },
+
+  addMessagingToken(user, token, onSuccess, onFailure) {
+    db.set('/users/' + user + '/messagingTokens/' + token, true, onSuccess, onFailure);
   }
 };
