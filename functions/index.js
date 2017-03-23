@@ -26,25 +26,33 @@ exports.sendMessageNotification = functions.database.ref('/chatMessages/{chat}/{
   // Get the sender's profile.
   const getSenderProfilePromise = admin.database().ref(`/profiles/${data.author}`).once('value');
   return Promise.all([getOtherUsersPromise, getSenderProfilePromise]).then(results => {
-    const usernames = Object.keys(results[0].val());
+    const usernames = results[0].val();
     const senderProfile = results[1].val();
+    // console.log('usernames', usernames, 'senderProfile', senderProfile);
     for (var username in usernames) {
-      notifyUser(username, senderProfile, data);
+      if (username != data.author) notifyUser(username, senderProfile, data);
     }
   });
 });
 
 function notifyUser(username, senderProfile, data) {
   // Get the list of device notification tokens.
-  const getDeviceTokensPromise = admin.database().ref(`/users/${username}/messagingTokens`).once('value');
+  const getUserDataPromise = admin.database().ref(`/users/${username}`).once('value');
 
-  return Promise.all([getDeviceTokensPromise]).then(results => {
-    const tokensSnapshot = results[0];
+  return Promise.all([getUserDataPromise]).then(results => {
+    const user = results[0].val();
+    // Check that user allows notifications.
+    if (!user.messageNotifications) {
+      return console.log(username + ': User does not allow notifications for messages.')
+    }
+
+    const tokensSnapshot = results[0].child('messagingTokens');
 
     // Check if there are any device tokens.
     if (!tokensSnapshot.hasChildren()) {
       return console.log(username +': There are no notification tokens to send to.');
     }
+
     console.log(username +': There are', tokensSnapshot.numChildren(), 'tokens to send notifications to.');
 
     // Notification details.

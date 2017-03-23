@@ -7,7 +7,6 @@
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../../bower_components/polymerfire/firebase-document.html">
-<link rel="import" href="../../../bower_components/app-notifications/app-notifications.html">
 <link rel="import" href="../../header.html">
 <link rel="import" href="../../components/user-chat.html">
 <dom-module id="user-page">
@@ -37,13 +36,10 @@
       background-color: var(--warning-bg-color);
       @apply --font-small;
     }
+    .divider {
+      margin: 8px inherit;
+    }
   </style>
-
-  <app-notifications
-    id="notifications"
-    available="{{notificationsAvailable}}"
-    has-permission="{{hasNotificationsPermission}}">
-  </app-notifications>
 
   <app-route
     route="[[route]]"
@@ -162,14 +158,16 @@
     <firebase-document path="/users/[[auth.uid]]/messageNotifications" data="{{messageNotifications}}"><firebase-document>
     <div class="divider"></div>
 
-
     <div hidden$="[[!_hasPrivileges(auth.user.role)]]">
-      <div class="font-subhead">Role</div>
-      <div>[[auth.user.role]]</div>
-
-      <div class="font-subhead">Elevate Privileges</div>
-      <a href="javascript:" on-tap="toggleElevated"
-        >[[_toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
+      <div class="layout horizontal center justified">
+        <div class="font-default2">Role</div>
+        <div class="font-default2">Privileges</div>
+      </div>
+      <div class="layout horizontal center justified">
+        <div>[[auth.user.role]]</div>
+        <a href="javascript:" on-tap="toggleElevated"
+          >[[_toggleString(auth.user.isElevated, 'De-elevate', 'Elevate')]]</a>
+      </div>
     </div>
   </paper-material>
 </template>
@@ -198,8 +196,7 @@ Polymer({
   },
   observers: [
     '_loadProfile(auth, routeData.user)',
-    '_processProviders(auth.user.providers)',
-    '_notificationsInfoChanged(notificationsAvailable, hasNotificationsPermission, messageNotifications)'
+    '_processProviders(auth.user.providers)'
   ],
 
   _loadProfile: function(auth, user) {
@@ -336,14 +333,6 @@ Polymer({
     var hasUsername = providers[0] == 'Username';
     return (hasUsername && providers.length < 5)
         || (!hasUsername && providers.length < 4);
-  },
-  _notificationsInfoChanged: function(available, hasPermission, userWants) {
-    // LOG && log.v('notification permission', available, hasPermission);
-    if (available) {
-      if (hasPermission === null && userWants) {
-        this.$.notifications.requestPermission();
-      }
-    }
   }
 });
 </script>
