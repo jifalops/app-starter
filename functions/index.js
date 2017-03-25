@@ -58,9 +58,14 @@ function notifyUser(username, senderProfile, data) {
     // Notification details.
     const payload = {
       notification: {
+        tag: 'app-starter',
         title: data.author,
         body: data.text,
-        icon: senderProfile.pic
+        icon: senderProfile.pic,
+        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'
+      },
+      data: {
+        created: data.created
       }
     };
 
