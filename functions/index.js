@@ -65,7 +65,7 @@ function notifyUser(username, senderProfile, data) {
         click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'
       },
       data: {
-        created: data.created
+        created: data.created + ''
       }
     };
 
