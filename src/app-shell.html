@@ -19,6 +19,9 @@
 <link rel="import" href="../bower_components/value-history/value-history.html">
 <link rel="import" href="../bower_components/app-notifications/app-notifications.html">
 <link rel="import" href="../bower_components/app-toasts/app-toasts.html">
+<link rel="import" href="../bower_components/app-toast/app-toast.html">
+<link rel="import" href="../bower_components/notification-toast/notification-toast.html">
+<link rel="import" href="../bower_components/screen-env/screen-env.html">
 <link rel="import" href="header.html">
 <link rel="import" href="app-firebase.html">
 <link rel="import" href="components/auth-loader.html">
@@ -90,6 +93,8 @@
     </firebase-document>
 
     <app-notifications id="notifications"></app-notifications>
+
+    <screen-env id="screenEnv"></screen-env>
 
     <app-location
       id="appLocation"
@@ -203,7 +208,8 @@
         </div>
       </app-header-layout>
     </app-drawer-layout>
-    <app-toasts id="toast"></app-toasts>
+    <app-toasts id="toasts"></app-toasts>
+    <notification-toast id="notificationToast" on-toast-tap="_goToMessages"></notification-toast>
     <confirm-dialog id="confirmDialog"></confirm-dialog>
     <set-username-dialog id="setUsernameDialog"></set-username-dialog>
   </template>
@@ -321,7 +327,11 @@
       var n = data.message.notification;
       // Only show if the currently auth'd user is the recipient.
       if (this.routeData.page != 'messages' && this.auth && this.auth.uid == n.title) {
-        showDefaultToast(n.title + ': ' + n.body);
+        this.$.notificationToast.show({
+          notificationTitle: n.title,
+          body: n.body,
+          icon: n.icon,
+        });
       }
     },
 
@@ -363,6 +373,9 @@
     },
     _makeUrl: function() {
       return 'https://github.com/jifalops/app' + '-starter';
+    },
+    _goToMessages: function() {
+      redirect('/messages');
     }
   });
   </script>

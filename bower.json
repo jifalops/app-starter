@@ -49,7 +49,9 @@
     "app-notifications": "^0.1.3",
     "app-toasts": "^0.3.2",
     "webcomponentsjs": "^0.7.24",
-    "app-toast": "^0.1.2"
+    "app-toast": "^0.2.2",
+    "notification-toast": "^0.1.0",
+    "screen-env": "^0.2.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
