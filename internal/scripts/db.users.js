@@ -80,7 +80,7 @@ db.users = {
     for (var i = 0; i < otherUsers.length; i++) {
       updates['/users/' + otherUsers[i] + '/chats/' + chat] = msgObj;
       // The following line allows lookup of a chat-id from a username,
-      // and connects the 1-to-1 chat implementation with the many-to-many chat rules base.
+      // and connects the one-to-one chat implementation with the one-to-many chat rules base.
       updates['/users/' + otherUsers[i] + '/messages/' + user] = chat;
       updates['/users/' + user + '/messages/' + otherUsers[i]] = chat;
     }
@@ -95,7 +95,7 @@ db.users = {
     db.update(updates, onSuccess, onFailure);
   },
 
-  addMessagingToken(user, token, onSuccess, onFailure) {
+  addMessagingToken: function(user, token, onSuccess, onFailure) {
     db.set('/users/' + user + '/messagingTokens/' + token, true, onSuccess, onFailure);
   }
 };
