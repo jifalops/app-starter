@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<!--<link rel="import" href="../bower_components/polymerfire/firebase-document.html">-->
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -86,15 +86,21 @@
       token="{{messagingToken}}"
       on-message="_handleCloudMessage">
     </firebase-messaging>
-    <firebase-document
-      disabled="[[!messagingToken]]"
-      path="/users/[[auth.uid]]/messagingTokens/[[messagingToken]]"
-      data="true">
-    </firebase-document>
+    <!--<firebase-document log-->
+    <!--  disabled="[[!messagingToken]]"-->
+    <!--  path="/users/[[auth.uid]]/messagingTokens/[[messagingToken]]"-->
+    <!--  data="[[_returnTrue()]]">-->
+    <!--</firebase-document>-->
 
     <app-notifications id="notifications"></app-notifications>
 
-    <screen-env id="screenEnv"></screen-env>
+    <screen-env
+      id="screenEnv"
+      is-touch="{{isTouch}}"
+      is-mobile="{{isMobile}}"
+      is-tablet="{{isTablet}}"
+      is-desktop="{{isDesktop}}">
+    </screen-env>
 
     <app-location
       id="appLocation"
@@ -226,7 +232,7 @@
 
     observers: [
       '_routePageChanged(routeData.page, offline, auth)',
-      // '_messagingTokenChanged(auth.uid, messagingToken)',
+      '_messagingTokenChanged(auth.uid, auth.user, messagingToken)',
       '_messagingEnabledChanged(auth.user.messageNotifications)'
     ],
 
@@ -317,10 +323,12 @@
       if (enabled) this.$.messaging.requestPermission();
     },
 
-    // _messagingTokenChanged: function(uid, token) {
-    //   LOG && log.v('token changed', token);
-    //   if (uid && token) db.users.addMessagingToken(uid, token);
-    // },
+    _messagingTokenChanged: function(uid, user, token) {
+      // LOG && log.v('token changed', token);
+      if (uid && token && !hasChild(user, 'messagingTokens', token)) {
+        db.users.addMessagingToken(uid, token);
+      }
+    },
 
     _handleCloudMessage: function(e, data) {
       LOG && log.v('Message received', arguments);
@@ -376,7 +384,8 @@
     },
     _goToMessages: function() {
       redirect('/messages');
-    }
+    },
+    _returnTrue: function() { return true; }
   });
   </script>
 </dom-module>

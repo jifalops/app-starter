@@ -57,11 +57,11 @@ db.users = {
   sendMessage: function(user, otherUsers, chat, msg, onSuccess, onFailure) {
     LOG && DB && console.log('Sending message to', otherUsers);
     var updates = db.userActionUpdate(user);
-
+    var i;
     if (!chat) {
       chat = db.newKey('/chats');
       updates['/chats/' + chat + '/' + user] = db.timestamp();
-      for (var i = 0; i < otherUsers.length; i++) {
+      for (i = 0; i < otherUsers.length; i++) {
         updates['/chats/' + chat + '/' + otherUsers[i]] = db.timestamp();
       }
     }
@@ -77,7 +77,7 @@ db.users = {
     updates['/chatMessages/' + chat + '/' + key] = msgObj;
 
     updates['/users/' + user + '/chats/' + chat] = msgObj;
-    for (var i = 0; i < otherUsers.length; i++) {
+    for (i = 0; i < otherUsers.length; i++) {
       updates['/users/' + otherUsers[i] + '/chats/' + chat] = msgObj;
       // The following line allows lookup of a chat-id from a username,
       // and connects the one-to-one chat implementation with the one-to-many chat rules base.
