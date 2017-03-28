@@ -62,11 +62,13 @@ function notifyUser(username, senderProfile, data) {
         title: data.author,
         body: data.text,
         icon: senderProfile.pic,
-        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'
-      },
-      data: {
+        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages',
         created: data.created + ''
-      }
+      },
+      // This seems to break notifications on Chrome-linux and Chromebooks.
+      // data: {
+      //   created: data.created + ''
+      // }
     };
 
     // Listing all tokens.
