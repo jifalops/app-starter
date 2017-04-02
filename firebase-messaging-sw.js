@@ -25,16 +25,14 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
   const auth = firebase.auth().currentUser;
   if (auth) {
-    db.read('/uids/' + auth.uid, function(username) {
-      if (username == payload.data.to) {
-        showNotification(payload);
-      } else {
-        console.log('Ignoring message to', payload.data.to);
-        showNotification(payload); // TODO remove if notifications are working.
-      }
-    })
-  } else {
     return showNotification(payload); // TODO remove if notifications are working.
+    // db.read('/uids/' + auth.uid, function(username) {
+    //   if (username == payload.data.to) {
+    //     showNotification(payload);
+    //   } else {
+    //     console.log('Ignoring message to', payload.data.to);
+    //   }
+    // });
   }
 });
 
@@ -44,11 +42,12 @@ function showNotification(payload) {
   const options = {
     body: payload.notification.body,
     icon: payload.notification.icon,
-    tag: payload.notification.tag,
-    data: payload.notification.data,
-    timestamp: payload.notification.timestamp,
-    badge: payload.notification.badge,
-    requireInteraction: payload.notification.requireInteraction
+    click_action: payload.notification.click_action,
+    tag: payload.data.tag,
+    data: payload.data.to,
+    timestamp: Number(payload.data.created),
+    badge: '/images/app-icon-transparent-32.png',
+    requireInteraction: true
   };
   return self.registration.showNotification(title, options);
 }

@@ -56,18 +56,16 @@ function notifyUser(username, pic, data) {
 
     // Notification details.
     const payload = {
+      // Allowed params: https://firebase.google.com/docs/cloud-messaging/http-server-ref#notification-payload-support
       notification: {
         tag: 'app-starter.' + data.author,
         title: data.author,
         body: data.text,
         icon: pic,
-        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages',
-        data: username,
-        timestamp: data.created,
-        badge: '/images/app-icon-transparent-32.png',
-        requireInteraction: true
+        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'        
       },
       data: {
+        tag: 'app-starter.' + data.author,
         to: username,
         created: String(data.created)
       }
