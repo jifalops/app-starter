@@ -66,7 +66,7 @@ function notifyUser(username, pic, data) {
       },
       data: {
         tag: 'app-starter.' + data.author,
-        from: data.author,
+        fromUsername: data.author,
         to: username,
         created: String(data.created)
       }
