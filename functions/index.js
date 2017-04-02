@@ -62,10 +62,11 @@ function notifyUser(username, pic, data) {
         title: data.author,
         body: data.text,
         icon: pic,
-        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'        
+        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'
       },
       data: {
         tag: 'app-starter.' + data.author,
+        from: data.author,
         to: username,
         created: String(data.created)
       }

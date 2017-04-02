@@ -25,14 +25,15 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
   const auth = firebase.auth().currentUser;
   if (auth) {
-    return showNotification(payload); // TODO remove if notifications are working.
-    // db.read('/uids/' + auth.uid, function(username) {
-    //   if (username == payload.data.to) {
-    //     showNotification(payload);
-    //   } else {
-    //     console.log('Ignoring message to', payload.data.to);
-    //   }
-    // });
+    // return showNotification(payload); // TODO remove if notifications are working.
+    // Only show if message is for the currently authenticated user.
+    db.read('/uids/' + auth.uid, function(username) {
+      if (username == payload.data.to) {
+        showNotification(payload);
+      } else {
+        console.log('Ignoring message to', payload.data.to);
+      }
+    });
   }
 });
 
@@ -44,7 +45,7 @@ function showNotification(payload) {
     icon: payload.notification.icon,
     click_action: payload.notification.click_action,
     tag: payload.data.tag,
-    data: payload.data.to,
+    data: payload.data,
     timestamp: Number(payload.data.created),
     badge: '/images/app-icon-transparent-32.png',
     requireInteraction: true

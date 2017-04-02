@@ -86,11 +86,6 @@
       token="{{messagingToken}}"
       on-message="_handleCloudMessage">
     </firebase-messaging>
-    <!--<firebase-document log-->
-    <!--  disabled="[[!messagingToken]]"-->
-    <!--  path="/users/[[auth.uid]]/messagingTokens/[[messagingToken]]"-->
-    <!--  data="[[_returnTrue()]]">-->
-    <!--</firebase-document>-->
 
     <app-notifications id="notifications"></app-notifications>
 
@@ -215,7 +210,7 @@
       </app-header-layout>
     </app-drawer-layout>
     <app-toasts id="toasts"></app-toasts>
-    <notification-toast id="notificationToast" on-toast-tap="_goToMessages"></notification-toast>
+    <notification-toast id="notificationToast"></notification-toast>
     <confirm-dialog id="confirmDialog"></confirm-dialog>
     <set-username-dialog id="setUsernameDialog"></set-username-dialog>
   </template>
@@ -333,13 +328,17 @@
     _handleCloudMessage: function(e, data) {
       LOG && log.v('Message received', arguments);
       var n = data.message.notification;
+      var d = data.message.data;
       // Only show if the currently auth'd user is the recipient.
-      LOG && log.v('page', this.routeData.page, 'auth', this.auth, 'from', n.title);
-      if (this.routeData.page != 'messages' && this.auth && this.auth.uid != n.title) {
+      if (this.routeData.page != 'messages' && this.auth && this.auth.uid == d.to) {
         this.$.notificationToast.show({
           notificationTitle: n.title,
           body: n.body,
           icon: n.icon,
+          onTapped: function(e) {
+            redirect('/messages/');
+            this.$.notificationToast.close();
+          }.bind(this)
         });
       }
     },
@@ -382,11 +381,7 @@
     },
     _makeUrl: function() {
       return 'https://github.com/jifalops/app' + '-starter';
-    },
-    _goToMessages: function() {
-      redirect('/messages');
-    },
-    _returnTrue: function() { return true; }
+    }
   });
   </script>
 </dom-module>
