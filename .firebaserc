@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "app-starter-8f1a5"
+    "default": "app-starter-8f1a5",
+    "dev": "app-starter-8f1a5",
+    "staging": "app-starter-8f1a5",
+    "production": "app-starter-8f1a5"
   }
 }

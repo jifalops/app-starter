@@ -23,15 +23,34 @@ const messaging = firebase.messaging();
 // [START background_handler]
 
 messaging.setBackgroundMessageHandler(function(payload) {
+  const auth = firebase.auth().currentUser;
+  if (auth) {
+    db.read('/uids/' + auth.uid, function(username) {
+      if (username == payload.data.to) {
+        showNotification(payload);
+      } else {
+        console.log('Ignoring message to', payload.data.to);
+        showNotification(payload); // TODO remove if notifications are working.
+      }
+    })
+  } else {
+    return showNotification(payload); // TODO remove if notifications are working.
+  }
+});
+
+function showNotification(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
   const title = payload.notification.title;
   const options = {
     body: payload.notification.body,
-    icon: payload.notification.icon
+    icon: payload.notification.icon,
+    tag: payload.notification.tag,
+    data: payload.notification.data,
+    timestamp: payload.notification.timestamp,
+    badge: payload.notification.badge,
+    requireInteraction: payload.notification.requireInteraction
   };
-
   return self.registration.showNotification(title, options);
-});
+}
 
 // [END background_handler]

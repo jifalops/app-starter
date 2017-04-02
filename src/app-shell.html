@@ -334,7 +334,8 @@
       LOG && log.v('Message received', arguments);
       var n = data.message.notification;
       // Only show if the currently auth'd user is the recipient.
-      if (this.routeData.page != 'messages' && this.auth && this.auth.uid == n.title) {
+      LOG && log.v('page', this.routeData.page, 'auth', this.auth, 'from', n.title);
+      if (this.routeData.page != 'messages' && this.auth && this.auth.uid != n.title) {
         this.$.notificationToast.show({
           notificationTitle: n.title,
           body: n.body,

@@ -15,28 +15,27 @@ exports.sendMessageNotification = functions.database.ref('/chatMessages/{chat}/{
   const chat = event.params.chat;
   const msg = event.params.msg;
   const data = event.data.val();
-  // If deleted we exit the function.
   if (!data) {
     return console.log('Message deleted ', chat, msg);
   }
   console.log('Message sent by ', data.author);
 
-  // Get the other users in the chat.
-  const getOtherUsersPromise = admin.database().ref(`/chats/${chat}`).once('value');
-  // Get the sender's profile.
-  const getSenderProfilePromise = admin.database().ref(`/profiles/${data.author}`).once('value');
-  return Promise.all([getOtherUsersPromise, getSenderProfilePromise]).then(results => {
+  // Get the users in this chat.
+  const chatUsersPromise = admin.database().ref(`/chats/${chat}`).once('value');
+  // Get the sender's profile pic.
+  const senderPicPromise = admin.database().ref(`/profiles/${data.author}/pic`).once('value');
+  return Promise.all([chatUsersPromise, senderPicPromise]).then(results => {
+    console.log('There are', results[0].numChildren() - 1, 'users to send to.');
     const usernames = results[0].val();
-    const senderProfile = results[1].val();
-    // console.log('usernames', usernames, 'senderProfile', senderProfile);
+    const pic = results[1].val();
+    delete usernames[data.author];
     for (var username in usernames) {
-      if (username != data.author) notifyUser(username, senderProfile, data);
+      notifyUser(username, pic, data);
     }
   });
 });
 
-function notifyUser(username, senderProfile, data) {
-  // Get the list of device notification tokens.
+function notifyUser(username, pic, data) {
   const getUserDataPromise = admin.database().ref(`/users/${username}`).once('value');
 
   return Promise.all([getUserDataPromise]).then(results => {
@@ -58,17 +57,20 @@ function notifyUser(username, senderProfile, data) {
     // Notification details.
     const payload = {
       notification: {
-        tag: 'app-starter',
+        tag: 'app-starter.' + data.author,
         title: data.author,
         body: data.text,
-        icon: senderProfile.pic,
+        icon: pic,
         click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages',
-        created: data.created + ''
+        data: username,
+        timestamp: data.created,
+        badge: '/images/app-icon-transparent-32.png',
+        requireInteraction: true
       },
-      // This seems to break notifications on Chrome-linux and Chromebooks.
-      // data: {
-      //   created: data.created + ''
-      // }
+      data: {
+        to: username,
+        created: String(data.created)
+      }
     };
 
     // Listing all tokens.
