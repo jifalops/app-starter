@@ -326,20 +326,25 @@
     },
 
     _handleCloudMessage: function(e, data) {
-      LOG && log.v('Message received', arguments);
-      var n = data.message.notification;
-      var d = data.message.data;
-      // Only show if the currently auth'd user is the recipient.
-      if (this.routeData.page != 'messages' && this.auth && this.auth.uid == d.to) {
-        this.$.notificationToast.show({
-          notificationTitle: n.title,
-          body: n.body,
-          icon: n.icon,
-          onTapped: function(e) {
-            redirect('/messages/');
-            this.$.notificationToast.close();
-          }.bind(this)
-        });
+      // LOG && log.v('Message received', arguments);
+      
+      // If a system notification was shown, the data part will be passed here.
+      // We will ignore those messages and handle notifications when the app is currently open.
+      if (hasChild(data, 'message', 'notification')) {
+        var n = data.message.notification;
+        var d = data.message.data;
+        // Only show if the currently auth'd user is the recipient.
+        if (this.routeData.page != 'messages' && this.auth && this.auth.uid == d.to) {
+          this.$.notificationToast.show({
+            notificationTitle: n.title,
+            body: n.body,
+            icon: n.icon,
+            onTapped: function(e) {
+              redirect('/messages/');
+              this.$.notificationToast.close();
+            }.bind(this)
+          });
+        }
       }
     },
 

@@ -25,10 +25,9 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
   const auth = firebase.auth().currentUser;
   if (auth) {
-    // return showNotification(payload); // TODO remove if notifications are working.
     // Only show if message is for the currently authenticated user.
     db.read('/uids/' + auth.uid, function(username) {
-      if (username == payload.data.to) {
+      if (username == payload.data.to && username != payload.data.fromUsername) {
         showNotification(payload);
       } else {
         console.log('Ignoring message to', payload.data.to);
