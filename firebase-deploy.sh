@@ -10,5 +10,5 @@ cd ..
 if [ $1 ]; then
   firebase deploy -P $1
 else
-  firebase deploy -P default
+  firebase deploy -P dev
 fi
