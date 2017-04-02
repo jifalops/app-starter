@@ -1,7 +1,8 @@
 /*
  * Firebase Cloud Functions (Firebase Cloud Messaging)
  */
-/* eslint no-console: ["error", { allow: ["log"] }] */
+/* eslint no-console: */
+/* eslint no-undef: */
 'use strict';
 
 const functions = require('firebase-functions');
@@ -12,7 +13,8 @@ admin.initializeApp(functions.config().firebase);
  * Triggers when a message is received by a user.
  * If the user has message notifications enabled, send them a notification.
  */
-exports.sendMessageNotification = functions.database.ref('/chatMessages/{chat}/{msg}').onWrite(event => {
+exports.sendMessageNotification = functions.database.ref(
+    '/chatMessages/{chat}/{msg}').onWrite((event) => {
   const chat = event.params.chat;
   const msg = event.params.msg;
   const data = event.data.val();
@@ -24,8 +26,9 @@ exports.sendMessageNotification = functions.database.ref('/chatMessages/{chat}/{
   // Get the users in this chat.
   const chatUsersPromise = admin.database().ref(`/chats/${chat}`).once('value');
   // Get the sender's profile pic.
-  const senderPicPromise = admin.database().ref(`/profiles/${data.author}/pic`).once('value');
-  return Promise.all([chatUsersPromise, senderPicPromise]).then(results => {
+  const senderPicPromise = admin.database().ref(
+    `/profiles/${data.author}/pic`).once('value');
+  return Promise.all([chatUsersPromise, senderPicPromise]).then((results) => {
     console.log('There are', results[0].numChildren() - 1, 'users to send to.');
     const usernames = results[0].val();
     const pic = results[1].val();
@@ -37,23 +40,27 @@ exports.sendMessageNotification = functions.database.ref('/chatMessages/{chat}/{
 });
 
 function notifyUser(username, pic, data) {
-  const getUserDataPromise = admin.database().ref(`/users/${username}`).once('value');
+  const getUserDataPromise = admin.database().ref(
+    `/users/${username}`).once('value');
 
-  return Promise.all([getUserDataPromise]).then(results => {
+  return Promise.all([getUserDataPromise]).then((results) => {
     const user = results[0].val();
     // Check that user allows notifications.
     if (!user.messageNotifications) {
-      return console.log(username + ': User does not allow notifications for messages.')
+      return console.log(username
+        + ': User does not allow notifications for messages.');
     }
 
     const tokensSnapshot = results[0].child('messagingTokens');
 
     // Check if there are any device tokens.
     if (!tokensSnapshot.hasChildren()) {
-      return console.log(username +': There are no notification tokens to send to.');
+      return console.log(username
+        +': There are no notification tokens to send to.');
     }
 
-    console.log(username +': There are', tokensSnapshot.numChildren(), 'tokens to send notifications to.');
+    console.log(username +': There are', tokensSnapshot.numChildren(),
+      'tokens to send notifications to.');
 
     // Notification details.
     const payload = {
@@ -77,7 +84,7 @@ function notifyUser(username, pic, data) {
     const tokens = Object.keys(tokensSnapshot.val());
 
     // Send notifications to all tokens.
-    return admin.messaging().sendToDevice(tokens, payload).then(response => {
+    return admin.messaging().sendToDevice(tokens, payload).then((response) => {
       // For each message check if there was an error.
       const tokensToRemove = [];
       response.results.forEach((result, index) => {
