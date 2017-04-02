@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-messaging.html">
-<!--<link rel="import" href="../bower_components/polymerfire/firebase-document.html">-->
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -93,8 +92,7 @@
       id="screenEnv"
       is-touch="{{isTouch}}"
       is-mobile="{{isMobile}}"
-      is-tablet="{{isTablet}}"
-      is-desktop="{{isDesktop}}">
+      ua-is-desktop="{{uaIsDesktop}}">
     </screen-env>
 
     <app-location
@@ -327,7 +325,7 @@
 
     _handleCloudMessage: function(e, data) {
       // LOG && log.v('Message received', arguments);
-      
+
       // If a system notification was shown, the data part will be passed here.
       // We will ignore those messages and handle notifications when the app is currently open.
       if (hasChild(data, 'message', 'notification')) {
