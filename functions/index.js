@@ -1,6 +1,7 @@
 /*
  * Firebase Cloud Functions (Firebase Cloud Messaging)
  */
+/* eslint no-console: ["error", { allow: ["log"] }] */
 'use strict';
 
 const functions = require('firebase-functions');
@@ -62,14 +63,14 @@ function notifyUser(username, pic, data) {
         title: data.author,
         body: data.text,
         icon: pic,
-        click_action : 'https://app-starter-8f1a5.firebaseapp.com/messages'
+        click_action: 'https://app-starter-8f1a5.firebaseapp.com/messages',
       },
       data: {
         tag: 'app-starter.' + data.author,
         fromUsername: data.author,
         to: username,
-        created: String(data.created)
-      }
+        created: String(data.created),
+      },
     };
 
     // Listing all tokens.
