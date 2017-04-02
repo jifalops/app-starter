@@ -21,11 +21,6 @@ type Offline extends Boolean {
   write() { amSuperAdmin() }
 }
 
-type DemoMode extends Boolean {
-  read() { true }
-  write() { amSuperAdmin() }
-}
-
 hasRoot() { root.status['hasRoot'] }
 
 // TODO no rules currently use this, so the site is only offline from the UI perspective.
