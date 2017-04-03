@@ -125,6 +125,9 @@
           <paper-item name="posts">
             <a plain class="flex" href="/posts/list">Posts</a>
           </paper-item>
+          <paper-item name="new">
+            <a plain class="flex" href="/new">New</a>
+          </paper-item>
           <div class="divider"></div>
           <paper-item name="messages">
             <a plain class="flex" href="/messages">Messages</a>
@@ -173,6 +176,12 @@
             <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
               <neon-animatable name="posts">
                 <posts-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></posts-page>
+              </neon-animatable>
+              <neon-animatable name="new">
+                <new-post-page auth="[[auth]]"></new-post-page>
+              </neon-animatable>
+              <neon-animatable name="post">
+                <post-page route="[[subroute]]"></post-page>
               </neon-animatable>
               <neon-animatable name="login">
                 <login-register-page id="loginPage" auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
@@ -271,6 +280,8 @@
     _fileForPage: function(page) {
       switch (page) {
         case 'posts':      return '/src/pages/posts/posts-page.html';
+        case 'post':       return '/src/pages/post/post-page.html';
+        case 'new':        return '/src/pages/new-post/new-post-page.html';
         case 'user':       return '/src/pages/user/user-page.html';
         case 'login':      return '/src/pages/login-register/login-register-page.html';
         case 'register':   return '/src/pages/login-register/login-register-page.html';

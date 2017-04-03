@@ -10,10 +10,12 @@ path /posts {
 type Post {
   title: PostTitle
   body: PostBody
+  location: PostLocation
+  tags: Map<Tag, Boolean>
   author: String
   created: FinalNow
   create() { isMe(this.author) }
-  delete() { isMe(prior(this).author)) || amModerator() }
+  delete() { isMe(prior(this.author)) || amModerator() }
 }
 
 type PostTitle extends String {
@@ -23,3 +25,14 @@ type PostTitle extends String {
 type PostBody extends String {
   validate() { this.length >= 15 && this.length <= 10000 }
 }
+
+type PostLocation extends String {
+  validate() { this.length >= 5 && this.length <= 30 }
+}
+
+type Tag extends String {
+  validate() { this.length >= 3 && this.length <= 16 }
+}
+
+isAuthor(user, post) { root.posts[post].author == user }
+amAuthor(post) { isAuthor(me(), post) }

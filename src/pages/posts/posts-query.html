@@ -2,7 +2,7 @@
 <link rel="import" href="../../../bower_components/geo-query-input/geo-query-input.html">
 <link rel="import" href="../../../bower_components/geo-location/geo-location.html">
 <link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
-<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<!--<link rel="import" href="../../../bower_components/paper-button/paper-button.html">-->
 <link rel="import" href="../../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
@@ -73,7 +73,7 @@
     </div>
     <div class="summary layout horizontal center justified">
       <span>[[_summary(results, results.length)]]</span>
-      <paper-button raised class="small primary-button" on-tap="_addUser">Add Me</paper-button>
+      <!--<paper-button raised class="small primary-button" on-tap="_addUser">Add Me</paper-button>-->
     </div>
 </template>
 <script>
@@ -258,51 +258,12 @@ Polymer({
       LOG && GEOFIRE && log.v('Using user\'s coordinates');
       this.lat = userLat;
       this.lng = userLng;
-      if (this.addingUser) this._doAddUser(userLat, userLng);
     }
   },
 
   _summary: function(results, len) {
     if (!results) len = "~";
     return len + (len == 1 ? ' result.' : ' results.');
-  },
-
-  _addUser: function() {
-    this.addingUser = true;
-    if (this.useCurrentLocation && this.userLat && this.userLng) {
-      this._doAddUser(this.userLat, this.userLng);
-    } else if (!this.useCurrentLocation && this.lat && this.lng) {
-      this._doAddUser(this.lat, this.lng);
-    }
-  },
-
-  _doAddUser: function(lat, lng) {
-    if (!this.auth) {
-      showInfoToast('Login to set your position.');
-      return;
-    }
-    // if (this.useCurrentLocation) {
-      var coords = [lat, lng];
-      lat = perturbCoordinate(lat);
-      lng = perturbCoordinate(lng);
-      var dist = GeoFire.distance(coords, [lat, lng]);
-      if (this.unit == 'mi') dist = kmToMiles(dist);
-      showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + this.unit + ' away.');
-    // }
-    db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
-    this.addingUser = false;
-  },
-
-  _onResultsReady: function(e) {
-    // LOG && log.v('results ready');
-    // Avoid propagating changes until after the first time ready is called.
-    // if (e.type == 'ready') {
-    //   this.hasInitialResults = true;
-    // }
-    // if (this.hasInitialResults) {
-    //   this.geoPosts = [];
-    //   this.geoPosts = this.$.query.resultsArray;
-    // }
   }
 });
 </script>

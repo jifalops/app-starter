@@ -1,0 +1,165 @@
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../bower_components/tags-input/tags-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/geo-location/geo-location.html">
+<link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
+<link rel="import" href="../../header.html">
+<link rel="import" href="../../geofire-import.html">
+
+<dom-module id="new-post-page">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <geo-location idle$="[[!isUser]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
+    <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
+
+    <paper-material class="layout vertical">
+      <paper-radio-group selected="{{type}}" class="font-title layout horizontal around-justified">
+        <paper-radio-button name="post" noink>Post</paper-radio-button>
+        <paper-radio-button name="user" noink>My Location</paper-radio-button>
+      </paper-radio-group>
+      <div hidden$="[[isUser]]">
+        <paper-input
+          id="title"
+          label="Title"
+          auto-validate
+          required
+          minlength="3"
+          maxlength="24">
+        </paper-input>
+        <paper-input
+          id="location"
+          label="Location"
+          auto-validate
+          required
+          value="{{location}}"
+          minlength="5"
+          maxlength="30">
+        </paper-input>
+        <div class="font-small text-secondary">
+          [[_fullAddress]]
+        </div>
+        <div>Tags (optional)</div>
+        <tags-input id="tags" label="" unique editable></tags-input>
+        <paper-textarea
+          id="body"
+          label="Body"
+          auto-validate
+          char-counter
+          minlength="15"
+          maxlength="10000">
+        </paper-textarea>
+      </div>
+      <paper-button class="primary-button self-end no-transform" on-tap="_createPost">
+        [[_toggleString(isUser, 'Post Your Location', 'Create Post')]]
+      </paper-button>
+    </paper-material>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'new-post-page',
+      properties: {
+        auth: Object,
+        type: {
+          type: String,
+          value: 'post'
+        },
+        isUser: {
+          type: Boolean,
+          computed: '_isUser(type)'
+        },
+        location: {
+          type: String,
+          observer: '_locationChanged'
+        }
+      },
+
+      observers: [
+        '_userLocationChanged(userLat, userLng)'
+      ],
+
+      _createPost: function() {
+        if (!this.auth) {
+          showInfoToast('Login to create posts.');
+          return;
+        }
+
+        if (this.isUser) {
+          this._addingUser = true;
+          if (this.userLat && this.userLng) {
+            this._addUser(this.userLat, this.userLng)
+          }
+        } else {
+          this._addingUser = false;
+          if (this._lat && this._lng) {
+            this._addPost(this._lat, this._lng);
+          }
+        }
+      },
+      _isUser: function(type) {
+        return type == 'user';
+      },
+      _toggleString: function(cond, t, f) {
+        return cond ? t : f;
+      },
+      _locationChanged: function(location) {
+        if (location && location.length >= 3) {
+          var ctx = this;
+          this.debounce('geocoder', function() {
+            ctx.$.codec.geocode(location, function(address, lat, lng) {
+              ctx._fullAddress = address;
+              ctx._lat = lat;
+              ctx._lng = lng;
+            });
+          }, 400);
+        } else {
+          this._fullAddress = '';
+        }
+      },
+      _userLocationChanged: function(userLat, userLng) {
+        if (this._addingUser && userLat && userLng) this._addUser(userLat, userLng);
+      },
+      _addUser: function(lat, lng) {
+        this._addingUser = false;
+        var coords = [lat, lng];
+        lat = perturbCoordinate(lat);
+        lng = perturbCoordinate(lng);
+        var dist = GeoFire.distance(coords, [lat, lng]);
+        if (this.unit == 'mi') dist = kmToMiles(dist);
+        showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + this.unit + ' away.');
+        db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
+      },
+      _addPost: function(lat, lng) {
+        if (this.$.title.validate() && this.$.location.validate()
+            && this.$.body.validate()) {
+          var coords = [lat, lng];
+          lat = perturbCoordinate(lat);
+          lng = perturbCoordinate(lng);
+          var dist = GeoFire.distance(coords, [lat, lng]);
+          if (this.unit == 'mi') dist = kmToMiles(dist);
+          showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + this.unit + ' away.');
+
+          var post = {
+            title: this.$.title.value,
+            location: this.location,
+            body: this.$.body.value,
+            tags: this.$.tags.tags
+          };
+
+          var key = db.posts.createPost(this.auth.uid, post, lat, lng, function() {
+            redirect('/post/' + key);
+          }, showServerErrorToast);
+        }
+      }
+    });
+  </script>
+</dom-module>

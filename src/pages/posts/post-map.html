@@ -112,7 +112,6 @@ Polymer({
     return post.type == 'user' ? post.name : post.title;
   },
   _getIcon: function(post) {
-    LOG && log.v('getting icon for', post);
     return post.type == 'user' ? '/images/map-marker.png' : '/images/map-marker-blue.png'
   }
 });

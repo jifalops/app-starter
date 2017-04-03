@@ -1,0 +1,83 @@
+<link rel="import" href="../../../bower_components/geo-location/geo-location.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/from-now/from-now.html">
+<link rel="import" href="../../header.html">
+<link rel="import" href="../../geofire-import.html">
+
+<dom-module id="post-page">
+  <template>
+    <style include="app-styles">
+      :host {
+        display: block;
+      }
+      .font-subhead {
+        margin-top: 12px;
+      }
+    </style>
+
+    <!--TODO may prompt on page load-->
+    <geo-location latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
+
+    <app-route
+      route="[[route]]"
+      pattern="/:pid"
+      data="{{routeData}}">
+    </app-route>
+
+    <paper-material class="layout vertical">
+      <div class="font-title">[[post.title]]</div>
+      <div class="text-secondary layout horizontal center justified">
+        <from-now time="[[post.created]]"></from-now>
+        <div>[[post.location]] ([[distance]] mi)</div>
+      </div>
+      <div class="font-subhead">Tags</div>
+      <div>[[_getTags(post.tags)]]</div>
+      <div class="font-subhead">Body</div>
+      <div>[[post.body]]</div>
+      <div class="font-subhead">Author</div>
+      <div><a href$="/user/[[post.author]]">[[post.author]]</a></div>
+    </paper-material>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'post-page',
+      properties: {
+        route: Object,
+        distance: {
+          type: Number,
+          computed: '_computeDistance(_lat, _lng, userLat, userLng)'
+        }
+      },
+      observers: [
+        '_pidChanged(routeData.pid)'
+      ],
+
+      _pidChanged: function(pid) {
+        if (pid) {
+          db.read('/posts/' + pid, function(post) {
+            // LOG && POSTS && log.v('loaded post', post);
+            this.post = post;
+          }.bind(this));
+          db.read('/geoPosts/' + pid + '/l', function(coords) {
+            // LOG && POSTS && log.v('loaded coords', coords);
+            if (isArray(coords) && coords.length == 2) {
+              this._lat = coords[0];
+              this._lng = coords[1];
+            }
+          }.bind(this));
+        }
+      },
+      _computeDistance: function(lat, lng, userLat, userLng) {
+        if (lat && lng && userLat && userLng) {
+          return round(kmToMiles(GeoFire.distance([lat, lng], [userLat, userLng])), 1);
+        }
+      },
+      _getTags: function(tags) {
+        if (tags) return Object.keys(tags).join(', ');
+      }
+    });
+  </script>
+</dom-module>
