@@ -3,6 +3,8 @@
   "shell": "src/app-shell.html",
   "fragments": [
     "src/pages/posts/posts-page.html",
+    "src/pages/post/post-page.html",
+    "src/pages/new-post/new-post-page.html",
     "src/pages/user/user-page.html",
     "src/pages/login-register/login-register-page.html",
     "src/pages/feedback/feedback-page.html",

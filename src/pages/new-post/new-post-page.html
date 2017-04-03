@@ -18,7 +18,7 @@
       }
     </style>
 
-    <geo-location idle$="[[!isUser]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
+    <geo-location idle="[[!isUser]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
     <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
     <paper-material class="layout vertical">
@@ -75,11 +75,16 @@
         },
         isUser: {
           type: Boolean,
+          value: false,
           computed: '_isUser(type)'
         },
         location: {
           type: String,
           observer: '_locationChanged'
+        },
+        unit: {
+          type: String,
+          value: 'mi'
         }
       },
 
