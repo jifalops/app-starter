@@ -2,7 +2,6 @@
 <link rel="import" href="../../../bower_components/geo-query-input/geo-query-input.html">
 <link rel="import" href="../../../bower_components/geo-location/geo-location.html">
 <link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
-<!--<link rel="import" href="../../../bower_components/paper-button/paper-button.html">-->
 <link rel="import" href="../../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
@@ -33,7 +32,6 @@
   <geo-location idle$="[[!useCurrentLocation]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
-  <app-localstorage-document key="geoCache" data="{{cache}}"></app-localstorage-document>
   <app-indexeddb-mirror
     session="[[auth.uid]]"
     key="results"
@@ -126,10 +124,6 @@ Polymer({
     useCurrentLocation: {
       type: Boolean,
       value: false
-    },
-    cache: {
-      type: Object,
-      value: function() { return {}; }
     }
   },
   observers: [
@@ -233,23 +227,12 @@ Polymer({
           ]
         };
       }
-      var cached = this.cache[data.search];
-      if (!cached) {
-        LOG && log.i('Geocoding:', data.search);
-        this.$.codec.geocode(data.search, function (address, lat, lng, place) {
-          LOG && log.v(address, lat, lng, place);
-          this.lat = lat;
-          this.lng = lng;
-          this.cache[data.search] = [address, lat, lng, place];
-          if (this.addingUser) {
-            this._doAddUser(lat, lng);
-          }
-        }.bind(this));
-      } else {
-        LOG && GEOFIRE && log.v('Using cached result', cached);
-        this.lat = cached[1];
-        this.lng = cached[2];
-      }
+      LOG && log.i('Geocoding:', data.search);
+      this.$.codec.geocode(data.search, function (address, lat, lng, place) {
+        LOG && log.v(address, lat, lng, place);
+        this.lat = lat;
+        this.lng = lng;
+      }.bind(this));
     }
   },
 

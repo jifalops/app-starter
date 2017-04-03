@@ -9,8 +9,8 @@
 var DB = true;
 var AUTH = false;
 var ROUTE = false;
-var GEOFIRE = true;
-var POSTS = true;
+var GEOFIRE = false;
+var POSTS = false;
 
 function fire(context, name, data, options) {
   options = options || {};

@@ -89,10 +89,10 @@
     <app-notifications id="notifications"></app-notifications>
 
     <screen-env
-      id="screenEnv"
+      narrow-width="{{narrowWidth}}"
       is-touch="{{isTouch}}"
-      is-mobile="{{isMobile}}"
-      ua-is-desktop="{{uaIsDesktop}}">
+      ua-is-desktop="{{uaIsDesktop}}"
+      is-mobile="{{isMobile}}">
     </screen-env>
 
     <app-location
@@ -212,7 +212,7 @@
               </neon-animatable>
             </neon-animated-pages>
           </div>
-          <footer>Powered by <a plain hover href$="[[_makeUrl()]]">App<span> </span>Starter</a></footer>
+          <footer>Powered by <a plain hover href$="[[_footerLink]]">App<span> </span>Starter</a></footer>
         </div>
       </app-header-layout>
     </app-drawer-layout>
@@ -229,7 +229,8 @@
       app: {
         type: Object,
         observer: '_onFirebaseAppChanged'
-      }
+      },
+      _footerLink: 'https://github.com/jifalops/app' + '-starter'
     },
 
     observers: [
@@ -392,9 +393,6 @@
           showErrorToast('That user already exists.');
           break;
       }
-    },
-    _makeUrl: function() {
-      return 'https://github.com/jifalops/app' + '-starter';
     }
   });
   </script>
