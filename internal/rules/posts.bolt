@@ -1,0 +1,25 @@
+//
+// posts.bolt
+//
+
+path /posts {
+  read() { true }
+  /{post} is Post;
+}
+
+type Post {
+  title: PostTitle
+  body: PostBody
+  author: String
+  created: FinalNow
+  create() { isMe(this.author) }
+  delete() { isMe(prior(this).author)) || amModerator() }
+}
+
+type PostTitle extends String {
+  validate() { this.length >= 3 && this.length <= 24 }
+}
+
+type PostBody extends String {
+  validate() { this.length >= 15 && this.length <= 10000 }
+}

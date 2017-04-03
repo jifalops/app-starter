@@ -10,6 +10,7 @@ path /profiles {
 type Profile {
   name: DisplayName
   pic: PicUrl
+  posts: String[]
   write() { key() == me() && this != null }
 }
 

@@ -1,15 +1,9 @@
-<!-- <link rel="import" href="../../../bower_components/paper-material/paper-material.html"> -->
 <link rel="import" href="../../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../../bower_components/google-map/google-map-marker.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../header.html">
 
-<!--
-  The user map page shows a google map fully zoomed out with a marker for each
-  user that has allowed themselves to be added.
-  The map can be searched, optionally by the visitor's current location.
--->
-<dom-module id="user-map">
+<dom-module id="post-map">
 <template>
   <style include="app-styles">
     :host {
@@ -28,38 +22,25 @@
       map="{{map}}"
       on-google-map-ready="_mapLoaded"
       zoom="[[_radiusToZoom(radiusKm, 'true')]]">
-
-      <!-- <google-map-marker
-        latitude="41.1623"
-        longitude="-82.0871"
-        title="[[auth.profile.name]]"
-        click-events
-        map="[[map]]"
-        on-google-map-marker-click="_toggleInfoWindow"
-        on-google-map-marker-close="_infoWindowClosed">
-      </google-map-marker> -->
-
-      <!-- <dom-repeat > -->
-        <template is="dom-repeat" items="[[users]]" as="user">
+      <template is="dom-repeat" items="[[posts]]" as="post">
         <google-map-marker
-          latitude="[[user.lat]]"
-          longitude="[[user.lng]]"
-          title="[[user.name]]"
+          latitude="[[post.lat]]"
+          longitude="[[post.lng]]"
+          title="[[_getTitle(post)]]"
           click-events
-          icon="/images/map-marker.png"          
+          icon="[[_getIcon(post)]]"
           on-google-map-marker-click="_toggleInfoWindow"
           on-google-map-marker-close="_infoWindowClosed"
           map="[[map]]"></google-map-marker>
-        </template>
-      <!-- <dom-repeat> -->
+      </template>
     </google-map>
 </template>
 <script>
 Polymer({
-  is: 'user-map',
+  is: 'post-map',
   properties: {
     auth: Object,
-    users: Array,
+    posts: Array,
     lat: {
       type: Number,
       value: 41.651
@@ -91,33 +72,48 @@ Polymer({
   },
   _toggleInfoWindow: function(e) {
     var marker = e.target.marker;
-    var user = e.model.user;
+    var post = e.model.post;
     this.infoWindows = this.infoWindows || {};
-    var info = this.infoWindows[user.$key];
+    var info = this.infoWindows[post.$key];
     if (info) {
       info.close();
-      this.infoWindows[user.$key] = null;
+      this.infoWindows[post.$key] = null;
     } else {
-      var contentString = '<img style="height:24px; width:24px" src="'+user.pic+'"/>'
-        + '<div style="font-weight: bold;"><a href="/user/'+user.$key+'">'+user.$key+'</a></div>'
-        + '<div>'+round(user.distance, 1)+' '+user.distanceUnit+' away</div>'
-        + '</div>';
+      var contentString = '';
+      if (post.type == 'user') {
+        contentString = '<img style="height:24px; width:24px" src="'+post.pic+'"/>'
+          + '<div style="font-weight: bold;"><a href="/user/'+post.$key+'">'+post.$key+'</a></div>'
+          + '<div>'+round(post.distance, 1)+' '+post.distanceUnit+' away</div>'
+          + '</div>';
+      } else {
+        contentString = '<div style="font-weight: bold;"><a href="/post/'+post.$key+'">'+post.title+'</a></div>'
+          + '<div>'+post.author+'</div>'
+          + '<div>'+round(post.distance, 1)+' '+post.distanceUnit+' away</div>'
+          + '</div>';
+      }
       info = new google.maps.InfoWindow({
           content: contentString
       });
       info.open(this.map, marker);
-      this.infoWindows[user.$key] = info;
+      this.infoWindows[post.$key] = info;
     }
   },
   _infoWindowClosed: function(e) {
     console.log('closed info window');
-    var user = e.model.user;
-    if (!user) return;
+    var post = e.model.post;
+    if (!post) return;
     this.infoWindows = this.infoWindows || {};
-    this.infoWindows[user.$key] = null;
+    this.infoWindows[post.$key] = null;
   },
   _mapLoaded: function() {
     LOG && log.d('Google maps api has loaded');
+  },
+  _getTitle: function(post) {
+    return post.type == 'user' ? post.name : post.title;
+  },
+  _getIcon: function(post) {
+    LOG && log.v('getting icon for', post);
+    return post.type == 'user' ? '/images/map-marker.png' : '/images/map-marker-blue.png'
   }
 });
 </script>

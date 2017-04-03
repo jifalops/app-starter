@@ -6,15 +6,10 @@
 <link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../../header.html">
 <link rel="import" href="../../geofire-import.html">
-<link rel="import" href="users-query.html">
+<link rel="import" href="posts-query.html">
 
 
-<!--
-  The user map page shows a google map fully zoomed out with a marker for each
-  user that has allowed themselves to be added.
-  The map can be searched, optionally by the visitor's current location.
--->
-<dom-module id="users-page">
+<dom-module id="posts-page">
 <template>
   <style include="app-styles">
     :host {
@@ -26,7 +21,6 @@
   </style>
 
   <app-route
-    active="{{active}}"
     route="[[route]]"
     pattern="/:page"
     data="{{routeData}}"
@@ -37,44 +31,44 @@
     selected="[[routeData.page]]"
     attr-for-selected="name"
     role="navigation">
-    <paper-tab name="list"><a plain href='/users/list'><span>List</span></a></paper-tab>
-    <paper-tab name="map"><a plain href='/users/map'><span>Map</span></a></paper-tab>
+    <paper-tab name="list"><a plain href="/posts/list"><span>List</span></a></paper-tab>
+    <paper-tab name="map"><a plain href="/posts/map"><span>Map</span></a></paper-tab>
   </paper-tabs>
 
   <div class="layout vertical">
-    <span class="font-subhead self-center">Users</span>
-    <users-query
+    <span class="font-subhead self-center">Posts</span>
+    <posts-query
       app="[[app]]"
       auth="[[auth]]"
-      profiles="{{profiles}}"
+      results="{{results}}"
       lat="{{lat}}"
       lng="{{lng}}"
       radius-km="{{radiusKm}}">
-    </users-query>
+    </posts-query>
   </div>
 
   <neon-animated-pages selected="[[routeData.page]]" attr-for-selected="name">
     <neon-animatable name="list">
-      <user-list
+      <post-list
         id="list"
         auth="[[auth]]"
-        users="[[profiles]]">
-      </user-list>
+        posts="[[results]]">
+      </post-list>
     </neon-animatable>
     <neon-animatable name="map">
-        <user-map
+        <post-map
           auth="[[auth]]"
-          users="[[profiles]]"
+          posts="[[results]]"
           lat="[[lat]]"
           lng="[[lng]]"
           radius-km="[[radiusKm]]">
-        </user-map>
+        </post-map>
     </neon-animatable>
   </neon-animated-pages>
 </template>
 <script>
 Polymer({
-  is: 'users-page',
+  is: 'posts-page',
   properties: {
     app: Object,
     auth: Object,
@@ -84,13 +78,13 @@ Polymer({
     '_pageChanged(routeData.page)'
   ],
   _pageChanged: function(page) {
-    if (!hasChild(this.route, 'prefix') || this.route.prefix != '/users') {
+    if (!hasChild(this.route, 'prefix') || this.route.prefix != '/posts') {
       return;
     }
 
     var file = this._fileForPage(page);
     if (!page || !file) {
-      redirect('/users/list');
+      redirect('/posts/list');
       return;
     }
 
@@ -112,8 +106,8 @@ Polymer({
 
   _fileForPage: function(page) {
     switch (page) {
-      case 'list':      return '/src/pages/users/user-list.html';
-      case 'map':       return '/src/pages/users/user-map.html';
+      case 'list':      return '/src/pages/posts/post-list.html';
+      case 'map':       return '/src/pages/posts/post-map.html';
     }
   }
 });

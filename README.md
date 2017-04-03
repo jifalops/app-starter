@@ -46,24 +46,24 @@ A typical way to accomplish that is
 
     ```
     bower install --save
+    npm install polymer-cli@next
     ```
 
-  2. Create the database rules.
+  2. Deploy the database rules before testing locally.
 
     ```
     cd internal
     ./make-rules.sh
     cd ..
+    firebase deploy --only database -P dev
     ```
-
-    **Note:** If you want to test locally before deploying, you will need to copy and paste `internal/rules.json` to the rules section your project's Firebase console.
 
   3. Deploy
 
     ```
-    ./polymer-build.sh
-    firebase deploy
-    ```  
+    polymer build
+    ./firebase-deploy.sh
+    ```
 
 ### Pulling in new changes
 To update your existing project to use the newest version of app-starter,
@@ -91,7 +91,7 @@ of sending password reset emails when using Firebase username logins.
   * The center point can be a search result or the visitor's current location.
   * Any logged in user may optionally add themselves to the map by clicking a button.
   The center point will be the user's current location, anonymized to
-  ~1 to 10 miles away.  
+  ~1 to 10 miles away.
 * User profile page with private info for the current user.
 * Roles. Each role encompasses the abilities of the roles below it. Privileged users
 may grant other users any role that is below them.

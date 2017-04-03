@@ -122,8 +122,8 @@
           <app-logo></app-logo>
         </app-toolbar>
         <paper-listbox selected="[[routeData.page]]" attr-for-selected="name" role="navigation">
-          <paper-item name="users">
-            <a plain class="flex" href="/users/list">Users</a>
+          <paper-item name="posts">
+            <a plain class="flex" href="/posts/list">Posts</a>
           </paper-item>
           <div class="divider"></div>
           <paper-item name="messages">
@@ -171,8 +171,8 @@
         <div class="content-wrapper">
           <div id="content">
             <neon-animated-pages role="main" selected="[[routeData.page]]" attr-for-selected="name">
-              <neon-animatable name="users">
-                <users-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></users-page>
+              <neon-animatable name="posts">
+                <posts-page app="[[app]]" auth="[[auth]]" route="[[subroute]]"></posts-page>
               </neon-animatable>
               <neon-animatable name="login">
                 <login-register-page id="loginPage" auth="[[auth]]" on-login-register="loginRegister"></login-register-page>
@@ -255,7 +255,7 @@
 
       var file = this._fileForPage(page);
       if (!page || !file) {
-        redirect('/users/list');
+        redirect('/posts/list');
         return;
       }
 
@@ -270,7 +270,7 @@
 
     _fileForPage: function(page) {
       switch (page) {
-        case 'users':      return '/src/pages/users/users-page.html';
+        case 'posts':      return '/src/pages/posts/posts-page.html';
         case 'user':       return '/src/pages/user/user-page.html';
         case 'login':      return '/src/pages/login-register/login-register-page.html';
         case 'register':   return '/src/pages/login-register/login-register-page.html';

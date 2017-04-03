@@ -3,24 +3,26 @@
 <link rel="import" href="../../../bower_components/geo-location/geo-location.html">
 <link rel="import" href="../../../bower_components/geo-codec/geo-codec.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../header.html">
-<!-- <link rel="import" href="geofire-query.html">
-<link rel="import" href="geo-query-input.html"> -->
 <link rel="import" href="../../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../header.html">
 
-<dom-module id="users-query">
+<dom-module id="posts-query">
 <template>
   <style include="app-styles">
     :host {
       display: block;
-      /*@apply --shadow-elevation-2dp;
-      margin-bottom: 4px;*/
     }
     geo-query-input {
       /*border-bottom: 1px solid var(--divider-color);*/
       padding: 0;
       margin: 0;
+    }
+    paper-checkbox {
+      margin: 8px 16px;
+      --paper-checkbox-size: 12px;
+      --paper-checkbox-label-spacing: 4px;
     }
     .summary {
       margin: 2px 8px;
@@ -31,21 +33,30 @@
   <geo-location idle$="[[!useCurrentLocation]]" latitude="{{userLat}}" longitude="{{userLng}}"></geo-location>
   <geo-codec id="codec" api-key="AIzaSyAUPOaJubJnaRTPUd_xX8MOA62gRtSlfCc"></geo-codec>
 
-  <app-localstorage-document key="geoCache" data="{{cache}}">
+  <app-localstorage-document key="geoCache" data="{{cache}}"></app-localstorage-document>
   <app-indexeddb-mirror
     session="[[auth.uid]]"
-    key="profiles"
-    data="{{liveProfiles}}"
-    persisted-data="{{profiles}}">
+    key="results"
+    data="[[_liveResults]]"
+    persisted-data="{{results}}">
   </app-indexeddb-mirror>
 
-  <geo-query 
-    id="query"
-    geofire="[[geofire]]"
+  <geo-query
+    id="postsQuery"
+    geofire="[[postsGeofire]]"
+    lat="[[lat]]"
+    lng="[[lng]]"
+    results-array="{{geoPosts}}"
+    radius="[[radiusKm]]">
+  </geo-query>
+  <geo-query
+    id="usersQuery"
+    geofire="[[usersGeofire]]"
     lat="[[lat]]"
     lng="[[lng]]"
     results-array="{{geoUsers}}"
-    radius="[[radiusKm]]"></geo-query>
+    radius="[[radiusKm]]">
+  </geo-query>
 
     <div class="layout vertical center">
       <geo-query-input
@@ -53,16 +64,21 @@
         radius="2000"
         unit="{{unit}}"
         radius-options="[[radiusOptions]]"
-        on-query-changed="_queryChanged"></geo-query-input>
+        on-query-changed="_queryChanged">
+      </geo-query-input>
+      <div class="layout horizontal">
+        <paper-checkbox noink checked="{{includePosts}}">Posts</paper-checkbox>
+        <paper-checkbox noink checked="{{includeUsers}}">Users</paper-checkbox>
+      </div>
     </div>
     <div class="summary layout horizontal center justified">
-      <span>[[_summary(geoUsers, geoUsers.length)]]</span>
+      <span>[[_summary(results, results.length)]]</span>
       <paper-button raised class="small primary-button" on-tap="_addUser">Add Me</paper-button>
     </div>
 </template>
 <script>
 Polymer({
-  is: 'users-query',
+  is: 'posts-query',
   properties: {
     app: {
       type: Object,
@@ -70,9 +86,21 @@ Polymer({
       observer: '_appChanged'
     },
     auth: Object,
-    geofire: {
+    postsGeofire: {
       type: Object,
       value: null
+    },
+    usersGeofire: {
+      type: Object,
+      value: null
+    },
+    includePosts: {
+      type: Boolean,
+      value: true
+    },
+    includeUsers: {
+      type: Boolean,
+      value: true
     },
 
     lat: {
@@ -91,12 +119,7 @@ Polymer({
       type: Array,
       value: function() { return [100, 1000, 2000, 5000, 10000]; }
     },
-    geoUsers: {
-      type: Array,
-      notify: true,
-      observer: '_geoUsersChanged'
-    },
-    profiles: {
+    results: {
       type: Array,
       notify: true
     },
@@ -111,43 +134,75 @@ Polymer({
   },
   observers: [
     '_userLocationChanged(useCurrentLocation, userLat, userLng)',
-    '_loadedProfilesChanged(_loadedProfiles.*)'
+    '_geoResultsChanged(geoPosts, geoUsers, includePosts, includeUsers, geoPosts.length, geoUsers.length)',
+    '_loadedResultsChanged(_loadedPosts.*, _loadedUsers.*, _loadedPosts.length, _loadedUsers.length)'
   ],
 
   _appChanged: function(app, old) {
     if (app && !old) {
         LOG && log.d('Initializing geofire');
-        this.geofire = new GeoFire(db.ref('geoUsers'));
+        this.postsGeofire = new GeoFire(db.ref('geoPosts'));
+        this.usersGeofire = new GeoFire(db.ref('geoUsers'));
     }
   },
 
-  _geoUsersChanged: function(geoUsers, old) {
-    LOG && GEOFIRE && log.v('geoUsers changed', geoUsers);
-    this._loadedProfiles = [];
-
-    if (isEmpty(geoUsers)) return;
-
-    for (var i = 0; i < geoUsers.length; i++) {
-      this._loadProfile(geoUsers[i]);
-    }
+  _geoResultsChanged: function(geoPosts, geoUsers, includePosts, includeUsers) {
+    this.debounce('load-results', function() {
+      this._loadedPosts = [];
+      this._loadedUsers = [];
+      var i;
+      if (includePosts && geoPosts) {
+        for (i = 0; i < geoPosts.length; ++i) {
+          this._loadPost(geoPosts[i]);
+        }
+      }
+      if (includeUsers && geoUsers) {
+        for (i = 0; i < geoUsers.length; ++i) {
+          this._loadUser(geoUsers[i]);
+        }
+      }
+    }.bind(this), 100);
   },
 
-  _loadProfile: function(geoUser) {
-    db.watch('/profiles/' + geoUser.key, function(profile) {
-      profile.$key = geoUser.key;
-      profile.lat = geoUser.lat;
-      profile.lng = geoUser.lng;
-      profile.distanceUnit = this.unit;
-      profile.distance = this.unit == 'km' ? geoUser.distance : kmToMiles(geoUser.distance);
-      this.push('_loadedProfiles', profile);
+  _loadPost: function(geoPost) {
+    db.watch('/posts/' + geoPost.key, function(post) {
+      post.$key = geoPost.key;
+      post.lat = geoPost.lat;
+      post.lng = geoPost.lng;
+      post.distanceUnit = this.unit;
+      post.distance = this.unit == 'km' ? geoPost.distance : kmToMiles(geoPost.distance);
+      this.push('_loadedPosts', post);
     }.bind(this));
   },
 
-  _loadedProfilesChanged: function(changeData) {
-    this.debounce('loaded-profiles-changed', function() {
-      // LOG && log.v('loaded profiles', changeData.base, this.geoUsers);
-      this.liveProfiles = changeData.base;
-      this.liveProfiles.sort(function(a, b) {
+  _loadUser: function(geoUser) {
+    db.watch('/profiles/' + geoUser.key, function(user) {
+      user.$key = geoUser.key;
+      user.lat = geoUser.lat;
+      user.lng = geoUser.lng;
+      user.distanceUnit = this.unit;
+      user.distance = this.unit == 'km' ? geoUser.distance : kmToMiles(geoUser.distance);
+      this.push('_loadedUsers', user);
+    }.bind(this));
+  },
+
+  _loadedResultsChanged: function(postsChangeData, usersChangeData, numPosts, numUsers) {
+    this.debounce('combine-and-sort', function() {
+      LOG && GEOFIRE && log.v('loaded', numPosts, 'posts and', numUsers, 'users.');
+      var combined = [];
+      var i;
+
+      for (i = 0; i < numPosts; ++i) {
+        postsChangeData.base[i].type = 'post';
+      }
+      combined = combined.concat(postsChangeData.base);
+
+      for (i = 0; i < numUsers; ++i) {
+        usersChangeData.base[i].type = 'user';
+      }
+      combined = combined.concat(usersChangeData.base);
+
+      combined.sort(function(a, b) {
         if (a.distance < b.distance) {
           return -1;
         }
@@ -156,7 +211,9 @@ Polymer({
         }
         return 0;
       });
-    }.bind(this), 250);
+      // LOG && GEOFIRE && log.v('setting live results', combined);
+      this._liveResults = combined;
+    }.bind(this), 100);
   },
 
   _queryChanged: function(e, data) {
@@ -205,8 +262,8 @@ Polymer({
     }
   },
 
-  _summary: function(geoUsers, len) {
-    if (!geoUsers) len = "~";
+  _summary: function(results, len) {
+    if (!results) len = "~";
     return len + (len == 1 ? ' result.' : ' results.');
   },
 
@@ -239,13 +296,13 @@ Polymer({
   _onResultsReady: function(e) {
     // LOG && log.v('results ready');
     // Avoid propagating changes until after the first time ready is called.
-    if (e.type == 'ready') {
-      this.hasInitialResults = true;
-    }
-    if (this.hasInitialResults) {
-      this.geoUsers = [];
-      this.geoUsers = this.$.query.resultsArray;
-    }
+    // if (e.type == 'ready') {
+    //   this.hasInitialResults = true;
+    // }
+    // if (this.hasInitialResults) {
+    //   this.geoPosts = [];
+    //   this.geoPosts = this.$.query.resultsArray;
+    // }
   }
 });
 </script>

@@ -3,7 +3,7 @@
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../header.html">
 
-<dom-module id="user-list">
+<dom-module id="post-list">
   <template>
 
     <style include="app-styles">
@@ -25,27 +25,27 @@
       }
     </style>
 
-    <!-- <paper-material class="layout vertical">
-      <span class="font-title self-center">User list</span>
-    </paper-material> -->
-
-    <!-- <div class="heading layout horizontal center justified">
-      <div>Image</div><div>User</div><div>Dist.</div>
-    </div> -->
     <iron-list
       id="list"
       selection-enabled
       scroll-target="document"
-      items="[[users]]"
-      as="user">
+      items="[[posts]]"
+      as="post">
       <template>
         <div>
-          <a plain href="/user/[[user.$key]]"
-            ><paper-material class="layout horizontal center justified">
-              <iron-image class="avatar small" src="[[user.pic]]"></iron-image>
-              <span class="font-subhead">[[user.$key]]</span>
-              <div class="font-small">[[_round(user.distance)]] [[user.distanceUnit]]</div>
-            </paper-material></a>
+          <a plain href$="[[_getUrl(post)]]">
+            <paper-material class="layout horizontal center justified">
+              <template is="dom-if" if="[[_isUser(post)]]">
+                <iron-image class="avatar small" src="[[post.pic]]"></iron-image>
+                <span class="font-subhead">[[post.$key]]</span>
+              </template>
+              <template is="dom-if" if="[[!_isUser(post)]]">
+                <span class="font-subhead">[[post.title]]</span>
+                <span>[[post.author]]</span>
+              </template>
+              <div class="font-small">[[_round(post.distance)]] [[post.distanceUnit]]</div>
+            </paper-material>
+          </a>
         </div>
       </template>
     </iron-list>
@@ -53,10 +53,10 @@
 
   <script>
   Polymer({
-    is: 'user-list',
+    is: 'post-list',
     properties: {
       auth: Object,
-      users: {
+      posts: {
         type: Array,
         observer: 'notifyResize'
       }
@@ -66,6 +66,12 @@
     },
     _round: function(dist) {
       return round(dist, 1)
+    },
+    _getUrl: function(post) {
+      return (post.type == 'post' ? '/post/' : '/user/') + post.$key;
+    },
+    _isUser: function(post) {
+      return post.type == 'user';
     }
   });
   </script>
