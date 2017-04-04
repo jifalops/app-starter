@@ -78,8 +78,14 @@ function resetToasts() {
 /*
  * Dialogs
  */
-function showConfirmDialog(header, content, confirm, cancel, onClosed) {
-  document.getElementById('app').$['confirmDialog'].show(header, content, confirm, cancel, onClosed);
+function showConfirmDialog(heading, body, confirm, cancel, onResult) {
+  document.getElementById('app').$['confirmDialog'].onResult = onResult;
+  document.getElementById('app').$['confirmDialog'].show({
+    heading: heading,
+    body: body,
+    confirm: confirm,
+    cancel: cancel
+  });
 }
 function showSetUsernameDialog(uid, provider, onUsernameChosen) {
   document.getElementById('app').$['setUsernameDialog'].show(uid, provider, onUsernameChosen);
