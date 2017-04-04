@@ -34,7 +34,7 @@
     "insertPrefetchLinks": false,
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": false},
+    "js": {"minify": true},
     "css": {"minify": true},
     "html": {"minify": true}
   },{
@@ -43,7 +43,7 @@
     "insertPrefetchLinks": false,
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": false, "compile": true},
+    "js": {"minify": true, "compile": true},
     "css": {"minify": true},
     "html": {"minify": true}
   },{
@@ -52,7 +52,7 @@
     "insertPrefetchLinks": false,
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": false},
+    "js": {"minify": true},
     "css": {"minify": true},
     "html": {"minify": true}
   },{
@@ -61,7 +61,7 @@
     "insertPrefetchLinks": false,
     "addServiceWorker": true,
     "swPrecacheConfig": "sw-precache-config.js",
-    "js": {"minify": false, "compile": true},
+    "js": {"minify": true, "compile": true},
     "css": {"minify": true},
     "html": {"minify": true}
   }]
