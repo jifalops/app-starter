@@ -55,7 +55,8 @@
     "paper-radio-button": "^1.3.1",
     "paper-radio-group": "^1.2.1",
     "tags-input": "^1.1.1",
-    "confirm-dialog": "^0.1.1"
+    "confirm-dialog": "^0.1.1",
+    "lazy-img": "CaptainCodeman/lazy-img#^0.0.7"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
