@@ -79,22 +79,22 @@
       <div class="font-small layout horizontal wrap around-justified">
         <div class="layout vertical center"
           on-tap="_googleLogin">
-          <iron-image src="/images/google-icon.svg"></iron-image>
+          <iron-image alt="google" src="/images/google-icon.svg"></iron-image>
           Google
         </div>
         <div class="layout vertical center"
           on-tap="_facebookLogin">
-          <iron-image src="/images/facebook-icon.svg"></iron-image>
+          <iron-image alt="facebook" src="/images/facebook-icon.svg"></iron-image>
           Facebook
         </div>
         <div class="layout vertical center"
           on-tap="_twitterLogin">
-          <iron-image src="/images/twitter-icon.svg"></iron-image>
+          <iron-image alt="twitter" src="/images/twitter-icon.svg"></iron-image>
           Twitter
         </div>
         <div class="layout vertical center"
           on-tap="_githubLogin">
-          <iron-image src="/images/github-icon.svg"></iron-image>
+          <iron-image alt="github" src="/images/github-icon.svg"></iron-image>
           Github
         </div>
       </div>
@@ -164,7 +164,7 @@ Polymer({
     }
     return true;
   },
-  
+
   _toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
   },

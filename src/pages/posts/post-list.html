@@ -36,7 +36,7 @@
           <a plain href$="[[_getUrl(post)]]">
             <paper-material class="layout horizontal center justified">
               <template is="dom-if" if="[[_isUser(post)]]">
-                <iron-image class="avatar small" src="[[post.pic]]"></iron-image>
+                <iron-image alt="photo" class="avatar small" src="[[post.pic]]"></iron-image>
                 <span class="font-subhead">[[post.$key]]</span>
               </template>
               <template is="dom-if" if="[[!_isUser(post)]]">

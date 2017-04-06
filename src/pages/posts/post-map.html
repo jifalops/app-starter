@@ -81,7 +81,7 @@ Polymer({
     } else {
       var contentString = '';
       if (post.type == 'user') {
-        contentString = '<img style="height:24px; width:24px" src="'+post.pic+'"/>'
+        contentString = '<img style="height:24px; width:24px" alt="photo" src="'+post.pic+'"/>'
           + '<div style="font-weight: bold;"><a href="/user/'+post.$key+'">'+post.$key+'</a></div>'
           + '<div>'+round(post.distance, 1)+' '+post.distanceUnit+' away</div>'
           + '</div>';
