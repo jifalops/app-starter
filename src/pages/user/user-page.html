@@ -79,7 +79,7 @@
       >[[_toggleString(editPic, 'cancel', 'change')]]</a>
     </div>
     <div hidden$="[[editPic]]">
-      <iron-image alt="photo" class="avatar" src="[[profile.pic]]"></iron-image>
+      <iron-image alt="photo" class="avatar" src="[[profile.pic]]" preload></iron-image>
     </div>
     <div hidden$="[[!editPic]]" class="layout horizontal center">
       <paper-input id="picInput" value="[[profile.pic]]" no-label-float></paper-input>
@@ -116,25 +116,25 @@
         <div class="layout vertical center"
           hidden$="[[_includes(_providers, 'Google')]]"
           on-tap="_linkGoogle">
-          <iron-image alt="google" src="/images/google-icon.svg"></iron-image>
+          <iron-image alt="google" src="/images/google-icon.svg" preload></iron-image>
           Google
         </div>
         <div class="layout vertical center"
           hidden$="[[_includes(_providers, 'Facebook')]]"
           on-tap="_linkFacebook">
-          <iron-image alt="facebook" src="/images/facebook-icon.svg"></iron-image>
+          <iron-image alt="facebook" src="/images/facebook-icon.svg" preload></iron-image>
           Facebook
         </div>
         <div class="layout vertical center"
           hidden$="[[_includes(_providers, 'Twitter')]]"
           on-tap="_linkTwitter">
-          <iron-image alt="twitter" src="/images/twitter-icon.svg"></iron-image>
+          <iron-image alt="twitter" src="/images/twitter-icon.svg" preload></iron-image>
           Twitter
         </div>
         <div class="layout vertical center"
           hidden$="[[_includes(_providers, 'Github')]]"
           on-tap="_linkGithub">
-          <iron-image alt="github" src="/images/github-icon.svg"></iron-image>
+          <iron-image alt="github" src="/images/github-icon.svg" preload></iron-image>
           Github
         </div>
       </div>

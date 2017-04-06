@@ -1,7 +1,6 @@
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/iron-list/iron-list.html">
-<!--<link rel="import" href="../../../bower_components/iron-image/iron-image.html">-->
-<link rel="import" href="../../../bower_components/lazy-img/lazy-img.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="../../header.html">
 
 <dom-module id="post-list">
@@ -37,8 +36,7 @@
           <a plain href$="[[_getUrl(post)]]">
             <paper-material class="layout horizontal center justified">
               <template is="dom-if" if="[[_isUser(post)]]">
-                <lazy-img alt="photo" class="avatar small" src="[[post.pic]]" observe="#list"></lazy-img>
-                <!--<iron-image alt="photo" class="avatar small" src="[[post.pic]]"></iron-image>-->
+                <iron-image alt="photo" class="avatar small" src="[[post.pic]]" preload></iron-image>
                 <span class="font-subhead">[[post.$key]]</span>
               </template>
               <template is="dom-if" if="[[!_isUser(post)]]">
