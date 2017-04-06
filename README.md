@@ -11,6 +11,7 @@ Try it at https://app-starter-8f1a5.firebaseapp.com
 * Use Firebase with usernames instead of cryptic IDs.
 * Link multiple OAuth providers to your account.
 * Site-wide theming
+* Lighthouse score: 95/100
 
 ## Usage
 
