@@ -230,7 +230,10 @@
         type: Object,
         observer: '_onFirebaseAppChanged'
       },
-      _footerLink: 'https://github.com/jifalops/app' + '-starter'
+      _footerLink: {
+        type: String,
+        value: 'https://github.com/jifalops/app' + '-starter'
+      }
     },
 
     observers: [
