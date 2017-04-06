@@ -227,11 +227,12 @@ Polymer({
           ]
         };
       }
-      if (this.$.codec.geocode(data.search, function (address, lat, lng, place) {
-        LOG && log.v(address, lat, lng, place);
+      var geocoding = this.$.codec.geocode(data.search, function (address, lat, lng, place) {
+        LOG && geocoding && log.v(address, lat, lng, place);
         this.lat = lat;
         this.lng = lng;
-      }.bind(this))) LOG && log.i('Geocoding:', data.search);
+      }.bind(this));
+      LOG && geocoding && log.i('Geocoding:', data.search);
     }
   },
 
