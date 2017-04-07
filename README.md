@@ -47,6 +47,7 @@ A typical way to accomplish that is
   ```
 
 5. Finish the initial setup, test, and deploy your project.
+
   1. Install dependencies
 
     ```

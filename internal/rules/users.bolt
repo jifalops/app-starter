@@ -6,7 +6,7 @@ path /users {
   read() { amAdmin() }
   /{user} is User {
     // NOTE chats allow many to many messaging,
-    // but only 1 to 1 messaging is used in app-starter.
+    // but only 1 to 1 messaging is used in the app.
     // `messages` here is used to lookup the chat id when
     // sending a message to another user.
     path /chats/{chat} is ChatLastMessage;
