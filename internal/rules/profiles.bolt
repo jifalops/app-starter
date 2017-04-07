@@ -10,7 +10,7 @@ path /profiles {
 type Profile {
   name: DisplayName
   pic: PicUrl
-  posts: PostTitle[]
+  posts: Map<FirebaseKey, PostTitle>
   write() { key() == me() && this != null }
 }
 
