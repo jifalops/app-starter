@@ -69,6 +69,35 @@
         margin-right: -12px;
       }
 
+      .success-banner, .info-banner, .warning-banner, .error-banner, .default-banner {
+        display: block;
+        margin: 4px;
+        padding: 4px 8px;
+        /*color: var(--secondary-text-color);*/
+        border: 1px solid;
+      }
+      .success-banner {
+        background-color: var(--success-bg-color);
+        border-color: var(--success-outline-color);
+      }
+      .info-banner {
+        background-color: var(--info-bg-color);
+        border-color: var(--info-outline-color);
+      }
+      .warning-banner {
+        background-color: var(--warning-bg-color);
+        border-color: var(--warning-outline-color);
+      }
+      .error-banner {
+        background-color: var(--error-bg-color);
+        border-color: var(--error-outline-color);
+      }
+      .default-banner {
+        background-color: var(--primary-background-color);
+        border-color: var(--divider-color);
+      }
+
+
       a[plain] {
         color: inherit;
         text-decoration: inherit;
