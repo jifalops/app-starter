@@ -64,6 +64,9 @@ A typical way to accomplish that is
 7. Deploy when ready.
 
     ```
+    # Optional -- setup cloud functions to handle push notifications.
+    firebase init functions
+
     polymer build
     firebase deploy
     ```
