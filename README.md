@@ -9,7 +9,6 @@ Try it at https://app-starter-8f1a5.firebaseapp.com
 * List and Map view of "posts". There are two types of posts in the demo.
 * Sort posts by their distance to you or another location you specify.
 * Use Firebase with usernames instead of cryptic IDs.
-* Link multiple OAuth providers to your account.
 * Site-wide theming
 * Lighthouse score: 95/100
 
@@ -46,29 +45,27 @@ A typical way to accomplish that is
   git push -u origin master
   ```
 
-5. Finish the initial setup, test, and deploy your project.
-
-  1. Install dependencies
+5. Install dependencies.
 
     ```
     bower install --save
     npm install polymer-cli@next
     ```
 
-  2. Deploy the database rules before testing locally.
+6. Test locally, requires deploying rules first.
 
     ```
-    cd internal
-    ./make-rules.sh
-    cd ..
-    firebase deploy --only database -P dev
+    firebase use dev
+    ./internal/make-rules.sh
+    firebase deploy --only database
+    polymer serve
     ```
 
-  3. Deploy
+7. Deploy when ready.
 
     ```
     polymer build
-    ./firebase-deploy.sh
+    firebase deploy
     ```
 
 ### Pulling in new changes
@@ -76,7 +73,7 @@ To update your existing project to use the newest version of app-starter,
 merge in new changes or rebase your project on top of app-starter.
 
 ```
-# If others are working from origin/master, or you are working from multiple places.
+# If others are working from origin/master.
 git merge app-starter master
 git push origin master
 ```
