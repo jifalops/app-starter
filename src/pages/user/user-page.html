@@ -20,19 +20,11 @@
     iron-icon {
       color: green;
     }
-    .add-provider {
-      background-color: var(--success-bg-color);
-      padding: 8px;
-    }
-    .add-provider > div {
+    .default-banner > div {
       margin: 0 6px;
     }
-    .provider-warning {
-      padding: 4px;
-      margin: 4px;
+    .warning-banner {
       max-width: 150px;
-      color: var(--warning-color);
-      background-color: var(--warning-bg-color);
       @apply --font-small;
     }
     .divider {
@@ -80,7 +72,7 @@
       <iron-image alt="photo" class="avatar" src="[[profile.pic]]" preload></iron-image>
     </div>
     <div hidden$="[[!editPic]]" class="layout horizontal center">
-      <paper-input id="picInput" value="[[profile.pic]]" no-label-float></paper-input>
+      <paper-input id="picInput" class="flex" value="[[profile.pic]]" no-label-float></paper-input>
       <paper-button class="secondary-button small" on-tap="updatePic">Change</paper-button>
     </div>
 
@@ -104,10 +96,10 @@
     <div class="font-subhead">Login methods</div>
     <div class="layout horizontal center justified wrap" hidden$="[[!_canAddProvider(_providers)]]">
       <span>[[_join(_providers, '\, ')]]</span>
-      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="provider-warning">
+      <span hidden$="[[!_hasUsernameProviderOnly(_providers)]]" class="warning-banner">
         Add a second login method to access your account if you forget the password.
       </span>
-      <div class="add-provider font-small layout horizontal center">
+      <div class="default-banner font-small layout horizontal center">
         <span class="font-default2">+</span>
         <div class="layout vertical center"
           hidden$="[[_includes(_providers, 'Google')]]"
