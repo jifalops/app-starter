@@ -46,6 +46,19 @@ type RecordedAction {
   created: FinalNow
 }
 
+type FirebaseKey extends String {
+  // validate() { this.test(/^[a-zA-Z0-9_-]{20}$/) } // Strict
+  validate() { this.test(/^[a-zA-Z0-9_-]{16,32}$/) }
+}
+type FirebaseUid extends String {
+  // validate() { this.test(/^[a-zA-Z0-9_-]{28}$/) } // Strict
+  validate() { this.test(/^[a-zA-Z0-9_-]{16,64}$/) }
+}
+type FirebaseMessagingToken extends String {
+  // validate() { this.test(/^[a-zA-Z0-9_-]{11}:[a-zA-Z0-9_-]{140}$/) } // Strict
+  validate() { this.test(/^[:a-zA-Z0-9_-]{64,256}$/) }
+}
+
 amAuthed() { auth.uid != null }
 isUnchanged(value) { prior(value) == null || value == prior(value) }
 isUnchangedDefault(value, default) { value == (prior(value) == null ? default : prior(value)) }

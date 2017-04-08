@@ -55,7 +55,7 @@
     <div class="font-subhead">
       <span>Display Name</span>
       <a
-        hidden$="[[!amOwner]]"
+        hidden$="[[!isMe]]"
         href="javascript:"
         class="font-tiny"
         on-tap="toggleEditName"
@@ -72,7 +72,7 @@
     <div class="font-subhead">
       <span>Image</span>
       <a
-        hidden$="[[!amOwner]]"
+        hidden$="[[!isMe]]"
         href="javascript:"
         class="font-tiny"
         on-tap="toggleEditPic"
@@ -88,7 +88,7 @@
     </div>
 
     <div hidden$="[[!auth]]">
-      <div hidden$="[[amOwner]]" class="layout horizontal center end-justified">
+      <div hidden$="[[isMe]]" class="layout horizontal center end-justified">
         <div hidden$="[[!sendingMsg]]" class="layout horizontal center">
           <paper-input id="msgInput" value="[[msg]]" no-label-float></paper-input>
           <!-- <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon> -->
@@ -103,7 +103,7 @@
 
   </paper-material>
 
-  <paper-material hidden$="[[!amOwner]]" class="layout vertical">
+  <paper-material hidden$="[[!isMe]]" class="layout vertical">
     <span class="font-title self-center">Private Info</span>
     <div class="font-subhead">Login methods</div>
     <div class="layout horizontal center justified wrap" hidden$="[[!_canAddProvider(_providers)]]">
@@ -177,7 +177,7 @@ Polymer({
   properties: {
     auth: Object,
     route: Object,
-    amOwner: {
+    isMe: {
       type: Boolean,
       value: false
     },
@@ -203,11 +203,11 @@ Polymer({
     if (auth && auth.uid == user) {
       LOG && AUTH && log.v('Using auth.profile');
       this.profile = auth.profile;
-      this.amOwner = true;
+      this.isMe = true;
     } else {
       db.watch('/profiles/' + user, function(profile) {
         LOG && AUTH && log.v("Using " + user + "'s profile'");
-        this.amOwner = false;
+        this.isMe = false;
         this.profile = profile;
       }.bind(this));
     }

@@ -18,11 +18,12 @@ path /users {
 
 type User {
   providers: Provider[]
+  // providers: Map<Provider, Boolean> TODO implement it this way
   created: FinalNow
   lastActivity: CurrentTimestamp
   role: UserRole
   isElevated: Boolean
-  messagingTokens: Map<MessagingToken, Boolean> | Null
+  messagingTokens: Map<FirebaseMessagingToken, Boolean>
   messageNotifications: Boolean | Null
   read() { key() == me() }
   write() { key() == me() && this != null }
@@ -35,10 +36,6 @@ type Provider extends String {
 type UserRole extends String {
   write() { true }
   validate() { root.roles[$user] == this || (root.roles[$user] == null && this == 'User') }
-}
-
-type MessagingToken extends String {
-  validate() { this.length >= 1 && this.length <= 512 }
 }
 
 type ChatLastMessage {
