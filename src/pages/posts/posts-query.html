@@ -83,7 +83,10 @@ Polymer({
       value: null,
       observer: '_appChanged'
     },
-    auth: Object,
+    auth: {
+      type: Object,
+      observer: '_authChanged'
+    },
     postsGeofire: {
       type: Object,
       value: null
@@ -129,7 +132,8 @@ Polymer({
   observers: [
     '_userLocationChanged(useCurrentLocation, userLat, userLng)',
     '_geoResultsChanged(geoPosts, geoUsers, includePosts, includeUsers, geoPosts.length, geoUsers.length)',
-    '_loadedResultsChanged(_loadedPosts.*, _loadedUsers.*, _loadedPosts.length, _loadedUsers.length)'
+    '_loadedResultsChanged(_loadedPosts.*, _loadedUsers.*, _loadedPosts.length, _loadedUsers.length)',
+    '_metricChanged(auth, unit)'
   ],
 
   _appChanged: function(app, old) {
@@ -237,6 +241,14 @@ Polymer({
   _summary: function(results, len) {
     if (!results) len = "~";
     return len + (len == 1 ? ' result.' : ' results.');
+  },
+  _metricChanged: function(auth, unit) {
+    if (auth && auth.user.useMetric === undefined && unit == 'km') {
+      db.users.setUseMetric(auth.uid, true);
+    }
+  },
+  _authChanged: function(auth) {
+    if (auth) this.unit = auth.user.useMetric ? 'km' : 'mi';
   }
 });
 </script>

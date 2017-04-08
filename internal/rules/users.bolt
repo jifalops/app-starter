@@ -22,6 +22,7 @@ type User {
   lastActivity: CurrentTimestamp
   role: UserRole
   isElevated: Boolean
+  useMetric: Boolean | Null
   messagingTokens: Map<FirebaseMessagingToken, Boolean>
   messageNotifications: Boolean | Null
   read() { key() == me() }

@@ -98,6 +98,13 @@ db.users = {
     db.set('/users/' + user + '/messagingTokens/' + token, true, onSuccess, onFailure);
   },
   setMessageNotifications: function(user, enabled, onSuccess, onFailure) {
-    db.set('/users/' + user + '/messageNotifications', enabled, onSuccess, onFailure);
+    var updates = db.userActionUpdate(user);
+    updates['/users/' + user + '/messageNotifications'] = enabled;
+    db.update(updates, onSuccess, onFailure);
+  },
+  setUseMetric: function(user, enabled, onSuccess, onFailure) {
+    var updates = db.userActionUpdate(user);
+    updates['/users/' + user + '/useMetric'] = enabled;
+    db.update(updates, onSuccess, onFailure);
   }
 };

@@ -86,10 +86,6 @@
         location: {
           type: String,
           observer: '_locationChanged'
-        },
-        unit: {
-          type: String,
-          value: 'mi'
         }
       },
 
@@ -144,8 +140,9 @@
         lat = perturbCoordinate(lat);
         lng = perturbCoordinate(lng);
         var dist = GeoFire.distance(coords, [lat, lng]);
-        if (this.unit == 'mi') dist = kmToMiles(dist);
-        showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + this.unit + ' away.');
+        var unit = this.auth.user.useMetric ? 'km' : 'mi';
+        if (unit == 'mi') dist = kmToMiles(dist);
+        showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + unit + ' away.');
         db.users.updateLocation(this.auth.uid, lat, lng, null, showServerErrorToast);
       },
       _addPost: function(lat, lng) {
@@ -155,8 +152,9 @@
           lat = perturbCoordinate(lat);
           lng = perturbCoordinate(lng);
           var dist = GeoFire.distance(coords, [lat, lng]);
-          if (this.unit == 'mi') dist = kmToMiles(dist);
-          showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + this.unit + ' away.');
+          var unit = this.auth.user.useMetric ? 'km' : 'mi';
+          if (unit == 'mi') dist = kmToMiles(dist);
+          showInfoToast('Anonymizing to ' + round(dist, 1) + ' ' + unit + ' away.');
 
           var post = {
             title: this.$.title.value,

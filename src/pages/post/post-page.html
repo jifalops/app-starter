@@ -29,7 +29,9 @@
       <div class="font-title">[[post.title]]</div>
       <div class="text-secondary layout horizontal center justified">
         <from-now time="[[post.created]]"></from-now>
-        <div>[[post.location]] ([[distance]] mi)</div>
+        <div>[[post.location]]
+          <span hidden$="[[!distance]]">([[distance]] [[unit]])</span>
+        </div>
       </div>
       <div class="font-subhead">Tags</div>
       <div>[[_getTags(post.tags)]]</div>
@@ -45,24 +47,26 @@
     Polymer({
       is: 'post-page',
       properties: {
+        auth: Object,
         route: Object,
         distance: {
           type: Number,
-          computed: '_computeDistance(_lat, _lng, userLat, userLng)'
+          value: 0
         }
       },
       observers: [
-        '_pidChanged(routeData.pid)'
+        '_pidChanged(routeData.pid)',
+        '_calcDistance(_lat, _lng, userLat, userLng, auth)'
       ],
 
       _pidChanged: function(pid) {
         if (pid) {
           db.read('/posts/' + pid, function(post) {
-            // LOG && POSTS && log.v('loaded post', post);
+            // LOG && log.v('loaded post', post);
             this.post = post;
           }.bind(this));
           db.read('/geoPosts/' + pid + '/l', function(coords) {
-            // LOG && POSTS && log.v('loaded coords', coords);
+            // LOG && log.v('loaded coords', coords);
             if (isArray(coords) && coords.length == 2) {
               this._lat = coords[0];
               this._lng = coords[1];
@@ -70,9 +74,17 @@
           }.bind(this));
         }
       },
-      _computeDistance: function(lat, lng, userLat, userLng) {
+      _calcDistance: function(lat, lng, userLat, userLng, auth) {
+        // LOG && log.v('_calcDistance', arguments);
         if (lat && lng && userLat && userLng) {
-          return round(kmToMiles(GeoFire.distance([lat, lng], [userLat, userLng])), 1);
+          var dist = GeoFire.distance([lat, lng], [userLat, userLng]);
+          if (!auth || !auth.user.useMetric) {
+            this.distance = round(kmToMiles(dist), 1);
+            this.unit = 'mi';
+          } else {
+            this.distance = round(dist, 1);
+            this.unit = 'km';
+          }
         }
       },
       _getTags: function(tags) {

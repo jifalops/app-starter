@@ -145,6 +145,12 @@
         checked="[[auth.user.messageNotifications]]"
         on-change="_messageNotificationsChanged"></paper-toggle-button>
     </div>
+    <div class="layout horizontal center justified">
+      <div>Use metric</div>
+      <paper-toggle-button
+        checked="[[auth.user.useMetric]]"
+        on-change="_useMetricChanged"></paper-toggle-button>
+    </div>
     <div class="divider"></div>
 
     <div hidden$="[[!_hasPrivileges(auth.user.role)]]">
@@ -331,6 +337,13 @@ Polymer({
     var enabled = e.target.checked;
     if (this.auth && this.auth.user.messageNotifications != enabled) {
       db.users.setMessageNotifications(this.auth.uid, enabled);
+    }
+  },
+  _useMetricChanged: function(e) {
+    // LOG && log.v('_messageNotificationsChanged', arguments);
+    var enabled = e.target.checked;
+    if (this.auth && this.auth.user.useMetric != enabled) {
+      db.users.setUseMetric(this.auth.uid, enabled);
     }
   }
 });
