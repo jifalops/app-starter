@@ -119,7 +119,8 @@
       var user = {};
       var profile = {};
       var data = firebaseUser.providerData[0];
-      user.providers = { 0: this._getProvider(data.providerId) };
+      user.providers = {};
+      user.providers[this._getProvider(data.providerId)] = true;
       user.created = db.timestamp();
       user.lastActivity = db.timestamp();
       user.role = 'User';

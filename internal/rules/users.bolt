@@ -17,8 +17,7 @@ path /users {
 }
 
 type User {
-  providers: Provider[]
-  // providers: Map<Provider, Boolean> TODO implement it this way
+  providers: Map<Provider, Boolean>
   created: FinalNow
   lastActivity: CurrentTimestamp
   role: UserRole

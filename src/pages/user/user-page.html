@@ -6,7 +6,6 @@
 <link rel="import" href="../../../bower_components/from-now/from-now.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../header.html">
 <link rel="import" href="../../components/user-chat.html">
 <dom-module id="user-page">
@@ -64,7 +63,6 @@
     <div hidden$="[[editName]]">[[profile.name]]</div>
     <div hidden$="[[!editName]]" class="layout horizontal center">
       <paper-input id="nameInput" value="[[profile.name]]" no-label-float></paper-input>
-      <!-- <iron-icon icon="check" on-tap="updateName"></iron-icon> -->
       <paper-button class="secondary-button small" on-tap="updateName">Change</paper-button>
     </div>
 
@@ -83,7 +81,6 @@
     </div>
     <div hidden$="[[!editPic]]" class="layout horizontal center">
       <paper-input id="picInput" value="[[profile.pic]]" no-label-float></paper-input>
-      <!-- <iron-icon icon="check" on-tap="updatePic"></iron-icon> -->
       <paper-button class="secondary-button small" on-tap="updatePic">Change</paper-button>
     </div>
 
@@ -91,7 +88,6 @@
       <div hidden$="[[isMe]]" class="layout horizontal center end-justified">
         <div hidden$="[[!sendingMsg]]" class="layout horizontal center">
           <paper-input id="msgInput" value="[[msg]]" no-label-float></paper-input>
-          <!-- <iron-icon icon="check" on-tap="sendMsg">Send</iron-icon> -->
           <paper-button class="secondary-button small" on-tap="sendMsg">Send</paper-button>
         </div>
         <a href="javascript:"
@@ -153,9 +149,10 @@
     <div class="font-subhead">Settings</div>
     <div class="layout horizontal center justified">
       <div>Message notifications</div>
-      <paper-toggle-button checked="{{messageNotifications}}"></paper-toggle-button>
+      <paper-toggle-button
+        checked="[[auth.user.messageNotifications]]"
+        on-change="_messageNotificationsChanged"></paper-toggle-button>
     </div>
-    <firebase-document path="/users/[[auth.uid]]/messageNotifications" data="{{messageNotifications}}"><firebase-document>
     <div class="divider"></div>
 
     <div hidden$="[[!_hasPrivileges(auth.user.role)]]">
@@ -277,11 +274,14 @@ Polymer({
   _toggleString: function(condition, ifTrue, ifFalse) {
     return condition ? ifTrue : ifFalse;
   },
+  _isEmpty: function(any) {
+    return isEmpty(any);
+  },
 
   _processProviders: function(providers) {
     var array = [];
     for (var key in providers) {
-      array.push(providers[key]);
+      array.push(key);
     }
     this._providers = array;
   },
@@ -333,6 +333,13 @@ Polymer({
     var hasUsername = providers[0] == 'Username';
     return (hasUsername && providers.length < 5)
         || (!hasUsername && providers.length < 4);
+  },
+  _messageNotificationsChanged: function(e) {
+    // LOG && log.v('_messageNotificationsChanged', arguments);
+    var enabled = e.target.checked;
+    if (this.auth && this.auth.user.messageNotifications != enabled) {
+      db.users.setMessageNotifications(this.auth.uid, enabled);
+    }
   }
 });
 </script>

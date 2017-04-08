@@ -90,12 +90,14 @@ db.users = {
 
   addProvider: function(user, provider, onSuccess, onFailure) {
     var updates = db.userActionUpdate(user);
-    var key = db.newKey('/users/' + user + '/providers');
-    updates['/users/' + user + '/providers/' + key] = provider;
+    updates['/users/' + user + '/providers/' + provider] = true;
     db.update(updates, onSuccess, onFailure);
   },
 
   addMessagingToken: function(user, token, onSuccess, onFailure) {
     db.set('/users/' + user + '/messagingTokens/' + token, true, onSuccess, onFailure);
+  },
+  setMessageNotifications: function(user, enabled, onSuccess, onFailure) {
+    db.set('/users/' + user + '/messageNotifications', enabled, onSuccess, onFailure);
   }
 };
