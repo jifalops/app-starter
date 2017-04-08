@@ -212,21 +212,11 @@ Polymer({
 
   _queryChanged: function(e, data) {
     LOG && GEOFIRE && log.v('Query changed', data);
-    this.hasInitialResults = false;
     this.useCurrentLocation = data.useCurrentLocation;
     this.radiusKm = data.radiusKm;
     if (data.useCurrentLocation) {
 
     } else {
-      if (isEmpty(this.cache)) {
-        this.cache = {
-          'usa': [
-            'United States',
-            37.09024, -95.712891,
-            'ChIJCzYy5IS16lQRQrfeQ5K5Oxw'
-          ]
-        };
-      }
       var geocoding = this.$.codec.geocode(data.search, function (address, lat, lng, place) {
         LOG && geocoding && log.v(address, lat, lng, place);
         this.lat = lat;
