@@ -126,7 +126,7 @@ Polymer({
     return chats;
   },
   _computeShowNotificationsWarning: function(auth) {
-    return !auth.user.messageNotifications;
+    return auth && !auth.user.messageNotifications;
   }
 });
 </script>
