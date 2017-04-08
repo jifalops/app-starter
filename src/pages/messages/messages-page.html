@@ -26,6 +26,11 @@
     }
   </style>
 
+  <div hidden$="[[!_showNotificationsWarning]]" class="warning-banner">
+    Message notifications are turned off. Visit your
+    <a href$="/user/[[auth.uid]]">profile page</a> to enable.
+  </div>
+
   <paper-material>
     <div class="font-headline align-center">Messages</div>
   </paper-material>
@@ -84,6 +89,11 @@ Polymer({
       type: Boolean,
       value: false,
       computed: '_computeHasMessages(auth.user.messages)'
+    },
+    _showNotificationsWarning: {
+      type: Boolean,
+      value: false,
+      computed: '_computeShowNotificationsWarning(auth)'
     }
   },
 
@@ -114,6 +124,9 @@ Polymer({
       return 0;
     }.bind(this));
     return chats;
+  },
+  _computeShowNotificationsWarning: function(auth) {
+    return !auth.user.messageNotifications;
   }
 });
 </script>
