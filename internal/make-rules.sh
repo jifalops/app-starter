@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
-for f in rules/*.bolt; do (cat "${f}"; echo; echo); done > rules.bolt
-firebase-bolt rules.bolt
+inputs="rules/*.bolt"
+output="rules.bolt"
+if [ -d "internal" ]; then
+  inputs="internal/$inputs"
+  output="internal/$output"
+fi
+for f in $inputs; do (cat "${f}"; echo; echo); done > $output
+firebase-bolt $output
